@@ -77,14 +77,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "CardiacRef — Clinical Cardiac Protocols" },
+      {
+        name: "description",
+        content:
+          "Bedside reference for adult cardiac emergencies: Code Blue, tachycardia, bradycardia, atrial fibrillation, PVCs, and common rhythms.",
+      },
+      { property: "og:title", content: "CardiacRef — Clinical Cardiac Protocols" },
+      {
+        property: "og:description",
+        content: "Bedside reference for common adult cardiac emergencies.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
     ],
     links: [
       {
