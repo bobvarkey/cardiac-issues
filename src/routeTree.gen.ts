@@ -9,50 +9,115 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as LayoutRouteImport } from './routes/_layout'
+import { Route as LayoutIndexRouteImport } from './routes/_layout.index'
+import { Route as LayoutRhythmsRouteImport } from './routes/_layout.rhythms'
+import { Route as LayoutProtocolIdRouteImport } from './routes/_layout.protocol.$id'
 
-const IndexRoute = IndexRouteImport.update({
+const LayoutRoute = LayoutRouteImport.update({
+  id: '/_layout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LayoutIndexRoute = LayoutIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutRhythmsRoute = LayoutRhythmsRouteImport.update({
+  id: '/rhythms',
+  path: '/rhythms',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutProtocolIdRoute = LayoutProtocolIdRouteImport.update({
+  id: '/protocol/$id',
+  path: '/protocol/$id',
+  getParentRoute: () => LayoutRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
+  '/': typeof LayoutIndexRoute
+  '/rhythms': typeof LayoutRhythmsRoute
+  '/protocol/$id': typeof LayoutProtocolIdRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
+  '/rhythms': typeof LayoutRhythmsRoute
+  '/': typeof LayoutIndexRoute
+  '/protocol/$id': typeof LayoutProtocolIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
+  '/_layout': typeof LayoutRouteWithChildren
+  '/_layout/rhythms': typeof LayoutRhythmsRoute
+  '/_layout/': typeof LayoutIndexRoute
+  '/_layout/protocol/$id': typeof LayoutProtocolIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/rhythms' | '/protocol/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/rhythms' | '/' | '/protocol/$id'
+  id:
+    | '__root__'
+    | '/_layout'
+    | '/_layout/rhythms'
+    | '/_layout/'
+    | '/_layout/protocol/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
+  LayoutRoute: typeof LayoutRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
+    '/_layout': {
+      id: '/_layout'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof LayoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_layout/': {
+      id: '/_layout/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof LayoutIndexRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/rhythms': {
+      id: '/_layout/rhythms'
+      path: '/rhythms'
+      fullPath: '/rhythms'
+      preLoaderRoute: typeof LayoutRhythmsRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/protocol/$id': {
+      id: '/_layout/protocol/$id'
+      path: '/protocol/$id'
+      fullPath: '/protocol/$id'
+      preLoaderRoute: typeof LayoutProtocolIdRouteImport
+      parentRoute: typeof LayoutRoute
     }
   }
 }
 
+interface LayoutRouteChildren {
+  LayoutRhythmsRoute: typeof LayoutRhythmsRoute
+  LayoutIndexRoute: typeof LayoutIndexRoute
+  LayoutProtocolIdRoute: typeof LayoutProtocolIdRoute
+}
+
+const LayoutRouteChildren: LayoutRouteChildren = {
+  LayoutRhythmsRoute: LayoutRhythmsRoute,
+  LayoutIndexRoute: LayoutIndexRoute,
+  LayoutProtocolIdRoute: LayoutProtocolIdRoute,
+}
+
+const LayoutRouteWithChildren =
+  LayoutRoute._addFileChildren(LayoutRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
+  LayoutRoute: LayoutRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
