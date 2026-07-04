@@ -442,6 +442,23 @@ export const algorithms: Algorithm[] = [
   },
 ];
 
+// Re-export treatment modules
+export {
+  treatmentModules,
+  commonArrhythmiaTreatments,
+  type TreatmentModule,
+  type TreatmentStep,
+  type ArrhythmiaTreatment
+} from './treatment-algorithms';
+
+// Treatment reference mapping for UI components
+export const treatmentReferences: Record<string, string> = {
+  "af_treatment": "Atrial Fibrillation/Flutter Treatment Algorithm",
+  "ventricular_ectopy_treatment": "PVC/Ventricular Ectopy Treatment Algorithm",
+  "code_blue_adult_cardiac_arrest_shockable_path": "Code Blue - Shockable Rhythm Path",
+  "code_blue_adult_cardiac_arrest_nonshockable_path": "Code Blue - Non-Shockable Rhythm Path"
+};
+
 export type Arrhythmia = {
   id: string;
   name: string;
