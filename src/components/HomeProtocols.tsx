@@ -143,6 +143,8 @@ export function HomeProtocols() {
           </div>
         </Link>
       </section>
+
+      <AntiarrhythmicsChart />
     </div>
   );
 }
