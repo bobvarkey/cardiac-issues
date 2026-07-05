@@ -1,0 +1,172 @@
+export type DrugDetails = {
+  name: string;
+  className: string;
+  classKey: string;
+  mnemonic?: string;
+  indications: string[];
+  adverse: string[];
+  monitoring: string[];
+};
+
+export const CALCULATOR_DRUGS = new Set([
+  "Diltiazem",
+  "Metoprolol",
+  "Esmolol",
+  "Digoxin",
+  "Amiodarone",
+]);
+
+export const DRUG_DETAILS: Record<string, DrugDetails> = {
+  Quinidine: {
+    name: "Quinidine",
+    className: "Na+ channel blocker (moderate)",
+    classKey: "Class Ia",
+    mnemonic: "\"Quinidine\" in Quinidine likes fever",
+    indications: ["Brugada syndrome", "Short QT syndrome", "Selected AF (rare)"],
+    adverse: ["QT prolongation / torsades", "Cinchonism (tinnitus, headache)", "Thrombocytopenia", "Diarrhea"],
+    monitoring: ["ECG (QT, QRS)", "Electrolytes (K+, Mg2+)", "CBC", "Digoxin level (interaction)"],
+  },
+  Procainamide: {
+    name: "Procainamide",
+    className: "Na+ channel blocker (moderate)",
+    classKey: "Class Ia",
+    indications: ["Stable monomorphic VT", "Pre-excited AF (WPW)"],
+    adverse: ["Drug-induced lupus", "QT prolongation / torsades", "Hypotension (IV)", "Agranulocytosis"],
+    monitoring: ["ECG (QT, QRS <25% widening)", "BP during infusion", "ANA if prolonged use", "CBC"],
+  },
+  Disopyramide: {
+    name: "Disopyramide",
+    className: "Na+ channel blocker (moderate)",
+    classKey: "Class Ia",
+    indications: ["Hypertrophic obstructive cardiomyopathy", "Vagally-mediated AF"],
+    adverse: ["Anticholinergic (dry mouth, urinary retention)", "Negative inotrope — heart failure", "QT prolongation"],
+    monitoring: ["ECG (QT)", "LV function", "Symptoms of urinary retention/glaucoma"],
+  },
+  Lidocaine: {
+    name: "Lidocaine",
+    className: "Na+ channel blocker (weak, fast)",
+    classKey: "Class Ib",
+    indications: ["VT/VF in ischemia", "Post-MI ventricular arrhythmias", "Digoxin-toxic VT"],
+    adverse: ["CNS: perioral numbness, tremor, seizures", "Confusion", "Bradycardia at high doses"],
+    monitoring: ["Neurologic status", "ECG", "Lidocaine level if prolonged infusion", "Hepatic function"],
+  },
+  Mexiletine: {
+    name: "Mexiletine",
+    className: "Na+ channel blocker (weak, fast)",
+    classKey: "Class Ib",
+    indications: ["Chronic ventricular arrhythmias", "LQT3", "Adjunct to amiodarone"],
+    adverse: ["GI upset, nausea", "Tremor", "Dizziness", "Hepatotoxicity (rare)"],
+    monitoring: ["ECG", "LFTs", "Symptoms of tremor/ataxia"],
+  },
+  Flecainide: {
+    name: "Flecainide",
+    className: "Na+ channel blocker (strong, slow)",
+    classKey: "Class Ic",
+    indications: ["Paroxysmal AF (pill-in-pocket) — structurally normal heart", "SVT", "Idiopathic VT"],
+    adverse: ["Proarrhythmia (1:1 atrial flutter conduction)", "Negative inotrope", "AVOID in structural heart disease / CAD (CAST trial)"],
+    monitoring: ["ECG (QRS <25% widening)", "Echo before starting", "AV nodal blocker co-therapy for AF"],
+  },
+  Propafenone: {
+    name: "Propafenone",
+    className: "Na+ channel blocker (strong) + weak β-blocker",
+    classKey: "Class Ic",
+    indications: ["Paroxysmal AF (pill-in-pocket)", "SVT prevention"],
+    adverse: ["Metallic taste", "Bronchospasm (β-effect)", "Proarrhythmia — avoid in structural heart disease", "Bradycardia"],
+    monitoring: ["ECG (QRS)", "Echo before starting", "Symptoms in asthma/COPD"],
+  },
+  Propranolol: {
+    name: "Propranolol",
+    className: "Non-selective β-blocker",
+    classKey: "Class II",
+    mnemonic: "\"LOL\"",
+    indications: ["Rate control", "Thyroid storm", "Long QT syndrome", "HOCM"],
+    adverse: ["Bronchospasm", "Bradycardia / AV block", "Fatigue", "Masked hypoglycemia"],
+    monitoring: ["HR, BP", "Symptoms in asthma", "Glucose in diabetics"],
+  },
+  Metoprolol: {
+    name: "Metoprolol",
+    className: "β1-selective blocker",
+    classKey: "Class II",
+    mnemonic: "\"LOL\"",
+    indications: ["Rate control in AF/flutter", "Post-MI", "SVT", "HFrEF (succinate)"],
+    adverse: ["Bradycardia / AV block", "Hypotension", "Fatigue", "Bronchospasm at high doses"],
+    monitoring: ["HR, BP", "ECG for AV block", "Signs of decompensated HF when initiating"],
+  },
+  Atenolol: {
+    name: "Atenolol",
+    className: "β1-selective blocker",
+    classKey: "Class II",
+    mnemonic: "\"LOL\"",
+    indications: ["Rate control", "Hypertension", "Angina"],
+    adverse: ["Bradycardia", "Fatigue", "Cold extremities", "Renal accumulation"],
+    monitoring: ["HR, BP", "Renal function (renally cleared)"],
+  },
+  Esmolol: {
+    name: "Esmolol",
+    className: "Ultra-short acting β1 blocker (IV)",
+    classKey: "Class II",
+    indications: ["Acute rate control (perioperative)", "Aortic dissection", "SVT in unstable patients"],
+    adverse: ["Hypotension", "Bradycardia", "Infusion-site reactions"],
+    monitoring: ["Continuous BP, HR, ECG", "Titrate to effect"],
+  },
+  Amiodarone: {
+    name: "Amiodarone",
+    className: "K+ channel blocker (also Na+, β, Ca2+ effects)",
+    classKey: "Class III",
+    mnemonic: "\"A\" in AIDS",
+    indications: ["VT/VF in cardiac arrest", "Stable wide-complex tachycardia", "AF rhythm/rate control", "Post-cardiac surgery arrhythmias"],
+    adverse: ["Pulmonary fibrosis", "Thyroid dysfunction (hypo/hyper)", "Hepatotoxicity", "Corneal deposits, blue-grey skin", "QT prolongation (rarely torsades)"],
+    monitoring: ["Baseline + q6mo: TFTs, LFTs, CXR/PFTs", "Ophthalmology yearly", "ECG (QT, HR)", "INR (warfarin interaction)"],
+  },
+  Ibutilide: {
+    name: "Ibutilide",
+    className: "K+ channel blocker (IV)",
+    classKey: "Class III",
+    mnemonic: "\"I\" in AIDS",
+    indications: ["Chemical cardioversion of AF/flutter"],
+    adverse: ["Torsades de pointes (2–4%)", "QT prolongation", "Hypotension"],
+    monitoring: ["Continuous ECG for ≥4 h post-dose", "K+ >4, Mg2+ >2 before dosing", "Defibrillator at bedside"],
+  },
+  Dofetilide: {
+    name: "Dofetilide",
+    className: "Pure K+ channel blocker (oral)",
+    classKey: "Class III",
+    mnemonic: "\"D\" in AIDS",
+    indications: ["Maintenance of sinus rhythm in AF/flutter", "Chemical cardioversion"],
+    adverse: ["Torsades de pointes", "QT prolongation", "Headache"],
+    monitoring: ["In-hospital initiation ×3 days", "ECG QTc <500 ms (<550 if QRS wide)", "CrCl — dose-adjust", "Avoid many QT-prolonging drugs"],
+  },
+  Sotalol: {
+    name: "Sotalol",
+    className: "K+ channel blocker + non-selective β-blocker",
+    classKey: "Class III",
+    mnemonic: "\"S\" in AIDS",
+    indications: ["AF/flutter maintenance", "Ventricular arrhythmias"],
+    adverse: ["Torsades de pointes", "Bradycardia", "Bronchospasm", "Fatigue"],
+    monitoring: ["In-hospital initiation", "ECG QTc <500 ms", "CrCl — dose-adjust", "K+, Mg2+"],
+  },
+  Verapamil: {
+    name: "Verapamil",
+    className: "Non-dihydropyridine Ca2+ channel blocker",
+    classKey: "Class IV",
+    indications: ["SVT (AVNRT)", "Rate control in AF (no HFrEF)", "Idiopathic fascicular VT"],
+    adverse: ["Constipation", "Bradycardia / AV block", "Negative inotrope — AVOID in HFrEF", "Hypotension", "AVOID in WPW with AF"],
+    monitoring: ["HR, BP, ECG", "LV function before use", "Digoxin level (interaction)"],
+  },
+  Diltiazem: {
+    name: "Diltiazem",
+    className: "Non-dihydropyridine Ca2+ channel blocker",
+    classKey: "Class IV",
+    indications: ["Rate control in AF/flutter", "SVT (AVNRT)", "Angina"],
+    adverse: ["Bradycardia / AV block", "Hypotension", "Peripheral edema", "AVOID in HFrEF and WPW with AF"],
+    monitoring: ["HR, BP, ECG", "LV function", "LFTs with chronic use"],
+  },
+  Digoxin: {
+    name: "Digoxin",
+    className: "Cardiac glycoside (Na/K-ATPase inhibitor)",
+    classKey: "Unclassified (adjunct)",
+    indications: ["Rate control in AF (esp. sedentary or HFrEF)", "HFrEF symptom control"],
+    adverse: ["Digoxin toxicity: nausea, visual halos, confusion", "Bradyarrhythmias, PVCs, junctional rhythms", "Narrow therapeutic index"],
+    monitoring: ["Digoxin level (0.5–0.9 ng/mL in HF)", "K+, Mg2+, renal function", "ECG"],
+  },
+};

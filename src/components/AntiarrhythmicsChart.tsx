@@ -1,5 +1,15 @@
+import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Zap } from "lucide-react";
+import { Zap, ArrowRight, AlertTriangle, Activity, Stethoscope, Calculator } from "lucide-react";
+
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+} from "@/components/ui/sheet";
+import { CALCULATOR_DRUGS, DRUG_DETAILS, type DrugDetails } from "@/lib/antiarrhythmic-details";
 
 type Subclass = { key: string; mnemonic: string; drugs: string[] };
 type ClassEntry = {
@@ -9,15 +19,6 @@ type ClassEntry = {
   drugs?: string[];
   subclasses?: Subclass[];
 };
-
-// Drugs that exist in the TreatmentMiniApp dosing calculator.
-const CALCULATOR_DRUGS = new Set([
-  "Diltiazem",
-  "Metoprolol",
-  "Esmolol",
-  "Digoxin",
-  "Amiodarone",
-]);
 
 const overallMnemonic = {
   text: "Some Block Potassium Channels",
@@ -34,7 +35,7 @@ const classes: ClassEntry[] = [
     key: "Class I",
     type: "Na+ channel blockers",
     subclasses: [
-      { key: "Ia", mnemonic: "Quinine", drugs: ["Quinidine", "Procainamide", "Disopyramide"] },
+      { key: "Ia", mnemonic: "Quinidine", drugs: ["Quinidine", "Procainamide", "Disopyramide"] },
       { key: "Ib", mnemonic: "likes", drugs: ["Lidocaine", "Mexiletine"] },
       { key: "Ic", mnemonic: "fever", drugs: ["Flecainide", "Propafenone"] },
     ],
@@ -58,23 +59,21 @@ const classes: ClassEntry[] = [
   },
 ];
 
-function DrugChip({ name }: { name: string }) {
-  if (CALCULATOR_DRUGS.has(name)) {
-    return (
-      <Link
-        to="/treatment"
-        search={{ drug: name }}
-        className="rounded-md border border-primary/40 bg-primary/10 px-2 py-0.5 text-xs text-primary transition hover:border-primary hover:bg-primary/20"
-        title={`Open ${name} in dosing calculator`}
-      >
-        {name} →
-      </Link>
-    );
-  }
+function DrugChip({ name, onOpen }: { name: string; onOpen: (name: string) => void }) {
+  const inCalc = CALCULATOR_DRUGS.has(name);
   return (
-    <span className="rounded-md border border-border bg-background px-2 py-0.5 text-xs text-muted-foreground">
+    <button
+      type="button"
+      onClick={() => onOpen(name)}
+      className={
+        inCalc
+          ? "rounded-md border border-primary/40 bg-primary/10 px-2 py-0.5 text-xs text-primary transition hover:border-primary hover:bg-primary/20"
+          : "rounded-md border border-border bg-background px-2 py-0.5 text-xs text-muted-foreground transition hover:border-primary/40 hover:text-foreground"
+      }
+      title={`Details for ${name}`}
+    >
       {name}
-    </span>
+    </button>
   );
 }
 
@@ -83,7 +82,82 @@ function classHasCalculatorDrug(c: ClassEntry): string | null {
   return all.find((d) => CALCULATOR_DRUGS.has(d)) ?? null;
 }
 
+function DrugDetailsBody({ details }: { details: DrugDetails }) {
+  return (
+    <div className="mt-4 space-y-5">
+      <div className="rounded-lg border border-border bg-surface-elevated p-3">
+        <div className="font-mono text-[10px] uppercase tracking-wider text-primary">
+          {details.classKey}
+        </div>
+        <div className="text-sm font-medium">{details.className}</div>
+        {details.mnemonic && (
+          <div className="mt-2 rounded-md bg-primary/10 px-2 py-1 font-mono text-xs text-primary">
+            Mnemonic: {details.mnemonic}
+          </div>
+        )}
+      </div>
+
+      <section>
+        <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          <Stethoscope className="h-3.5 w-3.5" /> Common indications
+        </div>
+        <ul className="space-y-1 text-sm">
+          {details.indications.map((i) => (
+            <li key={i} className="flex gap-2">
+              <span className="text-primary">•</span>
+              <span>{i}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section>
+        <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-destructive">
+          <AlertTriangle className="h-3.5 w-3.5" /> Adverse effects
+        </div>
+        <ul className="space-y-1 text-sm">
+          {details.adverse.map((a) => (
+            <li key={a} className="flex gap-2">
+              <span className="text-destructive">•</span>
+              <span>{a}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section>
+        <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          <Activity className="h-3.5 w-3.5" /> Monitoring
+        </div>
+        <ul className="space-y-1 text-sm">
+          {details.monitoring.map((m) => (
+            <li key={m} className="flex gap-2">
+              <span className="text-primary">•</span>
+              <span>{m}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      {CALCULATOR_DRUGS.has(details.name) && (
+        <Link
+          to="/treatment"
+          search={{ drug: details.name }}
+          className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground transition hover:bg-primary/90"
+        >
+          <Calculator className="h-4 w-4" />
+          Open in dosing calculator
+          <ArrowRight className="h-4 w-4" />
+        </Link>
+      )}
+    </div>
+  );
+}
+
 export function AntiarrhythmicsChart() {
+  const [openDrug, setOpenDrug] = useState<string | null>(null);
+  const details = openDrug ? DRUG_DETAILS[openDrug] : null;
+
   return (
     <section className="surface-panel p-5 space-y-5">
       <div className="flex items-start gap-3">
@@ -93,8 +167,8 @@ export function AntiarrhythmicsChart() {
         <div>
           <h2 className="text-lg font-semibold">Anti-arrhythmic drugs</h2>
           <p className="text-sm text-muted-foreground">
-            Vaughan-Williams classification with memory hooks. Tap a highlighted drug to preselect
-            it in the dosing calculator.
+            Vaughan-Williams classification with memory hooks. Tap any drug for class,
+            indications, adverse effects, and monitoring.
           </p>
         </div>
       </div>
@@ -162,7 +236,7 @@ export function AntiarrhythmicsChart() {
                       </div>
                       <div className="mt-1 flex flex-wrap gap-1.5">
                         {s.drugs.map((d) => (
-                          <DrugChip key={d} name={d} />
+                          <DrugChip key={d} name={d} onOpen={setOpenDrug} />
                         ))}
                       </div>
                     </div>
@@ -173,7 +247,7 @@ export function AntiarrhythmicsChart() {
               {c.drugs && c.drugs.length > 0 && (
                 <div className="flex flex-wrap gap-1.5">
                   {c.drugs.map((d) => (
-                    <DrugChip key={d} name={d} />
+                    <DrugChip key={d} name={d} onOpen={setOpenDrug} />
                   ))}
                 </div>
               )}
@@ -191,6 +265,27 @@ export function AntiarrhythmicsChart() {
           );
         })}
       </div>
+
+      <Sheet open={!!openDrug} onOpenChange={(o) => !o && setOpenDrug(null)}>
+        <SheetContent side="right" className="w-full overflow-y-auto sm:max-w-md">
+          {details ? (
+            <>
+              <SheetHeader>
+                <SheetTitle>{details.name}</SheetTitle>
+                <SheetDescription>{details.classKey} · {details.className}</SheetDescription>
+              </SheetHeader>
+              <DrugDetailsBody details={details} />
+            </>
+          ) : openDrug ? (
+            <>
+              <SheetHeader>
+                <SheetTitle>{openDrug}</SheetTitle>
+                <SheetDescription>Details not yet available for this drug.</SheetDescription>
+              </SheetHeader>
+            </>
+          ) : null}
+        </SheetContent>
+      </Sheet>
     </section>
   );
 }
