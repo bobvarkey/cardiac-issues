@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Zap, ArrowRight, AlertTriangle, Activity, Stethoscope, Calculator } from "lucide-react";
+import { Zap, ArrowRight, AlertTriangle, Activity, Stethoscope, Calculator, Ban, Pill, Link2 } from "lucide-react";
 
 import {
   Sheet,
