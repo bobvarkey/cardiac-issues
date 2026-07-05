@@ -413,7 +413,7 @@ interface AntiarrhythmicClass {
   class: string;
   mechanism: string;
   mnemonic?: string;
-  drugs: AntiarrhythmicDrug[];
+  drugs?: AntiarrhythmicDrug[];
   subclasses?: AntiarrhythmicSubclass[];
   clinicalPearls?: string[];
 }
