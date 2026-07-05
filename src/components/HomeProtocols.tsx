@@ -120,6 +120,27 @@ export function HomeProtocols() {
             Pre-operative · Risk Calculator
           </div>
         </Link>
+        <Link
+          to="/antiarrhythmics"
+          className="group surface-panel flex flex-col gap-3 p-5 transition hover:border-primary/50 hover:bg-surface-elevated"
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/15 text-primary">
+              <Zap className="h-5 w-5" />
+            </div>
+            <ChevronRight className="h-4 w-4 text-muted-foreground transition group-hover:translate-x-1 group-hover:text-primary" />
+          </div>
+          <div>
+            <h2 className="text-base font-semibold">Anti-arrhythmic drugs</h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Vaughan-Williams classes with mnemonics. Tap a drug to preselect it in the dosing
+              calculator.
+            </p>
+          </div>
+          <div className="mt-auto font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+            Reference · Mnemonics
+          </div>
+        </Link>
       </section>
     </div>
   );
