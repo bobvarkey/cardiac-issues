@@ -28,6 +28,32 @@ export function HomeProtocols() {
         </p>
       </section>
 
+      <Link
+        to="/treatment"
+        className="group relative block overflow-hidden rounded-xl border border-primary/50 bg-gradient-to-br from-primary/20 via-primary/10 to-transparent p-6 transition hover:border-primary hover:from-primary/30"
+      >
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex items-start gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-lg">
+              <Pill className="h-6 w-6" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h2 className="text-lg font-semibold">Treatment Mini App</h2>
+                <span className="rounded-full bg-primary/20 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-primary">
+                  Featured
+                </span>
+              </div>
+              <p className="mt-1 max-w-xl text-sm text-muted-foreground">
+                Live, weight-based dosing calculator for AF / VT / VF with stability-first
+                recommendations and per-drug mg/mcg outputs.
+              </p>
+            </div>
+          </div>
+          <ChevronRight className="h-5 w-5 shrink-0 text-primary transition group-hover:translate-x-1" />
+        </div>
+      </Link>
+
       <section className="grid gap-3 sm:grid-cols-2">
         {algorithms.map((a) => {
           const Icon = iconMap[a.id] ?? HeartPulse;
