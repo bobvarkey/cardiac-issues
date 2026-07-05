@@ -120,26 +120,6 @@ export function HomeProtocols() {
             Pre-operative · Risk Calculator
           </div>
         </Link>
-        <Link
-          to="/treatment"
-          className="group surface-panel flex flex-col gap-3 p-5 transition hover:border-primary/50 hover:bg-surface-elevated"
-        >
-          <div className="flex items-center justify-between">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/15 text-primary">
-              <Pill className="h-5 w-5" />
-            </div>
-            <ChevronRight className="h-4 w-4 text-muted-foreground transition group-hover:translate-x-1 group-hover:text-primary" />
-          </div>
-          <div>
-            <h2 className="text-base font-semibold">Treatment Mini App</h2>
-            <p className="mt-1 text-sm text-muted-foreground">
-              AF / VT / VF stability-first recommendations with weight-based dosing and drug cards.
-            </p>
-          </div>
-          <div className="mt-auto font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
-            Decision Support · Dosing
-          </div>
-        </Link>
       </section>
     </div>
   );
