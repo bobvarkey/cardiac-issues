@@ -1,4 +1,5 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import { useSearch } from "@tanstack/react-router";
 
 import { AntiarrhythmicsChart } from "@/components/AntiarrhythmicsChart";
 
@@ -172,11 +173,21 @@ function hasInstability(s: {
 }
 
 export function TreatmentMiniApp() {
+  const search = useSearch({ strict: false }) as { drug?: string };
+  const initialDrug = drugs.find((d) => d.name === search.drug)?.name ?? drugs[0].name;
+
   const [arrhythmia, setArrhythmia] = useState<Arrhythmia>("AF");
   const [weight, setWeight] = useState<number>(70);
   const [afDuration, setAfDuration] = useState<number>(24);
   const [ef, setEf] = useState<number>(60);
-  const [selectedDrug, setSelectedDrug] = useState<string>(drugs[0].name);
+  const [selectedDrug, setSelectedDrug] = useState<string>(initialDrug);
+
+  useEffect(() => {
+    if (search.drug && drugs.some((d) => d.name === search.drug)) {
+      setSelectedDrug(search.drug);
+    }
+  }, [search.drug]);
+
   const [unstable, setUnstable] = useState({
     hypotension: false,
     shock: false,
