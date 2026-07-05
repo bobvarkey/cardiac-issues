@@ -1,7 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { useSearch } from "@tanstack/react-router";
-
-import { AntiarrhythmicsChart } from "@/components/AntiarrhythmicsChart";
+import { Link, useSearch } from "@tanstack/react-router";
 
 type Arrhythmia = "AF" | "VT" | "VF";
 
@@ -433,9 +431,13 @@ export function TreatmentMiniApp() {
             </button>
           ))}
         </div>
+        <Link
+          to="/antiarrhythmics"
+          className="mt-4 inline-flex text-sm font-medium text-primary hover:underline"
+        >
+          Browse full anti-arrhythmic classification →
+        </Link>
       </section>
-
-      <AntiarrhythmicsChart />
     </div>
   );
 }
