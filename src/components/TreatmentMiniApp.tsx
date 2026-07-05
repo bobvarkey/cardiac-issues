@@ -1,5 +1,7 @@
 import React, { useMemo, useState } from "react";
 
+import { AntiarrhythmicsChart } from "@/components/AntiarrhythmicsChart";
+
 type Arrhythmia = "AF" | "VT" | "VF";
 
 type DoseRule = {
@@ -421,6 +423,8 @@ export function TreatmentMiniApp() {
           ))}
         </div>
       </section>
+
+      <AntiarrhythmicsChart />
     </div>
   );
 }
