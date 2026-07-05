@@ -50,10 +50,10 @@ export function GlobalSearch() {
     setQuery("");
     navigate({
       to: item.to,
-      params: item.params as never,
-      search: (item.search ?? {}) as never,
+      params: item.params,
+      search: item.search ?? {},
       hash: item.hash,
-    });
+    } as never);
   }
 
   function onKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
