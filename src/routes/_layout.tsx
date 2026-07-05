@@ -33,6 +33,7 @@ function LayoutComponent() {
             <NavLink to="/rhythms">Rhythms</NavLink>
             <NavLink to="/antiarrhythmics">Drugs</NavLink>
             <NavLink to="/syncope">Syncope</NavLink>
+            <NavLink to="/syncope-triage">Triage</NavLink>
           </nav>
         </div>
         <div className="pointer-events-none h-4 text-primary/40">
