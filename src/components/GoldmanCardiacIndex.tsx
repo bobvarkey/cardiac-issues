@@ -931,7 +931,7 @@ const GoldmanCardiacIndex = () => {
                           </div>
                         ) : (
                           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-                            {cls.drugs.map((drug) => (
+                            {(cls.drugs ?? []).map((drug) => (
                               <div key={drug.name} className="p-2 rounded bg-background/50 border border-border/30">
                                 <div className="font-medium text-sm">{drug.name}</div>
                                 {drug.uses && (
