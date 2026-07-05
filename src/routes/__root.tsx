@@ -42,15 +42,38 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   }, [error]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
+    <div className="flex min-h-screen items-center justify-center bg-background px-4 py-10">
+      <div className="w-full max-w-lg rounded-lg border border-border bg-card p-6 shadow-sm">
         <h1 className="text-xl font-semibold tracking-tight text-foreground">
           This page didn't load
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Something went wrong on our end. You can try refreshing or head back home.
+          Something went wrong while loading this screen. Your data is safe — try one
+          of the steps below to recover.
         </p>
-        <div className="mt-6 flex flex-wrap justify-center gap-2">
+
+        <div className="mt-5 rounded-md bg-muted/50 p-4">
+          <h2 className="text-sm font-medium text-foreground">Troubleshooting steps</h2>
+          <ol className="mt-2 list-decimal space-y-1 pl-5 text-sm text-muted-foreground">
+            <li>Tap <span className="font-medium text-foreground">Try again</span> to reload this screen.</li>
+            <li>Check your internet connection, then retry.</li>
+            <li>Return to the <span className="font-medium text-foreground">home screen</span> and re-open the protocol.</li>
+            <li>If the issue continues, fully refresh the browser (pull down or press ⌘/Ctrl+R).</li>
+          </ol>
+        </div>
+
+        {error?.message ? (
+          <details className="mt-4 rounded-md border border-border bg-background p-3 text-xs text-muted-foreground">
+            <summary className="cursor-pointer font-medium text-foreground">
+              Technical details
+            </summary>
+            <pre className="mt-2 max-h-40 overflow-auto whitespace-pre-wrap break-words">
+              {error.message}
+            </pre>
+          </details>
+        ) : null}
+
+        <div className="mt-6 flex flex-wrap gap-2">
           <button
             onClick={() => {
               router.invalidate();
@@ -66,6 +89,12 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
           >
             Go home
           </a>
+          <button
+            onClick={() => window.location.reload()}
+            className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+          >
+            Hard refresh
+          </button>
         </div>
       </div>
     </div>
