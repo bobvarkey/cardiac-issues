@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as LayoutIndexRouteImport } from './routes/_layout.index'
 import { Route as LayoutRhythmsRouteImport } from './routes/_layout.rhythms'
+import { Route as LayoutGoldmanRouteImport } from './routes/_layout.goldman'
 import { Route as LayoutProtocolIdRouteImport } from './routes/_layout.protocol.$id'
 
 const LayoutRoute = LayoutRouteImport.update({
@@ -28,6 +29,11 @@ const LayoutRhythmsRoute = LayoutRhythmsRouteImport.update({
   path: '/rhythms',
   getParentRoute: () => LayoutRoute,
 } as any)
+const LayoutGoldmanRoute = LayoutGoldmanRouteImport.update({
+  id: '/goldman',
+  path: '/goldman',
+  getParentRoute: () => LayoutRoute,
+} as any)
 const LayoutProtocolIdRoute = LayoutProtocolIdRouteImport.update({
   id: '/protocol/$id',
   path: '/protocol/$id',
@@ -36,10 +42,12 @@ const LayoutProtocolIdRoute = LayoutProtocolIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof LayoutIndexRoute
+  '/goldman': typeof LayoutGoldmanRoute
   '/rhythms': typeof LayoutRhythmsRoute
   '/protocol/$id': typeof LayoutProtocolIdRoute
 }
 export interface FileRoutesByTo {
+  '/goldman': typeof LayoutGoldmanRoute
   '/rhythms': typeof LayoutRhythmsRoute
   '/': typeof LayoutIndexRoute
   '/protocol/$id': typeof LayoutProtocolIdRoute
@@ -47,18 +55,20 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_layout': typeof LayoutRouteWithChildren
+  '/_layout/goldman': typeof LayoutGoldmanRoute
   '/_layout/rhythms': typeof LayoutRhythmsRoute
   '/_layout/': typeof LayoutIndexRoute
   '/_layout/protocol/$id': typeof LayoutProtocolIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/rhythms' | '/protocol/$id'
+  fullPaths: '/' | '/goldman' | '/rhythms' | '/protocol/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/rhythms' | '/' | '/protocol/$id'
+  to: '/goldman' | '/rhythms' | '/' | '/protocol/$id'
   id:
     | '__root__'
     | '/_layout'
+    | '/_layout/goldman'
     | '/_layout/rhythms'
     | '/_layout/'
     | '/_layout/protocol/$id'
@@ -91,6 +101,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutRhythmsRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/_layout/goldman': {
+      id: '/_layout/goldman'
+      path: '/goldman'
+      fullPath: '/goldman'
+      preLoaderRoute: typeof LayoutGoldmanRouteImport
+      parentRoute: typeof LayoutRoute
+    }
     '/_layout/protocol/$id': {
       id: '/_layout/protocol/$id'
       path: '/protocol/$id'
@@ -102,12 +119,14 @@ declare module '@tanstack/react-router' {
 }
 
 interface LayoutRouteChildren {
+  LayoutGoldmanRoute: typeof LayoutGoldmanRoute
   LayoutRhythmsRoute: typeof LayoutRhythmsRoute
   LayoutIndexRoute: typeof LayoutIndexRoute
   LayoutProtocolIdRoute: typeof LayoutProtocolIdRoute
 }
 
 const LayoutRouteChildren: LayoutRouteChildren = {
+  LayoutGoldmanRoute: LayoutGoldmanRoute,
   LayoutRhythmsRoute: LayoutRhythmsRoute,
   LayoutIndexRoute: LayoutIndexRoute,
   LayoutProtocolIdRoute: LayoutProtocolIdRoute,

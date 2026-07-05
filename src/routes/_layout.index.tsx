@@ -1,5 +1,5 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { HeartPulse, Zap, TrendingDown, Waves, Activity, ChevronRight } from "lucide-react";
+import { HeartPulse, Zap, TrendingDown, Waves, Activity, ChevronRight, Heart } from "lucide-react";
 import { algorithms } from "@/data/cardiac";
 
 export const Route = createFileRoute("/_layout/")({
@@ -89,6 +89,26 @@ function Home() {
             <p className="mt-1 text-sm text-muted-foreground">
               Catalog of common arrhythmias with ECG features and clinical notes.
             </p>
+          </div>
+        </Link>
+        <Link
+          to="/goldman"
+          className="group surface-panel flex flex-col gap-3 p-5 transition hover:border-primary/50 hover:bg-surface-elevated"
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/15 text-primary">
+              <Heart className="h-5 w-5" />
+            </div>
+            <ChevronRight className="h-4 w-4 text-muted-foreground transition group-hover:translate-x-1 group-hover:text-primary" />
+          </div>
+          <div>
+            <h2 className="text-base font-semibold">Goldman Cardiac Risk Index</h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Pre-operative cardiac risk stratification with ECG patterns, anti-arrhythmics, and ACLS algorithms.
+            </p>
+          </div>
+          <div className="mt-auto font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+            Pre-operative · Risk Calculator
           </div>
         </Link>
       </section>
