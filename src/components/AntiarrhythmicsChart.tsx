@@ -112,6 +112,35 @@ function DrugDetailsBody({ details }: { details: DrugDetails }) {
       </section>
 
       <section>
+        <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-amber-600 dark:text-amber-500">
+          <Ban className="h-3.5 w-3.5" /> Contraindications
+        </div>
+        <ul className="space-y-1 text-sm">
+          {details.contraindications.map((c) => (
+            <li key={c} className="flex gap-2">
+              <span className="text-amber-600 dark:text-amber-500">•</span>
+              <span>{c}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section>
+        <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          <Pill className="h-3.5 w-3.5" /> Dosing & routes
+        </div>
+        <div className="space-y-1.5">
+          {details.dosing.map((d) => (
+            <div key={d.route + d.dose} className="rounded-md border border-border bg-background p-2 text-sm">
+              <div className="font-mono text-[10px] uppercase tracking-wider text-primary">{d.route}</div>
+              <div>{d.dose}</div>
+              {d.notes && <div className="text-xs text-muted-foreground">{d.notes}</div>}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section>
         <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-destructive">
           <AlertTriangle className="h-3.5 w-3.5" /> Adverse effects
         </div>
@@ -127,17 +156,39 @@ function DrugDetailsBody({ details }: { details: DrugDetails }) {
 
       <section>
         <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          <Activity className="h-3.5 w-3.5" /> Monitoring
+          <Link2 className="h-3.5 w-3.5" /> Major interactions
         </div>
         <ul className="space-y-1 text-sm">
-          {details.monitoring.map((m) => (
-            <li key={m} className="flex gap-2">
+          {details.interactions.map((i) => (
+            <li key={i} className="flex gap-2">
               <span className="text-primary">•</span>
-              <span>{m}</span>
+              <span>{i}</span>
             </li>
           ))}
         </ul>
       </section>
+
+      <section>
+        <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          <Activity className="h-3.5 w-3.5" /> Monitoring checklist
+        </div>
+        <ul className="space-y-2 text-sm">
+          {details.monitoring.map((m) => (
+            <li key={m.watch} className="rounded-md border border-border bg-background p-2">
+              <div className="flex gap-2">
+                <span className="text-primary">☐</span>
+                <span>{m.watch}</span>
+              </div>
+              {m.stopOrEscalate && (
+                <div className="mt-1 ml-5 rounded bg-destructive/10 px-2 py-1 text-xs text-destructive">
+                  ⚠ {m.stopOrEscalate}
+                </div>
+              )}
+            </li>
+          ))}
+        </ul>
+      </section>
+
 
       {CALCULATOR_DRUGS.has(details.name) && (
         <Link
