@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { Heart, AlertTriangle, CheckCircle, Info, ChevronDown, ChevronUp, Activity, Pill, Brain, Shield } from "lucide-react";
+import { Heart, AlertTriangle, CheckCircle, Info, ChevronDown, ChevronUp, Activity, Pill, Brain, Shield, Syringe } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
@@ -8,6 +8,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import { ARRHYTHMIA_TREATMENTS, ELECTROLYTE_ABNORMALITIES, type ArrhythmiaTreatment, type ElectrolyteAbnormality } from "./ArrhythmiaTreatments";
 
 interface RiskFactor {
   id: string;
@@ -32,6 +33,22 @@ interface ECGPattern {
   criteria: string[];
   clinicalSignificance: string;
   management: string;
+  treatment?: {
+    acute: string[];
+    chronic: string[];
+    medications: {
+      drug: string;
+      dose: string;
+      route: string;
+      frequency?: string;
+      notes?: string;
+    }[];
+    procedures?: string[];
+  };
+  electrolytes?: {
+    check: string[];
+    correct: string[];
+  };
 }
 
 const GOLDMAN_CLASSES: RiskClass[] = [
@@ -556,6 +573,9 @@ const GoldmanCardiacIndex = () => {
   const [expandedDrugClasses, setExpandedDrugClasses] = useState<Set<string>>(new Set());
   const [showSyncopeAlgorithm, setShowSyncopeAlgorithm] = useState(false);
   const [showACLS, setShowACLS] = useState(false);
+  const [showTreatments, setShowTreatments] = useState(false);
+  const [showElectrolytes, setShowElectrolytes] = useState(false);
+  const [expandedTreatments, setExpandedTreatments] = useState<Set<string>>(new Set());
 
   const toggleFactor = (id: string) => {
     setFactors(prev => prev.map(f => f.id === id ? { ...f, active: !f.active } : f));
@@ -1440,8 +1460,219 @@ const GoldmanCardiacIndex = () => {
           </CollapsibleContent>
         </Collapsible>
       </Card>
-      {/* Expand All / Collapse All */}
-      <div className="flex gap-2">
+      {/* Arrhythmia Treatments with Medications */}
+      <Card className="border-border/40">
+        <Collapsible open={showTreatments} onOpenChange={setShowTreatments}>
+          <CollapsibleTrigger asChild>
+            <button className="w-full">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base flex items-center justify-between">
+                  <span className="flex items-center gap-2">
+                    <Syringe className="w-4 h-4 text-muted-foreground" />
+                    Arrhythmia Treatments & Medications
+                  </span>
+                  {showTreatments ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
+                </CardTitle>
+              </CardHeader>
+            </button>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <CardContent className="pt-2 space-y-3">
+              <p className="text-xs text-muted-foreground">
+                Detailed treatment protocols with medication doses for each arrhythmia.
+              </p>
+              {ARRHYTHMIA_TREATMENTS.map((treatment) => (
+                <Collapsible key={treatment.id} open={expandedTreatments.has(treatment.id)} onOpenChange={() => {
+                  setExpandedTreatments(prev => {
+                    const next = new Set(prev);
+                    if (next.has(treatment.id)) {
+                      next.delete(treatment.id);
+                    } else {
+                      next.add(treatment.id);
+                    }
+                    return next;
+                  });
+                }}>
+                  <CollapsibleTrigger asChild>
+                    <button className="w-full text-left">
+                      <div className={`p-3 rounded-lg border transition-colors ${
+                        expandedTreatments.has(treatment.id) ? "bg-muted/50 border-primary/30" : "bg-muted/20 border-border/40 hover:bg-muted/30"
+                      }`}>
+                        <div className="flex items-center justify-between">
+                          <span className="font-medium text-sm">{treatment.name}</span>
+                          {expandedTreatments.has(treatment.id) ? <ChevronUp className="w-4 h-4 text-muted-foreground shrink-0" /> : <ChevronDown className="w-4 h-4 text-muted-foreground shrink-0" />}
+                        </div>
+                      </div>
+                    </button>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
+                    <div className="mt-2 p-3 rounded-lg bg-muted/30 border border-border/30 space-y-3">
+                      {/* Acute Treatment */}
+                      <div>
+                        <h4 className="text-xs font-semibold text-destructive mb-1.5">Acute Management</h4>
+                        <ul className="text-xs space-y-1">
+                          {treatment.treatment.acute.map((a, i) => (
+                            <li key={i} className="flex items-start gap-1.5">
+                              <span className="text-destructive shrink-0">•</span>
+                              <span>{a}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                      
+                      {/* Chronic Treatment */}
+                      <div>
+                        <h4 className="text-xs font-semibold text-primary mb-1.5">Chronic Management</h4>
+                        <ul className="text-xs space-y-1">
+                          {treatment.treatment.chronic.map((c, i) => (
+                            <li key={i} className="flex items-start gap-1.5">
+                              <span className="text-primary shrink-0">•</span>
+                              <span>{c}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      {/* Medications */}
+                      <div>
+                        <h4 className="text-xs font-semibold text-foreground mb-1.5 flex items-center gap-1.5">
+                          <Pill className="w-3 h-3" />
+                          Medications
+                        </h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                          {treatment.treatment.medications.map((med, i) => (
+                            <div key={i} className="p-2 rounded bg-background/50 border border-border/30">
+                              <div className="font-medium text-xs">{med.drug}</div>
+                              <div className="text-xs text-muted-foreground mt-0.5">
+                                {med.dose} {med.route}
+                                {med.frequency && <span> · {med.frequency}</span>}
+                              </div>
+                              {med.notes && (
+                                <div className="text-xs text-warning mt-0.5">{med.notes}</div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Procedures */}
+                      {treatment.treatment.procedures && (
+                        <div>
+                          <h4 className="text-xs font-semibold text-muted-foreground mb-1.5">Procedures</h4>
+                          <div className="flex flex-wrap gap-1.5">
+                            {treatment.treatment.procedures.map((p, i) => (
+                              <span key={i} className="text-xs px-2 py-0.5 rounded-full bg-muted/50">{p}</span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Electrolytes */}
+                      {treatment.electrolytes && (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                          <div className="p-2 rounded bg-warning/5 border border-warning/20">
+                            <h4 className="text-xs font-medium text-warning mb-1">Check Electrolytes</h4>
+                            <ul className="text-xs space-y-0.5">
+                              {treatment.electrolytes.check.map((e, i) => (
+                                <li key={i}>• {e}</li>
+                              ))}
+                            </ul>
+                          </div>
+                          <div className="p-2 rounded bg-success/5 border border-success/20">
+                            <h4 className="text-xs font-medium text-success mb-1">Correct To</h4>
+                            <ul className="text-xs space-y-0.5">
+                              {treatment.electrolytes.correct.map((e, i) => (
+                                <li key={i}>• {e}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Monitoring */}
+                      <div>
+                        <h4 className="text-xs font-semibold text-muted-foreground mb-1.5">Monitoring</h4>
+                        <div className="flex flex-wrap gap-1.5">
+                          {treatment.monitoring.map((m, i) => (
+                            <span key={i} className="text-xs px-2 py-0.5 rounded-full bg-muted/50">{m}</span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </CollapsibleContent>
+                </Collapsible>
+              ))}
+            </CardContent>
+          </CollapsibleContent>
+        </Collapsible>
+      </Card>
+
+      {/* Electrolyte Abnormalities */}
+      <Card className="border-border/40">
+        <Collapsible open={showElectrolytes} onOpenChange={setShowElectrolytes}>
+          <CollapsibleTrigger asChild>
+            <button className="w-full">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base flex items-center justify-between">
+                  <span className="flex items-center gap-2">
+                    <Activity className="w-4 h-4 text-muted-foreground" />
+                    Electrolyte Abnormalities & Arrhythmias
+                  </span>
+                  {showElectrolytes ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
+                </CardTitle>
+              </CardHeader>
+            </button>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <CardContent className="pt-2 space-y-2">
+              <p className="text-xs text-muted-foreground mb-3">
+                Electrolyte disturbances that can cause or exacerbate arrhythmias, with ECG findings and treatment.
+              </p>
+              {ELECTROLYTE_ABNORMALITIES.map((e) => (
+                <div key={e.electrolyte} className="p-3 rounded-lg bg-muted/30 border border-border/30">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-medium text-sm">{e.electrolyte}</span>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                    {/* Arrhythmias */}
+                    <div className="p-2 rounded bg-destructive/5 border border-destructive/20">
+                      <div className="text-xs font-medium text-destructive mb-1">Arrhythmias</div>
+                      <div className="flex flex-wrap gap-1">
+                        {e.arrhythmias.map((a, i) => (
+                          <span key={i} className="text-xs px-1.5 py-0.5 rounded bg-destructive/10">{a}</span>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    {/* ECG Findings */}
+                    <div className="p-2 rounded bg-warning/5 border border-warning/20">
+                      <div className="text-xs font-medium text-warning mb-1">ECG Findings</div>
+                      <ul className="text-xs space-y-0.5">
+                        {e.ecgFindings.map((f, i) => (
+                          <li key={i}>• {f}</li>
+                        ))}
+                      </ul>
+                    </div>
+                    
+                    {/* Treatment */}
+                    <div className="p-2 rounded bg-success/5 border border-success/20">
+                      <div className="text-xs font-medium text-success mb-1">Treatment</div>
+                      <ul className="text-xs space-y-0.5">
+                        <li><strong>Mild:</strong> {e.treatment.mild}</li>
+                        <li><strong>Moderate:</strong> {e.treatment.moderate}</li>
+                        <li><strong>Severe:</strong> {e.treatment.severe}</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </CollapsibleContent>
+        </Collapsible>
+      </Card>
+
+      {/* Expand All / Collapse All */}      <div className="flex gap-2">
         <button
           onClick={() => setExpandedCats(new Set(["history", "examination", "ecg", "vitals", "lab", "age"]))}
           className="text-xs px-3 py-1.5 rounded-lg bg-muted/50 hover:bg-muted"
