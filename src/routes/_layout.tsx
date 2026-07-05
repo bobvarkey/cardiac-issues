@@ -1,6 +1,7 @@
 import { Link, Outlet, createFileRoute } from "@tanstack/react-router";
 import { Activity } from "lucide-react";
 import { EcgLine } from "@/components/EcgLine";
+import { GlobalSearch } from "@/components/GlobalSearch";
 
 export const Route = createFileRoute("/_layout")({
   component: LayoutComponent,
@@ -10,7 +11,7 @@ function LayoutComponent() {
   return (
     <div className="min-h-screen">
       <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
+        <div className="mx-auto flex max-w-5xl flex-wrap items-center gap-3 px-4 py-3">
           <Link to="/" className="flex items-center gap-2.5">
             <div className="relative flex h-8 w-8 items-center justify-center rounded-lg bg-primary/15 text-primary">
               <Activity className="h-4 w-4" />
@@ -23,9 +24,14 @@ function LayoutComponent() {
               </div>
             </div>
           </Link>
-          <nav className="flex items-center gap-1 text-sm">
+          <div className="order-3 w-full sm:order-2 sm:ml-4 sm:w-auto sm:flex-1">
+            <GlobalSearch />
+          </div>
+          <nav className="order-2 ml-auto flex items-center gap-1 text-sm sm:order-3">
             <NavLink to="/">Protocols</NavLink>
+            <NavLink to="/treatment">Treatment</NavLink>
             <NavLink to="/rhythms">Rhythms</NavLink>
+            <NavLink to="/antiarrhythmics">Drugs</NavLink>
           </nav>
         </div>
         <div className="pointer-events-none h-4 text-primary/40">
