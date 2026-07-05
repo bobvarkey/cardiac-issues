@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as LayoutChar91indexChar93RouteImport } from './routes/_layout.[index]'
 import { Route as LayoutIndexRouteImport } from './routes/_layout.index'
+import { Route as LayoutTreatmentRouteImport } from './routes/_layout.treatment'
 import { Route as LayoutRhythmsRouteImport } from './routes/_layout.rhythms'
 import { Route as LayoutGoldmanRouteImport } from './routes/_layout.goldman'
 import { Route as LayoutProtocolIdRouteImport } from './routes/_layout.protocol.$id'
@@ -28,6 +29,11 @@ const LayoutChar91indexChar93Route = LayoutChar91indexChar93RouteImport.update({
 const LayoutIndexRoute = LayoutIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutTreatmentRoute = LayoutTreatmentRouteImport.update({
+  id: '/treatment',
+  path: '/treatment',
   getParentRoute: () => LayoutRoute,
 } as any)
 const LayoutRhythmsRoute = LayoutRhythmsRouteImport.update({
@@ -51,12 +57,14 @@ export interface FileRoutesByFullPath {
   '/goldman': typeof LayoutGoldmanRoute
   '/index': typeof LayoutChar91indexChar93Route
   '/rhythms': typeof LayoutRhythmsRoute
+  '/treatment': typeof LayoutTreatmentRoute
   '/protocol/$id': typeof LayoutProtocolIdRoute
 }
 export interface FileRoutesByTo {
   '/goldman': typeof LayoutGoldmanRoute
   '/index': typeof LayoutChar91indexChar93Route
   '/rhythms': typeof LayoutRhythmsRoute
+  '/treatment': typeof LayoutTreatmentRoute
   '/': typeof LayoutIndexRoute
   '/protocol/$id': typeof LayoutProtocolIdRoute
 }
@@ -66,20 +74,28 @@ export interface FileRoutesById {
   '/_layout/goldman': typeof LayoutGoldmanRoute
   '/_layout/index': typeof LayoutChar91indexChar93Route
   '/_layout/rhythms': typeof LayoutRhythmsRoute
+  '/_layout/treatment': typeof LayoutTreatmentRoute
   '/_layout/': typeof LayoutIndexRoute
   '/_layout/protocol/$id': typeof LayoutProtocolIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/goldman' | '/index' | '/rhythms' | '/protocol/$id'
+  fullPaths:
+    | '/'
+    | '/goldman'
+    | '/index'
+    | '/rhythms'
+    | '/treatment'
+    | '/protocol/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/goldman' | '/index' | '/rhythms' | '/' | '/protocol/$id'
+  to: '/goldman' | '/index' | '/rhythms' | '/treatment' | '/' | '/protocol/$id'
   id:
     | '__root__'
     | '/_layout'
     | '/_layout/goldman'
     | '/_layout/index'
     | '/_layout/rhythms'
+    | '/_layout/treatment'
     | '/_layout/'
     | '/_layout/protocol/$id'
   fileRoutesById: FileRoutesById
@@ -111,6 +127,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutIndexRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/_layout/treatment': {
+      id: '/_layout/treatment'
+      path: '/treatment'
+      fullPath: '/treatment'
+      preLoaderRoute: typeof LayoutTreatmentRouteImport
+      parentRoute: typeof LayoutRoute
+    }
     '/_layout/rhythms': {
       id: '/_layout/rhythms'
       path: '/rhythms'
@@ -139,6 +162,7 @@ interface LayoutRouteChildren {
   LayoutGoldmanRoute: typeof LayoutGoldmanRoute
   LayoutChar91indexChar93Route: typeof LayoutChar91indexChar93Route
   LayoutRhythmsRoute: typeof LayoutRhythmsRoute
+  LayoutTreatmentRoute: typeof LayoutTreatmentRoute
   LayoutIndexRoute: typeof LayoutIndexRoute
   LayoutProtocolIdRoute: typeof LayoutProtocolIdRoute
 }
@@ -147,6 +171,7 @@ const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutGoldmanRoute: LayoutGoldmanRoute,
   LayoutChar91indexChar93Route: LayoutChar91indexChar93Route,
   LayoutRhythmsRoute: LayoutRhythmsRoute,
+  LayoutTreatmentRoute: LayoutTreatmentRoute,
   LayoutIndexRoute: LayoutIndexRoute,
   LayoutProtocolIdRoute: LayoutProtocolIdRoute,
 }
@@ -160,13 +185,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
