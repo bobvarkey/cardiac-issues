@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { HomeProtocols } from "@/components/HomeProtocols";
 
-export const Route = createFileRoute("/_layout/")({
+export const Route = createFileRoute("/_layout/index")({
   head: () => ({
     meta: [
       { title: "CardiacRef — Clinical Cardiac Protocols" },
