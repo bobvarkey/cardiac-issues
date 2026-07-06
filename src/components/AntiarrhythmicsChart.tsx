@@ -250,7 +250,7 @@ function DrugDetailsBody({ details }: { details: DrugDetails }) {
         </ul>
       </section>
 
-      <InteractionChecker details={details} />
+      <InteractionChecker key={details.name} details={details} />
 
 
       <section>
