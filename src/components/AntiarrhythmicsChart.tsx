@@ -83,6 +83,93 @@ function classHasCalculatorDrug(c: ClassEntry): string | null {
   return all.find((d) => CALCULATOR_DRUGS.has(d)) ?? null;
 }
 
+function InteractionChecker({ details }: { details: DrugDetails }) {
+  const [selected, setSelected] = useState<string[]>([]);
+
+  // Reset selection when the active drug changes
+  const drugName = details.name;
+  useMemo(() => {
+    setSelected([]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [drugName]);
+
+  const hits = useMemo(() => findInteractions(details, selected), [details, selected]);
+  const hitNames = new Set(hits.map((h) => h.companion.name));
+
+  const toggle = (name: string) =>
+    setSelected((prev) =>
+      prev.includes(name) ? prev.filter((n) => n !== name) : [...prev, name],
+    );
+
+  return (
+    <section>
+      <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+        <ShieldAlert className="h-3.5 w-3.5" /> Interaction checker
+      </div>
+      <p className="mb-2 text-xs text-muted-foreground">
+        Select any co-administered medications to see real-time conflicts with{" "}
+        <span className="font-medium text-foreground">{details.name}</span>.
+      </p>
+
+      <div className="flex flex-wrap gap-1.5">
+        {COMPANION_MEDS.map((m) => {
+          const isSelected = selected.includes(m.name);
+          const isConflict = isSelected && hitNames.has(m.name);
+          return (
+            <button
+              key={m.name}
+              type="button"
+              onClick={() => toggle(m.name)}
+              className={
+                isConflict
+                  ? "inline-flex items-center gap-1 rounded-md border border-destructive bg-destructive/15 px-2 py-0.5 text-xs font-medium text-destructive"
+                  : isSelected
+                  ? "inline-flex items-center gap-1 rounded-md border border-primary bg-primary/15 px-2 py-0.5 text-xs text-primary"
+                  : "rounded-md border border-border bg-background px-2 py-0.5 text-xs text-muted-foreground transition hover:border-primary/40 hover:text-foreground"
+              }
+            >
+              {isConflict && <AlertTriangle className="h-3 w-3" />}
+              {m.name}
+              {isSelected && !isConflict && <X className="h-3 w-3 opacity-60" />}
+            </button>
+          );
+        })}
+      </div>
+
+      {selected.length > 0 && (
+        <div className="mt-3 space-y-2">
+          {hits.length === 0 ? (
+            <div className="rounded-md border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-xs text-emerald-700 dark:text-emerald-400">
+              ✓ No major interaction listed for {details.name} with the selected medication{selected.length > 1 ? "s" : ""}. Always verify clinically.
+            </div>
+          ) : (
+            hits.map((h) => (
+              <div
+                key={h.companion.name}
+                className="rounded-md border border-destructive/40 bg-destructive/10 p-2.5 text-sm"
+              >
+                <div className="flex items-center gap-2 font-medium text-destructive">
+                  <AlertTriangle className="h-4 w-4" />
+                  {details.name} + {h.companion.name}
+                  <span className="ml-auto font-mono text-[10px] uppercase text-destructive/80">
+                    {h.companion.category}
+                  </span>
+                </div>
+                <ul className="mt-1.5 space-y-1 pl-6 text-xs text-foreground">
+                  {h.matches.map((m) => (
+                    <li key={m} className="list-disc">{m}</li>
+                  ))}
+                </ul>
+              </div>
+            ))
+          )}
+        </div>
+      )}
+    </section>
+  );
+}
+
+
 function DrugDetailsBody({ details }: { details: DrugDetails }) {
   return (
     <div className="mt-4 space-y-5">
