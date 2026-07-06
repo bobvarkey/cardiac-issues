@@ -973,6 +973,72 @@ const GoldmanCardiacIndex = () => {
           </CollapsibleTrigger>
           <CollapsibleContent>
             <CardContent className="pt-2 space-y-4">
+              {/* Cardiac Action Potential Reference */}
+              <div className="p-3 rounded-lg bg-blue-500/5 border border-blue-500/20">
+                <h4 className="text-xs font-semibold text-blue-600 mb-2">🫀 Cardiac Action Potential Phases</h4>
+                <div className="grid grid-cols-5 gap-1.5 text-[10px]">
+                  <div className="text-center p-1.5 rounded bg-blue-500/10">
+                    <div className="font-bold text-blue-600">Phase 0</div>
+                    <div className="text-muted-foreground">Rapid depolarization</div>
+                    <div className="font-mono text-primary">Na⁺ influx</div>
+                  </div>
+                  <div className="text-center p-1.5 rounded bg-blue-500/10">
+                    <div className="font-bold text-blue-600">Phase 1</div>
+                    <div className="text-muted-foreground">Initial repolarization</div>
+                    <div className="font-mono text-primary">K⁺ out</div>
+                  </div>
+                  <div className="text-center p-1.5 rounded bg-blue-500/10">
+                    <div className="font-bold text-blue-600">Phase 2</div>
+                    <div className="text-muted-foreground">Plateau</div>
+                    <div className="font-mono text-primary">Ca²⁺ in, K⁺ out</div>
+                  </div>
+                  <div className="text-center p-1.5 rounded bg-blue-500/10">
+                    <div className="font-bold text-blue-600">Phase 3</div>
+                    <div className="text-muted-foreground">Repolarization</div>
+                    <div className="font-mono text-primary">K⁺ out</div>
+                  </div>
+                  <div className="text-center p-1.5 rounded bg-blue-500/10">
+                    <div className="font-bold text-blue-600">Phase 4</div>
+                    <div className="text-muted-foreground">Resting potential</div>
+                    <div className="font-mono text-primary">K⁺ (I_K1)</div>
+                  </div>
+                </div>
+                <p className="text-[10px] text-muted-foreground mt-2">
+                  💡 Antiarrhythmics block Na⁺ (Phase 0), K⁺ (Phase 3), or Ca²⁺ (Phase 2) channels to affect conduction
+                </p>
+              </div>
+
+              {/* Effects on Conduction System */}
+              <div className="p-3 rounded-lg bg-purple-500/5 border border-purple-500/20">
+                <h4 className="text-xs font-semibold text-purple-600 mb-2">⚡ Effects on Cardiac Conduction</h4>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
+                  <div className="p-2 rounded bg-purple-500/10">
+                    <div className="font-medium text-purple-600">SA Node</div>
+                    <div className="text-muted-foreground">↓ Automaticity</div>
+                    <div className="text-primary font-mono">↓ HR</div>
+                    <div className="text-[10px] text-muted-foreground mt-1">Class II, IV, digoxin</div>
+                  </div>
+                  <div className="p-2 rounded bg-green-500/10">
+                    <div className="font-medium text-green-600">AV Node</div>
+                    <div className="text-muted-foreground">↓ Conduction</div>
+                    <div className="text-primary font-mono">↑ PR interval</div>
+                    <div className="text-[10px] text-muted-foreground mt-1">Class II, IV, adenosine</div>
+                  </div>
+                  <div className="p-2 rounded bg-blue-500/10">
+                    <div className="font-medium text-blue-600">His-Purkinje</div>
+                    <div className="text-muted-foreground">↓ Conduction</div>
+                    <div className="text-primary font-mono">↑ QRS</div>
+                    <div className="text-[10px] text-muted-foreground mt-1">Class I (Ia, Ic)</div>
+                  </div>
+                  <div className="p-2 rounded bg-red-500/10">
+                    <div className="font-medium text-red-600">Repolarization</div>
+                    <div className="text-muted-foreground">Prolonged</div>
+                    <div className="text-primary font-mono">↑ QT</div>
+                    <div className="text-[10px] text-muted-foreground mt-1">Class Ia, III</div>
+                  </div>
+                </div>
+              </div>
+
               {/* Mnemonic */}
               <div className="p-3 rounded-lg bg-primary/5 border border-primary/20">
                 <p className="text-xs text-muted-foreground mb-1">Mnemonic</p>
