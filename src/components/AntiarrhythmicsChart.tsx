@@ -86,12 +86,6 @@ function classHasCalculatorDrug(c: ClassEntry): string | null {
 function InteractionChecker({ details }: { details: DrugDetails }) {
   const [selected, setSelected] = useState<string[]>([]);
 
-  // Reset selection when the active drug changes
-  const drugName = details.name;
-  useMemo(() => {
-    setSelected([]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [drugName]);
 
   const hits = useMemo(() => findInteractions(details, selected), [details, selected]);
   const hitNames = new Set(hits.map((h) => h.companion.name));
