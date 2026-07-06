@@ -49,6 +49,13 @@ interface ECGPattern {
     check: string[];
     correct: string[];
   };
+  comparison?: {
+    title: string;
+    brugada: Record<string, string>;
+    stemi: Record<string, string>;
+    keyClue: string;
+  };
+  differential?: string[];
 }
 
 const GOLDMAN_CLASSES: RiskClass[] = [
@@ -302,16 +309,45 @@ const ECG_PATTERNS: ECGPattern[] = [
   {
     id: "brugada",
     name: "Brugada Syndrome",
-    description: "Inherited sodium channelopathy with coved ST elevation in V1-V3",
+    description: "Inherited sodium channelopathy with coved ST elevation in V1-V3 — NOT every ST elevation is STEMI!",
     criteria: [
       "Type 1 (diagnostic): Coved ST elevation ≥2mm in V1-V3 with negative T waves",
       "Type 2: Saddleback ST elevation with ≥2mm J-point elevation, ≥1mm ST",
       "Type 3: ST elevation <1mm (saddleback or coved)",
+      "Pseudo-RBBB pattern (incomplete right bundle branch block appearance)",
       "May be unmasked by fever, sodium channel blockers (ajmaline, flecainide)",
       "Normal cardiac imaging, no structural heart disease",
     ],
-    clinicalSignificance: "Channelopathy causing sudden cardiac death in structurally normal heart. VF/SCD risk even with Type 1 ECG and no symptoms. Quotidian arrhythmia trigger. High perioperative risk if ECG abnormal.",
+    clinicalSignificance: "Channelopathy causing sudden cardiac death in structurally normal heart. VF/SCD risk even with Type 1 ECG and no symptoms. Quotidian arrhythmia trigger. High perioperative risk if ECG abnormal. CRITICAL: Brugada can mimic anterior STEMI — misdiagnosis leads to unnecessary thrombolytics!",
     management: "ICD implantation for Type 1 ECG with symptoms or spontaneous ECG. Avoid sodium channel blockers, tricyclic antidepressants. Treat fever aggressively. Genetic testing, family screening. Avoid general anesthesia without cardiac monitoring.",
+    comparison: {
+      title: "Brugada Pattern vs Anterior STEMI",
+      brugada: {
+        leads: "V1-V3 (localized)",
+        stShape: "Coved / Saddleback",
+        reciprocalChanges: "Usually absent",
+        chestPain: "May be absent",
+        troponin: "Usually normal",
+        cause: "Genetic sodium channel disorder (SCN5A mutation)",
+        risk: "Risk of ventricular arrhythmia / sudden death",
+      },
+      stemi: {
+        leads: "V1-V6 (widespread anterior)",
+        stShape: "Convex / Tombstone",
+        reciprocalChanges: "Often present (II, III, aVF)",
+        chestPain: "Common, severe",
+        troponin: "Elevated",
+        cause: "Acute LAD coronary artery occlusion",
+        risk: "Myocardial infarction (heart attack)",
+      },
+      keyClue: "Widespread anterior ST elevation + reciprocal depression = Anterior STEMI",
+    },
+    differential: [
+      "Brugada: ST elevation confined to V1-V3, coved/saddleback morphology, no reciprocal changes, normal troponin, often no chest pain",
+      "Anterior STEMI: Widespread ST elevation across V1-V6, convex/tombstone morphology, reciprocal depression in inferior leads, elevated troponin, severe chest pain",
+      "Family history of sudden death suggests Brugada",
+      "Fever can unmask Brugada pattern (provocative testing)",
+    ],
   },
   {
     id: "arvc",
@@ -829,6 +865,77 @@ const GoldmanCardiacIndex = () => {
                           ))}
                         </ul>
                       </div>
+                      {/* Comparison Table for Brugada */}
+                      {pattern.comparison && (
+                        <div className="p-2 rounded bg-rose-500/5 border border-rose-500/20">
+                          <h4 className="text-xs font-semibold text-rose-600 mb-2">⚠️ {pattern.comparison.title}</h4>
+                          <div className="overflow-x-auto">
+                            <table className="w-full text-xs">
+                              <thead>
+                                <tr className="border-b border-border">
+                                  <th className="py-1.5 px-2 text-left font-medium text-muted-foreground">Feature</th>
+                                  <th className="py-1.5 px-2 text-center font-medium text-blue-600">🔴 Brugada Pattern</th>
+                                  <th className="py-1.5 px-2 text-center font-medium text-red-600">🫀 Anterior STEMI</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr className="border-b border-border/50">
+                                  <td className="py-1.5 px-2 font-medium">Leads</td>
+                                  <td className="py-1.5 px-2 text-center">{pattern.comparison.brugada.leads}</td>
+                                  <td className="py-1.5 px-2 text-center">{pattern.comparison.stemi.leads}</td>
+                                </tr>
+                                <tr className="border-b border-border/50">
+                                  <td className="py-1.5 px-2 font-medium">ST Shape</td>
+                                  <td className="py-1.5 px-2 text-center">{pattern.comparison.brugada.stShape}</td>
+                                  <td className="py-1.5 px-2 text-center">{pattern.comparison.stemi.stShape}</td>
+                                </tr>
+                                <tr className="border-b border-border/50">
+                                  <td className="py-1.5 px-2 font-medium">Reciprocal Changes</td>
+                                  <td className="py-1.5 px-2 text-center">{pattern.comparison.brugada.reciprocalChanges}</td>
+                                  <td className="py-1.5 px-2 text-center">{pattern.comparison.stemi.reciprocalChanges}</td>
+                                </tr>
+                                <tr className="border-b border-border/50">
+                                  <td className="py-1.5 px-2 font-medium">Chest Pain</td>
+                                  <td className="py-1.5 px-2 text-center">{pattern.comparison.brugada.chestPain}</td>
+                                  <td className="py-1.5 px-2 text-center">{pattern.comparison.stemi.chestPain}</td>
+                                </tr>
+                                <tr className="border-b border-border/50">
+                                  <td className="py-1.5 px-2 font-medium">Troponin</td>
+                                  <td className="py-1.5 px-2 text-center">{pattern.comparison.brugada.troponin}</td>
+                                  <td className="py-1.5 px-2 text-center">{pattern.comparison.stemi.troponin}</td>
+                                </tr>
+                                <tr className="border-b border-border/50">
+                                  <td className="py-1.5 px-2 font-medium">Cause</td>
+                                  <td className="py-1.5 px-2 text-center">{pattern.comparison.brugada.cause}</td>
+                                  <td className="py-1.5 px-2 text-center">{pattern.comparison.stemi.cause}</td>
+                                </tr>
+                                <tr>
+                                  <td className="py-1.5 px-2 font-medium">Risk</td>
+                                  <td className="py-1.5 px-2 text-center">{pattern.comparison.brugada.risk}</td>
+                                  <td className="py-1.5 px-2 text-center">{pattern.comparison.stemi.risk}</td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                          <div className="mt-2 p-2 rounded bg-amber-500/10 border border-amber-500/20">
+                            <p className="text-xs font-medium text-amber-700">💡 Key Clue: {pattern.comparison.keyClue}</p>
+                          </div>
+                        </div>
+                      )}
+                      {/* Differential Diagnosis */}
+                      {pattern.differential && (
+                        <div>
+                          <h4 className="text-xs font-semibold text-muted-foreground mb-1.5">Differential Diagnosis</h4>
+                          <ul className="text-xs space-y-1">
+                            {pattern.differential.map((d, i) => (
+                              <li key={i} className="flex items-start gap-2">
+                                <span className="text-amber-500">•</span>
+                                <span>{d}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
                       {/* Clinical Significance */}
                       <div>
                         <h4 className="text-xs font-semibold text-muted-foreground mb-1.5">Clinical Significance</h4>
