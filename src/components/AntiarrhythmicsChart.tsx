@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Zap, ArrowRight, AlertTriangle, Activity, Stethoscope, Calculator, Ban, Pill, Link2 } from "lucide-react";
+import { Zap, ArrowRight, AlertTriangle, Activity, Stethoscope, Calculator, Ban, Pill, Link2, ShieldAlert, X } from "lucide-react";
 
 import {
   Sheet,
@@ -10,6 +10,7 @@ import {
   SheetDescription,
 } from "@/components/ui/sheet";
 import { CALCULATOR_DRUGS, DRUG_DETAILS, type DrugDetails } from "@/lib/antiarrhythmic-details";
+import { COMPANION_MEDS, findInteractions } from "@/lib/interaction-checker";
 
 type Subclass = { key: string; mnemonic: string; drugs: string[] };
 type ClassEntry = {
