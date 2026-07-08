@@ -15,6 +15,7 @@ import { Route as LayoutIndexRouteImport } from './routes/_layout.index'
 import { Route as LayoutTreatmentRouteImport } from './routes/_layout.treatment'
 import { Route as LayoutSyncopeTriageRouteImport } from './routes/_layout.syncope-triage'
 import { Route as LayoutSyncopeRouteImport } from './routes/_layout.syncope'
+import { Route as LayoutScoresRouteImport } from './routes/_layout.scores'
 import { Route as LayoutRhythmsRouteImport } from './routes/_layout.rhythms'
 import { Route as LayoutGoldmanRouteImport } from './routes/_layout.goldman'
 import { Route as LayoutAnticoagulationRouteImport } from './routes/_layout.anticoagulation'
@@ -50,6 +51,11 @@ const LayoutSyncopeRoute = LayoutSyncopeRouteImport.update({
   path: '/syncope',
   getParentRoute: () => LayoutRoute,
 } as any)
+const LayoutScoresRoute = LayoutScoresRouteImport.update({
+  id: '/scores',
+  path: '/scores',
+  getParentRoute: () => LayoutRoute,
+} as any)
 const LayoutRhythmsRoute = LayoutRhythmsRouteImport.update({
   id: '/rhythms',
   path: '/rhythms',
@@ -83,6 +89,7 @@ export interface FileRoutesByFullPath {
   '/goldman': typeof LayoutGoldmanRoute
   '/index': typeof LayoutChar91indexChar93Route
   '/rhythms': typeof LayoutRhythmsRoute
+  '/scores': typeof LayoutScoresRoute
   '/syncope': typeof LayoutSyncopeRoute
   '/syncope-triage': typeof LayoutSyncopeTriageRoute
   '/treatment': typeof LayoutTreatmentRoute
@@ -94,6 +101,7 @@ export interface FileRoutesByTo {
   '/goldman': typeof LayoutGoldmanRoute
   '/index': typeof LayoutChar91indexChar93Route
   '/rhythms': typeof LayoutRhythmsRoute
+  '/scores': typeof LayoutScoresRoute
   '/syncope': typeof LayoutSyncopeRoute
   '/syncope-triage': typeof LayoutSyncopeTriageRoute
   '/treatment': typeof LayoutTreatmentRoute
@@ -108,6 +116,7 @@ export interface FileRoutesById {
   '/_layout/goldman': typeof LayoutGoldmanRoute
   '/_layout/index': typeof LayoutChar91indexChar93Route
   '/_layout/rhythms': typeof LayoutRhythmsRoute
+  '/_layout/scores': typeof LayoutScoresRoute
   '/_layout/syncope': typeof LayoutSyncopeRoute
   '/_layout/syncope-triage': typeof LayoutSyncopeTriageRoute
   '/_layout/treatment': typeof LayoutTreatmentRoute
@@ -123,6 +132,7 @@ export interface FileRouteTypes {
     | '/goldman'
     | '/index'
     | '/rhythms'
+    | '/scores'
     | '/syncope'
     | '/syncope-triage'
     | '/treatment'
@@ -134,6 +144,7 @@ export interface FileRouteTypes {
     | '/goldman'
     | '/index'
     | '/rhythms'
+    | '/scores'
     | '/syncope'
     | '/syncope-triage'
     | '/treatment'
@@ -147,6 +158,7 @@ export interface FileRouteTypes {
     | '/_layout/goldman'
     | '/_layout/index'
     | '/_layout/rhythms'
+    | '/_layout/scores'
     | '/_layout/syncope'
     | '/_layout/syncope-triage'
     | '/_layout/treatment'
@@ -202,6 +214,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutSyncopeRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/_layout/scores': {
+      id: '/_layout/scores'
+      path: '/scores'
+      fullPath: '/scores'
+      preLoaderRoute: typeof LayoutScoresRouteImport
+      parentRoute: typeof LayoutRoute
+    }
     '/_layout/rhythms': {
       id: '/_layout/rhythms'
       path: '/rhythms'
@@ -246,6 +265,7 @@ interface LayoutRouteChildren {
   LayoutGoldmanRoute: typeof LayoutGoldmanRoute
   LayoutChar91indexChar93Route: typeof LayoutChar91indexChar93Route
   LayoutRhythmsRoute: typeof LayoutRhythmsRoute
+  LayoutScoresRoute: typeof LayoutScoresRoute
   LayoutSyncopeRoute: typeof LayoutSyncopeRoute
   LayoutSyncopeTriageRoute: typeof LayoutSyncopeTriageRoute
   LayoutTreatmentRoute: typeof LayoutTreatmentRoute
@@ -259,6 +279,7 @@ const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutGoldmanRoute: LayoutGoldmanRoute,
   LayoutChar91indexChar93Route: LayoutChar91indexChar93Route,
   LayoutRhythmsRoute: LayoutRhythmsRoute,
+  LayoutScoresRoute: LayoutScoresRoute,
   LayoutSyncopeRoute: LayoutSyncopeRoute,
   LayoutSyncopeTriageRoute: LayoutSyncopeTriageRoute,
   LayoutTreatmentRoute: LayoutTreatmentRoute,
