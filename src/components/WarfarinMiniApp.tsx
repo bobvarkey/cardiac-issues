@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { Pill, AlertTriangle, CheckCircle, Info, ChevronRight, Activity, Droplet } from "lucide-react";
+import { Pill, AlertTriangle, CheckCircle, Info, ChevronRight, Activity, Droplet, Zap } from "lucide-react";
 
 // ATRIA bleeding risk percentages (approximate annual major bleeding risk)
 const atriaRisks: Record<string, string> = {
@@ -244,7 +244,7 @@ function calculateATRIA(inputs: ATRIAInputs): {
 }
 
 export function WarfarinMiniApp() {
-  const [activeTab, setActiveTab] = useState<"inr" | "labile" | "atria">("inr");
+  const [activeTab, setActiveTab] = useState<"inr" | "labile" | "atria" | "wild">("inr");
 
   // INR adjustment inputs
   const [inrInputs, setINRInputs] = useState<WarfarinInputs>({
@@ -306,7 +306,7 @@ export function WarfarinMiniApp() {
                 Warfarin/INR Monitoring
               </h1>
               <p className="mt-1 text-slate-400">
-                Dose adjustment • Labile INR • ATRIA bleeding risk
+                Dose adjustment • Labile INR • ATRIA score • Wild INR management
               </p>
             </div>
           </div>
@@ -346,6 +346,17 @@ export function WarfarinMiniApp() {
           >
             <Droplet className="inline h-4 w-4 mr-1" />
             ATRIA Score
+          </button>
+          <button
+            onClick={() => setActiveTab("wild")}
+            className={`rounded-full px-4 py-2 border text-sm font-medium transition ${
+              activeTab === "wild"
+                ? "bg-purple-400 text-slate-950 border-purple-300"
+                : "bg-slate-900 border-slate-700 text-slate-300 hover:border-slate-500"
+            }`}
+          >
+            <Zap className="inline h-4 w-4 mr-1" />
+            Wild INR
           </button>
         </div>
 
@@ -737,11 +748,230 @@ export function WarfarinMiniApp() {
           </div>
         )}
 
+        {/* Wild INR Tab */}
+        {activeTab === "wild" && (
+          <section className="space-y-6">
+            <h2 className="text-xl font-semibold">Managing Wildly Varying INR</h2>
+            <p className="text-slate-400">
+              Stepwise algorithm for INR instability: exclude artefact → identify cause → classify pattern → guide action.
+            </p>
+
+            {/* Step 1: Safety Check */}
+            <div className="rounded-xl border border-red-500/50 bg-red-950/20 p-4 space-y-3">
+              <h3 className="font-semibold text-red-300 flex items-center gap-2">
+                <AlertTriangle className="h-5 w-5" />
+                Step 1: Immediate Safety
+              </h3>
+              <div className="grid gap-2 md:grid-cols-2">
+                <div className="p-3 rounded-lg bg-slate-950/50 border border-slate-700">
+                  <div className="font-medium text-red-300">INR ≥ 4.5 or Bleeding</div>
+                  <ul className="mt-2 text-sm text-slate-300 space-y-1">
+                    <li>• Hold warfarin</li>
+                    <li>• Consider vitamin K (1–2.5mg oral)</li>
+                    <li>• Hospitalize if major bleed</li>
+                    <li>• Re-enter algorithm once safe</li>
+                  </ul>
+                </div>
+                <div className="p-3 rounded-lg bg-slate-950/50 border border-slate-700">
+                  <div className="font-medium text-amber-300">INR ≤ 1.5 + High Thrombotic Risk</div>
+                  <ul className="mt-2 text-sm text-slate-300 space-y-1">
+                    <li>• Consider LMWH bridging</li>
+                    <li>• Recent VTE, mechanical valve, LV thrombus</li>
+                    <li>• Then work through algorithm</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* Step 2: Lab Validation */}
+            <div className="rounded-xl border border-cyan-500/50 bg-cyan-950/20 p-4 space-y-3">
+              <h3 className="font-semibold text-cyan-300 flex items-center gap-2">
+                <CheckCircle className="h-5 w-5" />
+                Step 2: Exclude Lab Artefact
+              </h3>
+              <p className="text-sm text-slate-300">Is the INR variability real?</p>
+              <div className="space-y-2">
+                <div className="p-3 rounded-lg bg-slate-950/50 border border-slate-700">
+                  <div className="font-medium">Verify:</div>
+                  <ul className="mt-2 text-sm text-slate-300 space-y-1">
+                    <li>• Same lab, same coagulometer, same thromboplastin lot</li>
+                    <li>• No recent POCT ↔ central lab switch</li>
+                    <li>• Sample collection: underfilled tube, tourniquet time, heparin contamination</li>
+                  </ul>
+                </div>
+                <div className="grid gap-2 md:grid-cols-2 text-sm">
+                  <div className="p-2 rounded bg-slate-950/50 border border-slate-700">
+                    <span className="text-cyan-300 font-medium">Single outlier?</span>
+                    <span className="text-slate-400"> → Repeat INR 24–48h, different lab</span>
+                  </div>
+                  <div className="p-2 rounded bg-slate-950/50 border border-slate-700">
+                    <span className="text-amber-300 font-medium">Lab/reagent change?</span>
+                    <span className="text-slate-400"> → Check ISI/MNPT, use consistent site</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Step 3: Cause Screening */}
+            <div className="rounded-xl border border-amber-500/50 bg-amber-950/20 p-4 space-y-3">
+              <h3 className="font-semibold text-amber-300 flex items-center gap-2">
+                <Info className="h-5 w-5" />
+                Step 3: Identify Cause
+              </h3>
+              <div className="grid gap-3 md:grid-cols-2">
+                <div className="p-3 rounded-lg bg-slate-950/50 border border-slate-700">
+                  <div className="font-medium text-amber-200">Pharmacologic Drivers</div>
+                  <ul className="mt-2 text-sm text-slate-300 space-y-1">
+                    <li>• Adherence issues (missed/double doses)</li>
+                    <li>• Recent dose changes</li>
+                    <li>• Interacting drugs started/stopped:</li>
+                    <li className="pl-4 text-xs">↑ INR: amiodarone, azoles, macrolides, TMP-SMX, SSRIs</li>
+                    <li className="pl-4 text-xs">↓ INR: rifampicin, carbamazepine, phenytoin, St John's wort</li>
+                    <li>• OTC/herbals (ginkgo, ginseng, vitamin K)</li>
+                  </ul>
+                </div>
+                <div className="p-3 rounded-lg bg-slate-950/50 border border-slate-700">
+                  <div className="font-medium text-amber-200">Non-Pharmacologic Drivers</div>
+                  <ul className="mt-2 text-sm text-slate-300 space-y-1">
+                    <li>• Diet: erratic vitamin K intake</li>
+                    <li>• Alcohol: binges vs abstinence cycles</li>
+                    <li>• Intercurrent illness: diarrhea, vomiting, fever</li>
+                    <li>• New hepatic dysfunction</li>
+                    <li>• Heart failure exacerbation</li>
+                    <li>• Thyroid dysfunction</li>
+                    <li>• Nephrotic syndrome / hypoalbuminemia</li>
+                  </ul>
+                </div>
+              </div>
+              <div className="p-3 rounded-lg bg-amber-900/30 border border-amber-500/30 text-sm">
+                <strong className="text-amber-200">If clear trigger found:</strong>
+                <span className="text-slate-300"> Manage cause + adjust dose. If no driver → pattern classification.</span>
+              </div>
+            </div>
+
+            {/* Step 4: Pattern Classification */}
+            <div className="rounded-xl border border-purple-500/50 bg-purple-950/20 p-4 space-y-4">
+              <h3 className="font-semibold text-purple-300">Step 4: Pattern-Based Classification</h3>
+
+              {/* Pattern A */}
+              <div className="p-4 rounded-lg bg-red-950/30 border border-red-500/30 space-y-2">
+                <div className="font-semibold text-red-300">
+                  <span>Pattern A: Recurrent Supratherapeutic Spikes</span>
+                  <span className="ml-2 text-sm text-slate-400">(INR repeatedly &gt;3.5)</span>
+                </div>
+                <div className="text-sm text-slate-300">
+                  <strong>Consider:</strong> CYP2C9/VKORC1 polymorphisms, low weight, elderly, liver disease, low albumin, drug inhibitors, low vitamin K diet, acute illness.
+                </div>
+                <ul className="text-sm space-y-1">
+                  <li><ChevronRight className="inline h-3 w-3 text-red-400" /> Confirm no lab error; recheck in 24–48h</li>
+                  <li><ChevronRight className="inline h-3 w-3 text-red-400" /> Evaluate transient causes (antibiotic, diarrhea, reduced intake)</li>
+                  <li><ChevronRight className="inline h-3 w-3 text-red-400" /> Transient: reduce dose 10–20% or hold 1–2 doses; recheck 3–5 days</li>
+                  <li><ChevronRight className="inline h-3 w-3 text-red-400" /> Persistent: reduce long-term dose 10–30%</li>
+                  <li><ChevronRight className="inline h-3 w-3 text-red-400" /> Very low dose + instability → consider DOAC switch</li>
+                </ul>
+              </div>
+
+              {/* Pattern B */}
+              <div className="p-4 rounded-lg bg-blue-950/30 border border-blue-500/30 space-y-2">
+                <div className="font-semibold text-blue-300">
+                  <span>Pattern B: Recurrent Subtherapeutic Dips</span>
+                  <span className="ml-2 text-sm text-slate-400">(INR repeatedly &lt;1.8)</span>
+                </div>
+                <div className="text-sm text-slate-300">
+                  <strong>Consider:</strong> Poor adherence, enzyme inducers, high vitamin K intake, malabsorption.
+                </div>
+                <ul className="text-sm space-y-1">
+                  <li><ChevronRight className="inline h-3 w-3 text-blue-400" /> Screen adherence non-judgmentally; pill counts</li>
+                  <li><ChevronRight className="inline h-3 w-3 text-blue-400" /> Review inducers, supplements, diet shifts</li>
+                  <li><ChevronRight className="inline h-3 w-3 text-blue-400" /> Correctable: increase dose 10–20%, dosing calendar</li>
+                  <li><ChevronRight className="inline h-3 w-3 text-blue-400" /> High dose (&gt;15mg/day) or resistant → evaluate malabsorption</li>
+                  <li><ChevronRight className="inline h-3 w-3 text-blue-400" /> Consider DOAC if suitable</li>
+                </ul>
+              </div>
+
+              {/* Pattern C */}
+              <div className="p-4 rounded-lg bg-amber-950/30 border border-amber-500/30 space-y-2">
+                <div className="font-semibold text-amber-300">
+                  <span>Pattern C: Oscillation ("Saw-tooth")</span>
+                  <span className="ml-2 text-sm text-slate-400">(INR alternates above/below target)</span>
+                </div>
+                <div className="text-sm text-slate-300">
+                  <strong>Core problem:</strong> Over-aggressive titration, lack of stable weekly pattern.
+                </div>
+                <ul className="text-sm space-y-1">
+                  <li><ChevronRight className="inline h-3 w-3 text-amber-400" /> Fix weekly dose, don't chase single INRs</li>
+                  <li><ChevronRight className="inline h-3 w-3 text-amber-400" /> Small 5–10% changes, not 25–50%</li>
+                  <li><ChevronRight className="inline h-3 w-3 text-amber-400" /> Structured schedule (e.g., 3–4–3–4 mg instead of 3–5–3–5)</li>
+                  <li><ChevronRight className="inline h-3 w-3 text-amber-400" /> Fixed timing, fixed lab, fixed interval</li>
+                  <li><ChevronRight className="inline h-3 w-3 text-amber-400" /> TTR &lt;65% over 3–6mo → consider DOAC</li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Red Flags */}
+            <div className="rounded-xl border border-red-500/50 bg-red-950/30 p-4 space-y-3">
+              <h3 className="font-semibold text-red-300 flex items-center gap-2">
+                <AlertTriangle className="h-5 w-5" />
+                Red Flags: Structural/Rare Causes
+              </h3>
+              <div className="grid gap-3 md:grid-cols-2">
+                <div className="p-3 rounded-lg bg-slate-950/50 border border-slate-700">
+                  <div className="font-medium text-red-200">Sudden Massive INR ↑</div>
+                  <ul className="mt-2 text-sm text-slate-300 space-y-1">
+                    <li>• Jaundice, liver failure stigmata</li>
+                    <li>• Cytopenias, low platelets</li>
+                    <li>• Consider: hepatic failure, DIC</li>
+                  </ul>
+                </div>
+                <div className="p-3 rounded-lg bg-slate-950/50 border border-slate-700">
+                  <div className="font-medium text-red-200">Non-Adherence Suspected</div>
+                  <ul className="mt-2 text-sm text-slate-300 space-y-1">
+                    <li>• Simplify regimen (once-daily same dose)</li>
+                    <li>• Involve family, supervised dosing</li>
+                    <li>• Consider supervised administration</li>
+                  </ul>
+                </div>
+              </div>
+              <div className="text-sm text-slate-300">
+                <strong>Workup:</strong> LFTs, albumin, CBC, creatinine, TSH, baseline PT/aPTT off warfarin if feasible, fibrinogen, D-dimer if DIC suspected.
+              </div>
+            </div>
+
+            {/* Exit Decision */}
+            <div className="rounded-xl border border-green-500/50 bg-green-950/20 p-4 space-y-3">
+              <h3 className="font-semibold text-green-300 flex items-center gap-2">
+                <CheckCircle className="h-5 w-5" />
+                Exit Decision: Switch to DOAC?
+              </h3>
+              <div className="text-sm text-slate-300">
+                <strong>Criteria for DOAC switch:</strong>
+              </div>
+              <ul className="text-sm space-y-1">
+                <li><ChevronRight className="inline h-3 w-3 text-green-400" /> TTR &lt;60–65% over 3–6 months despite:</li>
+                <li className="pl-4">≥3 structured dose adjustments</li>
+                <li className="pl-4">Education and adherence support</li>
+                <li className="pl-4">Stable lab and diet conditions</li>
+                <li><ChevronRight className="inline h-3 w-3 text-green-400" /> Indication suitable (non-valvular AF, VTE without mechanical valve)</li>
+              </ul>
+              <div className="grid gap-2 md:grid-cols-2 mt-3">
+                <div className="p-3 rounded-lg bg-green-900/30 border border-green-500/30">
+                  <div className="font-medium text-green-200">DOAC Suitable</div>
+                  <div className="text-sm text-slate-300 mt-1">Recommend switch with renal dose adjustment and overlap protocol.</div>
+                </div>
+                <div className="p-3 rounded-lg bg-red-900/30 border border-red-500/30">
+                  <div className="font-medium text-red-200">DOAC Unsuitable</div>
+                  <div className="text-sm text-slate-300 mt-1">Mechanical valve, rheumatic MS, severe renal failure → refer to anticoagulation clinic.</div>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
         {/* Reference */}
         <footer className="rounded-lg border border-slate-800 bg-slate-900/50 p-3 text-xs text-slate-500">
           <p>
             <strong>References:</strong> Warfarin dose adjustment (ACCP guidelines, community protocols) • 
-            Labile INR (TTR &lt;60%) • ATRIA (Pisters et al., 2011) • 
+            Labile INR (TTR &lt;60%) • ATRIA (Pisters et al., 2011) • Wild INR algorithm (INR instability management) • 
             For educational reference only. Not a substitute for clinical judgment.
           </p>
         </footer>
