@@ -32,6 +32,7 @@ function LayoutComponent() {
             <NavLink to="/treatment">Treatment</NavLink>
             <NavLink to="/rhythms">Rhythms</NavLink>
             <NavLink to="/antiarrhythmics">Drugs</NavLink>
+            <NavLink to="/anticoagulation">AC</NavLink>
             <NavLink to="/syncope">Syncope</NavLink>
             <NavLink to="/syncope-triage">Triage</NavLink>
           </nav>

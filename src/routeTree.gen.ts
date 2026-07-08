@@ -17,6 +17,7 @@ import { Route as LayoutSyncopeTriageRouteImport } from './routes/_layout.syncop
 import { Route as LayoutSyncopeRouteImport } from './routes/_layout.syncope'
 import { Route as LayoutRhythmsRouteImport } from './routes/_layout.rhythms'
 import { Route as LayoutGoldmanRouteImport } from './routes/_layout.goldman'
+import { Route as LayoutAnticoagulationRouteImport } from './routes/_layout.anticoagulation'
 import { Route as LayoutAntiarrhythmicsRouteImport } from './routes/_layout.antiarrhythmics'
 import { Route as LayoutProtocolIdRouteImport } from './routes/_layout.protocol.$id'
 
@@ -59,6 +60,11 @@ const LayoutGoldmanRoute = LayoutGoldmanRouteImport.update({
   path: '/goldman',
   getParentRoute: () => LayoutRoute,
 } as any)
+const LayoutAnticoagulationRoute = LayoutAnticoagulationRouteImport.update({
+  id: '/anticoagulation',
+  path: '/anticoagulation',
+  getParentRoute: () => LayoutRoute,
+} as any)
 const LayoutAntiarrhythmicsRoute = LayoutAntiarrhythmicsRouteImport.update({
   id: '/antiarrhythmics',
   path: '/antiarrhythmics',
@@ -73,6 +79,7 @@ const LayoutProtocolIdRoute = LayoutProtocolIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof LayoutIndexRoute
   '/antiarrhythmics': typeof LayoutAntiarrhythmicsRoute
+  '/anticoagulation': typeof LayoutAnticoagulationRoute
   '/goldman': typeof LayoutGoldmanRoute
   '/index': typeof LayoutChar91indexChar93Route
   '/rhythms': typeof LayoutRhythmsRoute
@@ -83,6 +90,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/antiarrhythmics': typeof LayoutAntiarrhythmicsRoute
+  '/anticoagulation': typeof LayoutAnticoagulationRoute
   '/goldman': typeof LayoutGoldmanRoute
   '/index': typeof LayoutChar91indexChar93Route
   '/rhythms': typeof LayoutRhythmsRoute
@@ -96,6 +104,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_layout': typeof LayoutRouteWithChildren
   '/_layout/antiarrhythmics': typeof LayoutAntiarrhythmicsRoute
+  '/_layout/anticoagulation': typeof LayoutAnticoagulationRoute
   '/_layout/goldman': typeof LayoutGoldmanRoute
   '/_layout/index': typeof LayoutChar91indexChar93Route
   '/_layout/rhythms': typeof LayoutRhythmsRoute
@@ -110,6 +119,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/antiarrhythmics'
+    | '/anticoagulation'
     | '/goldman'
     | '/index'
     | '/rhythms'
@@ -120,6 +130,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/antiarrhythmics'
+    | '/anticoagulation'
     | '/goldman'
     | '/index'
     | '/rhythms'
@@ -132,6 +143,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_layout'
     | '/_layout/antiarrhythmics'
+    | '/_layout/anticoagulation'
     | '/_layout/goldman'
     | '/_layout/index'
     | '/_layout/rhythms'
@@ -204,6 +216,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutGoldmanRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/_layout/anticoagulation': {
+      id: '/_layout/anticoagulation'
+      path: '/anticoagulation'
+      fullPath: '/anticoagulation'
+      preLoaderRoute: typeof LayoutAnticoagulationRouteImport
+      parentRoute: typeof LayoutRoute
+    }
     '/_layout/antiarrhythmics': {
       id: '/_layout/antiarrhythmics'
       path: '/antiarrhythmics'
@@ -223,6 +242,7 @@ declare module '@tanstack/react-router' {
 
 interface LayoutRouteChildren {
   LayoutAntiarrhythmicsRoute: typeof LayoutAntiarrhythmicsRoute
+  LayoutAnticoagulationRoute: typeof LayoutAnticoagulationRoute
   LayoutGoldmanRoute: typeof LayoutGoldmanRoute
   LayoutChar91indexChar93Route: typeof LayoutChar91indexChar93Route
   LayoutRhythmsRoute: typeof LayoutRhythmsRoute
@@ -235,6 +255,7 @@ interface LayoutRouteChildren {
 
 const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutAntiarrhythmicsRoute: LayoutAntiarrhythmicsRoute,
+  LayoutAnticoagulationRoute: LayoutAnticoagulationRoute,
   LayoutGoldmanRoute: LayoutGoldmanRoute,
   LayoutChar91indexChar93Route: LayoutChar91indexChar93Route,
   LayoutRhythmsRoute: LayoutRhythmsRoute,
