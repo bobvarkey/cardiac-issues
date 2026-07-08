@@ -1,5 +1,13 @@
 import React, { useState, useMemo } from "react";
-import { Heart, Droplet, AlertTriangle, CheckCircle, Info, ChevronRight } from "lucide-react";
+import { Heart, Droplet, AlertTriangle, CheckCircle, Info, ChevronRight, Image as ImageIcon } from "lucide-react";
+
+const scoreImages = [
+  { src: "/images/scores/af-stroke-prevention.jpg", title: "AF Stroke Prevention", desc: "2023 ACC/AHA guideline - risk-based anticoagulation thresholds" },
+  { src: "/images/scores/vte-prevention-surgery.jpg", title: "VTE Prevention After Surgery", desc: "DOACs vs LMWH for hip/knee replacement thromboprophylaxis" },
+  { src: "/images/scores/valvular-disease.jpg", title: "Valvular Heart Disease ", desc: "DOAC appropriateness - mechanical valves, rheumatic MS, TAVI" },
+  { src: "/images/scores/thrombophilia-aps.jpg", title: "Thrombophilia ", desc: "When DOACs are not the right choice - APS, triple-positive" },
+  { src: "/images/scores/laac-ablation.jpg", title: "LAAC ", desc: "Alternatives and off-ramps from long-term OAC" },
+];
 
 // CHA₂DS₂-VASc stroke risk percentages (approximate annual risk)
 const cha2ds2vascRisks: Record<number, string> = {
@@ -137,7 +145,7 @@ function calculateHasBled(inputs: HasBledInputs): { score: number; riskCategory:
 }
 
 export function ScoresMiniApp() {
-  const [activeTab, setActiveTab] = useState<"cha2ds2vasc" | "hasbled">("cha2ds2vasc");
+  const [activeTab, setActiveTab] = useState<"cha2ds2vasc" | "hasbled" | "images">("cha2ds2vasc");
 
   // CHA₂DS₂-VASc state
   const [chaInputs, setChaInputs] = useState<Cha2ds2VascInputs>({
@@ -184,7 +192,7 @@ export function ScoresMiniApp() {
         </header>
 
         {/* Tab Navigation */}
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setActiveTab("cha2ds2vasc")}
             className={`rounded-full px-4 py-2 border text-sm font-medium transition ${
@@ -206,6 +214,17 @@ export function ScoresMiniApp() {
           >
             <Droplet className="inline h-4 w-4 mr-1" />
             HAS-BLED
+          </button>
+          <button
+            onClick={() => setActiveTab("images")}
+            className={`rounded-full px-4 py-2 border text-sm font-medium transition ${
+              activeTab === "images"
+                ? "bg-cyan-400 text-slate-950 border-cyan-300"
+                : "bg-slate-900 border-slate-700 text-slate-300 hover:border-slate-500"
+            }`}
+          >
+            <ImageIcon className="inline h-4 w-4 mr-1" />
+            Images
           </button>
         </div>
 
@@ -531,6 +550,29 @@ export function ScoresMiniApp() {
                   <span className="text-sm text-slate-400">{hasResult.riskCategory} bleeding risk</span>
                 </div>
               </div>
+            </div>
+          </section>
+        )}
+
+        {/* Images Tab */}
+        {activeTab === "images" && (
+          <section className="space-y-4">
+            <h2 className="text-xl font-semibold">Guideline Images</h2>
+            <p className="text-slate-400">Reference infographics for anticoagulation and stroke prevention.</p>
+            <div className="grid gap-6 md:grid-cols-2">
+              {scoreImages.map((img, i) => (
+                <div key={i} className="rounded-xl border border-slate-700 bg-slate-950/50 overflow-hidden">
+                  <img 
+                    src={img.src} 
+                    alt={img.title}
+                    className="w-full h-auto"
+                  />
+                  <div className="p-3 border-t border-slate-700">
+                    <h3 className="font-medium text-cyan-400">{img.title}</h3>
+                    <p className="text-sm text-slate-400">{img.desc}</p>
+                  </div>
+                </div>
+              ))}
             </div>
           </section>
         )}
