@@ -510,7 +510,7 @@ export function AnticoagulationMiniApp() {
             <div className="p-4 rounded-lg bg-slate-950/50 border border-slate-700">
               <h3 className="font-medium text-cyan-400 mb-3">VTE Initial Treatment</h3>
               <div className="space-y-3">
-                {data.modules[0].agents.map((agent, i) => (
+                {(data.modules[0]?.agents ?? []).map((agent, i) => (
                   <div key={i} className="text-sm">
                     <div className="font-medium">{agent.drug}</div>
                     <div className="text-slate-400">
@@ -523,7 +523,7 @@ export function AnticoagulationMiniApp() {
                 ))}
               </div>
               <div className="mt-3 pt-3 border-t border-slate-700 text-xs text-slate-400">
-                {data.modules[0].comments}
+                {data.modules[0]?.comments}
               </div>
             </div>
 
@@ -531,7 +531,7 @@ export function AnticoagulationMiniApp() {
             <div className="p-4 rounded-lg bg-slate-950/50 border border-slate-700">
               <h3 className="font-medium text-cyan-400 mb-3">Extended VTE Therapy</h3>
               <div className="space-y-2">
-                {data.modules[1].rules[0].agents.map((agent, i) => (
+                {(data.modules[1]?.rules?.[0]?.agents ?? []).map((agent, i) => (
                   <div key={i} className="text-sm">
                     <span className="font-medium">{agent.drug}</span>: {agent.dose} {agent.frequency}
                   </div>
@@ -548,7 +548,7 @@ export function AnticoagulationMiniApp() {
             <div className="p-4 rounded-lg bg-slate-950/50 border border-slate-700 md:col-span-2">
               <h3 className="font-medium text-cyan-400 mb-3">DOACs in Kidney Disease (2024 KDIGO)</h3>
               <div className="grid gap-2 md:grid-cols-4">
-                {data.modules[2].stages.map((stage, i) => (
+                {(data.modules[2]?.stages ?? []).map((stage, i) => (
                   <div key={i} className="p-2 rounded bg-slate-900">
                     <div className="text-xs text-slate-400">
                       {stage.ckd_stage || stage.dialysis} {stage.egfr && `(${stage.egfr})`}

@@ -137,25 +137,57 @@ function InteractionChecker({ details }: { details: DrugDetails }) {
               ✓ No major interaction listed for {details.name} with the selected medication{selected.length > 1 ? "s" : ""}. Always verify clinically.
             </div>
           ) : (
-            hits.map((h) => (
-              <div
-                key={h.companion.name}
-                className="rounded-md border border-destructive/40 bg-destructive/10 p-2.5 text-sm"
-              >
-                <div className="flex items-center gap-2 font-medium text-destructive">
-                  <AlertTriangle className="h-4 w-4" />
-                  {details.name} + {h.companion.name}
-                  <span className="ml-auto font-mono text-[10px] uppercase text-destructive/80">
-                    {h.companion.category}
-                  </span>
+            hits.map((h) => {
+              const sevStyle =
+                h.severity === "contraindicated"
+                  ? "border-destructive bg-destructive/15"
+                  : h.severity === "major"
+                  ? "border-destructive/50 bg-destructive/10"
+                  : "border-amber-500/40 bg-amber-500/10";
+              const badgeStyle =
+                h.severity === "contraindicated"
+                  ? "bg-destructive text-destructive-foreground"
+                  : h.severity === "major"
+                  ? "bg-destructive/80 text-destructive-foreground"
+                  : "bg-amber-500/90 text-white";
+              const actionStyle =
+                h.action === "avoid"
+                  ? "border-destructive/50 text-destructive"
+                  : "border-amber-500/50 text-amber-700 dark:text-amber-400";
+              return (
+                <div
+                  key={h.companion.name}
+                  className={`rounded-md border p-2.5 text-sm ${sevStyle}`}
+                >
+                  <div className="flex flex-wrap items-center gap-2 font-medium">
+                    <AlertTriangle className="h-4 w-4 text-destructive" />
+                    <span>{details.name} + {h.companion.name}</span>
+                    <span className={`rounded px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider ${badgeStyle}`}>
+                      {h.severity}
+                    </span>
+                    <span className={`rounded border px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider ${actionStyle}`}>
+                      {h.action === "avoid" ? "Avoid" : "Monitor"}
+                    </span>
+                    <span className="ml-auto font-mono text-[10px] uppercase text-muted-foreground">
+                      {h.companion.category}
+                    </span>
+                  </div>
+                  <ul className="mt-1.5 space-y-1 pl-6 text-xs text-foreground">
+                    {h.matches.map((m) => (
+                      <li key={m} className="list-disc">{m}</li>
+                    ))}
+                  </ul>
+                  <div className="mt-2 rounded border border-border bg-background/60 p-2 text-xs">
+                    <div className="font-semibold uppercase tracking-wider text-[10px] text-primary">Management</div>
+                    <div className="mt-0.5">{h.companion.management}</div>
+                  </div>
+                  <div className="mt-1.5 rounded border border-border bg-background/40 p-2 text-xs">
+                    <div className="font-semibold uppercase tracking-wider text-[10px] text-muted-foreground">Rationale</div>
+                    <div className="mt-0.5 text-muted-foreground">{h.companion.rationale}</div>
+                  </div>
                 </div>
-                <ul className="mt-1.5 space-y-1 pl-6 text-xs text-foreground">
-                  {h.matches.map((m) => (
-                    <li key={m} className="list-disc">{m}</li>
-                  ))}
-                </ul>
-              </div>
-            ))
+              );
+            })
           )}
         </div>
       )}
