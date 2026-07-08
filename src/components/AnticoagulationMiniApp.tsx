@@ -510,7 +510,7 @@ export function AnticoagulationMiniApp() {
             <div className="p-4 rounded-lg bg-slate-950/50 border border-slate-700">
               <h3 className="font-medium text-cyan-400 mb-3">VTE Initial Treatment</h3>
               <div className="space-y-3">
-                {data.modules[0]!.agents.map((agent, i) => (
+                {(data.modules[0]?.agents ?? []).map((agent, i) => (
                   <div key={i} className="text-sm">
                     <div className="font-medium">{agent.drug}</div>
                     <div className="text-slate-400">
