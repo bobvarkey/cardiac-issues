@@ -366,6 +366,18 @@ export function AntiarrhythmicsChart() {
         </div>
       </div>
 
+      {/* Classification Image */}
+      <div className="rounded-lg border border-border bg-surface-elevated p-4">
+        <div className="font-mono text-xs uppercase tracking-wider text-muted-foreground mb-3">
+          Vaughan-Williams Classification
+        </div>
+        <img
+          src="/images/antiarrhythmics-classification.jpg"
+          alt="Vaughan-Williams Antiarrhythmic Drug Classification"
+          className="w-full h-auto rounded-lg"
+        />
+      </div>
+
       <div className="grid gap-3 md:grid-cols-2">
         {classes.map((c) => {
           const calcDrug = classHasCalculatorDrug(c);
