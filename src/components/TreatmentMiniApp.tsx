@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link, useSearch } from "@tanstack/react-router";
 
-type Arrhythmia = "AF" | "VT" | "VF";
+type Arrhythmia = "AF" | "VT" | "VF" | "SVT" | "AFlutter" | "MAT" | "Junctional";
 
 type DoseRule = {
   key: string;
@@ -26,9 +26,61 @@ const round = (n: number, d = 1) => {
 
 const drugs: Drug[] = [
   {
+    name: "Adenosine",
+    class: "Purinergic agonist (AV nodal blocker)",
+    indications: ["SVT termination", "SVT diagnostic"],
+    doseRules: [
+      {
+        key: "first_dose",
+        label: "First dose (rapid bolus)",
+        compute: () => ({ value: "6 mg IV rapid push", detail: "flush with 20 mL saline" }),
+        reference: "6 mg IV rapid push",
+      },
+      {
+        key: "second_dose",
+        label: "Second dose (if no response)",
+        compute: () => ({ value: "12 mg IV rapid push", detail: "may repeat once" }),
+        reference: "12 mg IV rapid push",
+      },
+      {
+        key: "third_dose",
+        label: "Third dose (if no response)",
+        compute: () => ({ value: "12 mg IV rapid push", detail: "max 2 doses of 12 mg" }),
+        reference: "12 mg IV (max single dose)",
+      },
+    ],
+    comments: "Must be rapid IV push via large vein; avoid in WPW with AF; monitor ECG continuously.",
+  },
+  {
+    name: "Verapamil",
+    class: "Non-dihydropyridine CCB",
+    indications: ["SVT termination", "Rate control in AF/SVT"],
+    doseRules: [
+      {
+        key: "initial",
+        label: "Initial dose",
+        compute: () => ({ value: "2.5–5 mg IV over 2 min", detail: "may repeat" }),
+        reference: "2.5–5 mg IV over 2 min",
+      },
+      {
+        key: "repeat",
+        label: "Repeat dose",
+        compute: () => ({ value: "5–10 mg IV in 15–30 min", detail: "max 20 mg" }),
+        reference: "5–10 mg IV, max 20 mg",
+      },
+      {
+        key: "infusion",
+        label: "Infusion (if needed)",
+        compute: () => ({ value: "5–10 mg/hr IV", detail: "for refractory" }),
+        reference: "5–10 mg/hr IV",
+      },
+    ],
+    comments: "Avoid in WPW with AF; negative inotrope — use cautiously in HF or hypotension.",
+  },
+  {
     name: "Diltiazem",
     class: "Non-dihydropyridine CCB",
-    indications: ["Rate control in AF"],
+    indications: ["Rate control in AF", "SVT termination"],
     doseRules: [
       {
         key: "iv_bolus",
@@ -225,7 +277,40 @@ export function TreatmentMiniApp() {
     if (arrhythmia === "VT") {
       return { title: "Follow ACLS VT algorithm", note: "Assess pulse and stability first." };
     }
-    return { title: "Defibrillation + CPR if pulseless VF", note: "Treat as a shockable rhythm." };
+    if (arrhythmia === "VF") {
+      return { title: "Defibrillation + CPR if pulseless VF", note: "Treat as a shockable rhythm." };
+    }
+    if (arrhythmia === "SVT") {
+      return {
+        title: "Vagal maneuvers → Adenosine → CCB/BB",
+        note: "If regular narrow-complex tachycardia without pre-excitation.",
+      };
+    }
+    if (arrhythmia === "AFlutter") {
+      if (afDuration >= 48) {
+        return {
+          title: "Anticoagulate or TEE before cardioversion",
+          note: "Atrial flutter carries similar thromboembolic risk as AF.",
+        };
+      }
+      return {
+        title: "Rate control (CCB/BB) or rhythm control",
+        note: "Consider typical vs atypical flutter for ablation planning.",
+      };
+    }
+    if (arrhythmia === "MAT") {
+      return {
+        title: "Treat underlying condition (COPD, hypoxia, sepsis)",
+        note: "Avoid AV nodal blockers if unstable; rate control may be ineffective.",
+      };
+    }
+    if (arrhythmia === "Junctional") {
+      return {
+        title: "Identify and treat underlying cause",
+        note: "Consider digoxin toxicity, inferior MI, post-cardiac surgery; avoid aggressive rate control.",
+      };
+    }
+    return { title: "Assess and treat per ACLS algorithm", note: "Identify rhythm and stability first." };
   }, [arrhythmia, afDuration, ef, unstableNow]);
 
   const instabilityFields: Array<[keyof typeof unstable, string]> = [
@@ -243,11 +328,12 @@ export function TreatmentMiniApp() {
       <section className="space-y-2">
         <div className="flex items-center gap-2 text-xs text-primary">
           <span className="pulse-dot" />
-          <span className="font-mono uppercase tracking-wider">Treatment · AF / VT / VF</span>
+          <span className="font-mono uppercase tracking-wider">Treatment · Arrhythmias</span>
         </div>
         <h1 className="text-3xl font-semibold tracking-tight">Treatment mini app</h1>
         <p className="text-muted-foreground max-w-2xl">
           Enter patient inputs to get a stability-first recommendation and live weight-based dosing.
+          Supports AF, atrial flutter, SVT, MAT, junctional tachycardia, VT, and VF.
         </p>
       </section>
 
@@ -262,9 +348,13 @@ export function TreatmentMiniApp() {
               onChange={(e) => setArrhythmia(e.target.value as Arrhythmia)}
               className="mt-1 block w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
             >
-              <option value="AF">AF</option>
-              <option value="VT">VT</option>
-              <option value="VF">VF</option>
+              <option value="AF">Atrial Fibrillation (AF)</option>
+              <option value="AFlutter">Atrial Flutter</option>
+              <option value="SVT">SVT (Supraventricular Tachycardia)</option>
+              <option value="MAT">Multifocal Atrial Tachycardia (MAT)</option>
+              <option value="Junctional">Junctional Tachycardia</option>
+              <option value="VT">Ventricular Tachycardia (VT)</option>
+              <option value="VF">Ventricular Fibrillation (VF)</option>
             </select>
           </label>
 
@@ -288,24 +378,32 @@ export function TreatmentMiniApp() {
           </label>
 
           <label className="block text-sm font-medium">
-            AF duration (hr)
+            {(arrhythmia === "AF" || arrhythmia === "AFlutter") ? "Duration (hr)" : "Onset (hr)"}
             <input
               type="number"
               value={afDuration}
               onChange={(e) => setAfDuration(Number(e.target.value))}
               className="mt-1 block w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
             />
+            {(arrhythmia === "AF" || arrhythmia === "AFlutter") && (
+              <p className="text-xs text-muted-foreground mt-1">
+                {afDuration >= 48 ? "≥48h: anticoagulation required before cardioversion" : "<48h: direct cardioversion may be considered"}
+              </p>
+            )}
           </label>
 
-          <label className="block text-sm font-medium">
-            EF (%)
-            <input
-              type="number"
-              value={ef}
-              onChange={(e) => setEf(Number(e.target.value))}
-              className="mt-1 block w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-            />
-          </label>
+          {(arrhythmia === "AF" || arrhythmia === "AFlutter" || arrhythmia === "VT") && (
+            <label className="block text-sm font-medium">
+              EF (%)
+              <input
+                type="number"
+                value={ef}
+                onChange={(e) => setEf(Number(e.target.value))}
+                className="mt-1 block w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+              />
+              {ef <= 35 && <p className="text-xs text-muted-foreground mt-1">Reduced EF: consider amiodarone for rhythm control</p>}
+            </label>
+          )}
 
           <div className="pt-2">
             <div className="text-sm font-semibold mb-2">Instability</div>
