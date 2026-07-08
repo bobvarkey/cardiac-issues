@@ -28,6 +28,8 @@ export const CALCULATOR_DRUGS = new Set([
   "Esmolol",
   "Digoxin",
   "Amiodarone",
+  "Adenosine",
+  "Verapamil",
 ]);
 
 export const DRUG_DETAILS: Record<string, DrugDetails> = {
@@ -510,7 +512,7 @@ export const DRUG_DETAILS: Record<string, DrugDetails> = {
   Digoxin: {
     name: "Digoxin",
     className: "Cardiac glycoside (Na/K-ATPase inhibitor)",
-    classKey: "Unclassified (adjunct)",
+    classKey: "Class V",
     indications: ["Rate control in AF (esp. sedentary or HFrEF)", "HFrEF symptom control"],
     dosing: [
       { route: "IV load", dose: "0.25 mg IV q2h up to total 1–1.5 mg (0.5 mg initial then 0.25 mg doses)" },
@@ -534,6 +536,62 @@ export const DRUG_DETAILS: Record<string, DrugDetails> = {
       { watch: "K+ (keep >4), Mg2+, renal function", stopOrEscalate: "Replete K+; reduce dose if renal function declines" },
       { watch: "ECG for bradyarrhythmias, junctional rhythms, PVCs", stopOrEscalate: "STOP and give Digoxin-Fab for life-threatening arrhythmia or hyperkalemia >5 in acute toxicity" },
       { watch: "Symptoms: nausea, visual halos, confusion" },
+    ],
+  },
+  Adenosine: {
+    name: "Adenosine",
+    className: "Purinergic agonist (AV nodal blocker)",
+    classKey: "Class V",
+    indications: ["SVT termination (AVNRT, AVRT)", "SVT diagnostic (differentiate SVT vs VT)"],
+    dosing: [
+      { route: "IV rapid push", dose: "6 mg rapid IV push followed immediately by 20 mL saline flush", notes: "Use large vein, rapid administration essential" },
+      { route: "Repeat dose", dose: "12 mg rapid IV push if no response to 6 mg", notes: "May repeat once (max 2 doses of 12 mg)" },
+      { route: "Third dose", dose: "12 mg rapid IV push if no response to first 12 mg", notes: "Max single dose 12 mg" },
+    ],
+    contraindications: [
+      "WPW with pre-excited AF (may accelerate accessory pathway)",
+      "Heart transplant (denervated heart, exaggerated response)",
+      "Severe asthma (bronchospasm risk)",
+      "2nd/3rd degree AV block without pacemaker",
+    ],
+    interactions: [
+      "Dipyridamole — potentiates adenosine effect (use much lower dose)",
+      "Theophylline, caffeine — antagonize adenosine effect",
+      "Carbamazepine — may increase AV block risk",
+    ],
+    adverse: ["Transient chest discomfort, flushing, dyspnea", "Brief asystole (usually <5 sec)", "Bronchospasm in asthmatics", "PACs/PVCs after termination"],
+    monitoring: [
+      { watch: "Continuous ECG during and after administration" },
+      { watch: "BP during administration", stopOrEscalate: "Unlikely to cause sustained hypotension" },
+      { watch: "Airway if asthma history", stopOrEscalate: "Have bronchodilator ready" },
+    ],
+  },
+  "Magnesium Sulfate": {
+    name: "Magnesium Sulfate",
+    className: "Electrolyte (multichannel effects)",
+    classKey: "Class V",
+    indications: ["Torsades de pointes", "Refractory VT/VF (especially if hypomagnesemic)", "Digitalis-induced arrhythmias", "AV node block (adjunct)", "Polymorphic VT with normal QT"],
+    dosing: [
+      { route: "IV bolus (torsades)", dose: "1–2 g (8–16 mEq) IV over 5–20 min", notes: "May repeat if needed" },
+      { route: "IV infusion", dose: "0.5–1 g/hr continuous infusion", notes: "Follow bolus for sustained effect" },
+      { route: "IV bolus (cardiac arrest)", dose: "1–2 g IV push for refractory VF/pulseless VT", notes: "Not in ACLS algorithm, but consider if torsades suspected" },
+    ],
+    contraindications: [
+      "Hypermagnesemia",
+      "Renal failure with elevated Mg2+",
+      "Heart block (may worsen)",
+    ],
+    interactions: [
+      "Neuromuscular blockers — potentiates (caution with intubation)",
+      "Calcium channel blockers — additive AV block",
+      "Digoxin — Mg2+ potentiates but also treats digoxin toxicity",
+    ],
+    adverse: ["Flushing, warmth", "Hypotension (dose-related)", "Muscle weakness, areflexia at high levels", "Respiratory depression (>4 mEq/L)"],
+    monitoring: [
+      { watch: "BP during and after infusion", stopOrEscalate: "Stop or slow infusion if SBP <90" },
+      { watch: "Deep tendon reflexes", stopOrEscalate: "Absence suggests Mg2+ >4 mEq/L" },
+      { watch: "Serum Mg2+ level with renal impairment", stopOrEscalate: "Hold if >4 mEq/L" },
+      { watch: "ECG for AV block", stopOrEscalate: "May need calcium gluconate if symptomatic AV block" },
     ],
   },
 };

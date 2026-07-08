@@ -22,12 +22,13 @@ type ClassEntry = {
 };
 
 const overallMnemonic = {
-  text: "Some Block Potassium Channels",
+  text: "Some Block Potassium Channels Mainly",
   mapping: [
     { word: "Some", meaning: "Sodium channel blockers", cls: "Class I" },
     { word: "Block", meaning: "Beta blockers", cls: "Class II" },
     { word: "Potassium", meaning: "Potassium channel blockers", cls: "Class III" },
     { word: "Channels", meaning: "Calcium channel blockers", cls: "Class IV" },
+    { word: "Mainly", meaning: "Miscellaneous agents", cls: "Class V" },
   ],
 };
 
@@ -57,6 +58,11 @@ const classes: ClassEntry[] = [
     key: "Class IV",
     type: "Ca2+ channel blockers",
     drugs: ["Verapamil", "Diltiazem"],
+  },
+  {
+    key: "Class V",
+    type: "Miscellaneous agents",
+    drugs: ["Digoxin", "Adenosine", "Magnesium Sulfate"],
   },
 ];
 
