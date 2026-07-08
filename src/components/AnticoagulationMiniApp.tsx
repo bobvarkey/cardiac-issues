@@ -523,7 +523,7 @@ export function AnticoagulationMiniApp() {
                 ))}
               </div>
               <div className="mt-3 pt-3 border-t border-slate-700 text-xs text-slate-400">
-                {data.modules[0]!.comments}
+                {data.modules[0]?.comments}
               </div>
             </div>
 
