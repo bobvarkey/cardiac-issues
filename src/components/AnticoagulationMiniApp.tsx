@@ -548,7 +548,7 @@ export function AnticoagulationMiniApp() {
             <div className="p-4 rounded-lg bg-slate-950/50 border border-slate-700 md:col-span-2">
               <h3 className="font-medium text-cyan-400 mb-3">DOACs in Kidney Disease (2024 KDIGO)</h3>
               <div className="grid gap-2 md:grid-cols-4">
-                {data.modules[2]!.stages.map((stage, i) => (
+                {(data.modules[2]?.stages ?? []).map((stage, i) => (
                   <div key={i} className="p-2 rounded bg-slate-900">
                     <div className="text-xs text-slate-400">
                       {stage.ckd_stage || stage.dialysis} {stage.egfr && `(${stage.egfr})`}
