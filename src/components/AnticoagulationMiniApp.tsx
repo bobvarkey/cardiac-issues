@@ -10,6 +10,11 @@ const imageFiles = [
   { src: "/images/anticoagulation/liver-disease.jpg", title: "DOACs in Liver Disease", desc: "Child-Pugh classification" },
   { src: "/images/anticoagulation/obesity.jpg", title: "Frailty & Obesity", desc: "BMI ≥40 kg/m² recommendations" },
   { src: "/images/anticoagulation/cancer-thrombosis.jpg", title: "Cancer-Associated Thrombosis", desc: "DOACs vs LMWH, Khorana score" },
+  { src: "/images/anticoagulation/af-stroke-prevention.jpg", title: "AF Stroke Prevention", desc: "2023 ACC/AHA risk-based anticoagulation" },
+  { src: "/images/anticoagulation/vte-prevention-surgery.jpg", title: "VTE Prevention After Surgery", desc: "DOACs vs LMWH for hip/knee replacement" },
+  { src: "/images/anticoagulation/valvular-disease.jpg", title: "Valvular Heart Disease", desc: "DOACs in mechanical valves, RHD, TAVI" },
+  { src: "/images/anticoagulation/thrombophilia-aps.jpg", title: "Thrombophilia & APS", desc: "When DOACs are not the right choice" },
+  { src: "/images/anticoagulation/laac-ablation.jpg", title: "LAAC & AF Ablation", desc: "Alternatives to long-term OAC" },
 ];
 
 const data = {

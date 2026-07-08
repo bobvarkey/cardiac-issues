@@ -2,11 +2,11 @@ import React, { useState, useMemo } from "react";
 import { Heart, Droplet, AlertTriangle, CheckCircle, Info, ChevronRight, Image as ImageIcon } from "lucide-react";
 
 const scoreImages = [
-  { src: "/images/scores/af-stroke-prevention.jpg", title: "AF Stroke Prevention", desc: "2023 ACC/AHA guideline - risk-based anticoagulation thresholds" },
-  { src: "/images/scores/vte-prevention-surgery.jpg", title: "VTE Prevention After Surgery", desc: "DOACs vs LMWH for hip/knee replacement thromboprophylaxis" },
-  { src: "/images/scores/valvular-disease.jpg", title: "Valvular Heart Disease ", desc: "DOAC appropriateness - mechanical valves, rheumatic MS, TAVI" },
-  { src: "/images/scores/thrombophilia-aps.jpg", title: "Thrombophilia ", desc: "When DOACs are not the right choice - APS, triple-positive" },
-  { src: "/images/scores/laac-ablation.jpg", title: "LAAC ", desc: "Alternatives and off-ramps from long-term OAC" },
+  { src: "/images/anticoagulation/af-stroke-prevention.jpg", title: "AF Stroke Prevention", desc: "2023 ACC/AHA guideline - risk-based anticoagulation thresholds" },
+  { src: "/images/anticoagulation/vte-prevention-surgery.jpg", title: "VTE Prevention After Surgery", desc: "DOACs vs LMWH for hip/knee replacement thromboprophylaxis" },
+  { src: "/images/anticoagulation/valvular-disease.jpg", title: "Valvular Heart Disease", desc: "DOAC appropriateness - mechanical valves, rheumatic MS, TAVI" },
+  { src: "/images/anticoagulation/thrombophilia-aps.jpg", title: "Thrombophilia & APS", desc: "When DOACs are not the right choice - APS, triple-positive" },
+  { src: "/images/anticoagulation/laac-ablation.jpg", title: "LAAC & AF Ablation", desc: "Alternatives and off-ramps from long-term OAC" },
 ];
 
 // CHA₂DS₂-VASc stroke risk percentages (approximate annual risk)
