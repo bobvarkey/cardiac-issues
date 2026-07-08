@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as LayoutChar91indexChar93RouteImport } from './routes/_layout.[index]'
 import { Route as LayoutIndexRouteImport } from './routes/_layout.index'
+import { Route as LayoutWarfarinRouteImport } from './routes/_layout.warfarin'
 import { Route as LayoutTreatmentRouteImport } from './routes/_layout.treatment'
 import { Route as LayoutSyncopeTriageRouteImport } from './routes/_layout.syncope-triage'
 import { Route as LayoutSyncopeRouteImport } from './routes/_layout.syncope'
@@ -34,6 +35,11 @@ const LayoutChar91indexChar93Route = LayoutChar91indexChar93RouteImport.update({
 const LayoutIndexRoute = LayoutIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutWarfarinRoute = LayoutWarfarinRouteImport.update({
+  id: '/warfarin',
+  path: '/warfarin',
   getParentRoute: () => LayoutRoute,
 } as any)
 const LayoutTreatmentRoute = LayoutTreatmentRouteImport.update({
@@ -93,6 +99,7 @@ export interface FileRoutesByFullPath {
   '/syncope': typeof LayoutSyncopeRoute
   '/syncope-triage': typeof LayoutSyncopeTriageRoute
   '/treatment': typeof LayoutTreatmentRoute
+  '/warfarin': typeof LayoutWarfarinRoute
   '/protocol/$id': typeof LayoutProtocolIdRoute
 }
 export interface FileRoutesByTo {
@@ -105,6 +112,7 @@ export interface FileRoutesByTo {
   '/syncope': typeof LayoutSyncopeRoute
   '/syncope-triage': typeof LayoutSyncopeTriageRoute
   '/treatment': typeof LayoutTreatmentRoute
+  '/warfarin': typeof LayoutWarfarinRoute
   '/': typeof LayoutIndexRoute
   '/protocol/$id': typeof LayoutProtocolIdRoute
 }
@@ -120,6 +128,7 @@ export interface FileRoutesById {
   '/_layout/syncope': typeof LayoutSyncopeRoute
   '/_layout/syncope-triage': typeof LayoutSyncopeTriageRoute
   '/_layout/treatment': typeof LayoutTreatmentRoute
+  '/_layout/warfarin': typeof LayoutWarfarinRoute
   '/_layout/': typeof LayoutIndexRoute
   '/_layout/protocol/$id': typeof LayoutProtocolIdRoute
 }
@@ -136,6 +145,7 @@ export interface FileRouteTypes {
     | '/syncope'
     | '/syncope-triage'
     | '/treatment'
+    | '/warfarin'
     | '/protocol/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -148,6 +158,7 @@ export interface FileRouteTypes {
     | '/syncope'
     | '/syncope-triage'
     | '/treatment'
+    | '/warfarin'
     | '/'
     | '/protocol/$id'
   id:
@@ -162,6 +173,7 @@ export interface FileRouteTypes {
     | '/_layout/syncope'
     | '/_layout/syncope-triage'
     | '/_layout/treatment'
+    | '/_layout/warfarin'
     | '/_layout/'
     | '/_layout/protocol/$id'
   fileRoutesById: FileRoutesById
@@ -191,6 +203,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof LayoutIndexRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/warfarin': {
+      id: '/_layout/warfarin'
+      path: '/warfarin'
+      fullPath: '/warfarin'
+      preLoaderRoute: typeof LayoutWarfarinRouteImport
       parentRoute: typeof LayoutRoute
     }
     '/_layout/treatment': {
@@ -269,6 +288,7 @@ interface LayoutRouteChildren {
   LayoutSyncopeRoute: typeof LayoutSyncopeRoute
   LayoutSyncopeTriageRoute: typeof LayoutSyncopeTriageRoute
   LayoutTreatmentRoute: typeof LayoutTreatmentRoute
+  LayoutWarfarinRoute: typeof LayoutWarfarinRoute
   LayoutIndexRoute: typeof LayoutIndexRoute
   LayoutProtocolIdRoute: typeof LayoutProtocolIdRoute
 }
@@ -283,6 +303,7 @@ const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutSyncopeRoute: LayoutSyncopeRoute,
   LayoutSyncopeTriageRoute: LayoutSyncopeTriageRoute,
   LayoutTreatmentRoute: LayoutTreatmentRoute,
+  LayoutWarfarinRoute: LayoutWarfarinRoute,
   LayoutIndexRoute: LayoutIndexRoute,
   LayoutProtocolIdRoute: LayoutProtocolIdRoute,
 }
