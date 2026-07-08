@@ -14,13 +14,13 @@ const iconMap: Record<string, typeof HeartPulse> = {
 
 export function HomeProtocols() {
   return (
-    <div className="space-y-8">
-      <section className="space-y-3">
-        <div className="flex items-center gap-2 text-xs text-primary">
+    <div className="space-y-10">
+      <section className="space-y-4">
+        <div className="flex items-center gap-2.5 text-xs text-primary">
           <span className="pulse-dot" />
           <span className="font-mono uppercase tracking-wider">Adult · In-hospital</span>
         </div>
-        <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
+        <h1 className="text-3xl font-semibold tracking-tight">
           Fast-access cardiac protocols
         </h1>
         <p className="max-w-2xl text-muted-foreground">
@@ -31,21 +31,21 @@ export function HomeProtocols() {
 
       <Link
         to="/treatment"
-        className="group relative block overflow-hidden rounded-xl border border-primary/50 bg-gradient-to-br from-primary/20 via-primary/10 to-transparent p-6 transition hover:border-primary hover:from-primary/30"
+        className="group relative block overflow-hidden rounded-xl border border-primary/40 bg-gradient-to-br from-primary/15 via-primary/5 to-transparent p-6 transition hover:border-primary hover:from-primary/25"
       >
         <div className="flex items-start justify-between gap-4">
-          <div className="flex items-start gap-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-lg">
+          <div className="flex items-start gap-5">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground">
               <Pill className="h-6 w-6" />
             </div>
             <div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2.5">
                 <h2 className="text-lg font-semibold">Treatment Mini App</h2>
-                <span className="rounded-full bg-primary/20 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-primary">
+                <span className="rounded-full bg-primary/15 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-primary">
                   Featured
                 </span>
               </div>
-              <p className="mt-1 max-w-xl text-sm text-muted-foreground">
+              <p className="mt-1.5 max-w-xl text-sm text-muted-foreground">
                 Live, weight-based dosing calculator for AF / VT / VF with stability-first
                 recommendations and per-drug mg/mcg outputs.
               </p>
@@ -55,7 +55,7 @@ export function HomeProtocols() {
         </div>
       </Link>
 
-      <section className="grid gap-3 sm:grid-cols-2">
+      <section className="grid gap-4 sm:grid-cols-2">
         {algorithms.map((a) => {
           const Icon = iconMap[a.id] ?? HeartPulse;
           return (
@@ -63,16 +63,16 @@ export function HomeProtocols() {
               key={a.id}
               to="/protocol/$id"
               params={{ id: a.id }}
-              className="group surface-panel flex flex-col gap-3 p-5 transition hover:border-primary/50 hover:bg-surface-elevated"
+              className="group surface-panel flex flex-col gap-4 transition hover:border-primary/40 hover:bg-surface-elevated"
             >
               <div className="flex items-center justify-between">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/15 text-primary">
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
                   <Icon className="h-5 w-5" />
                 </div>
                 <ChevronRight className="h-4 w-4 text-muted-foreground transition group-hover:translate-x-1 group-hover:text-primary" />
               </div>
               <div>
-                <h2 className="text-base font-semibold">{a.name}</h2>
+                <h3 className="font-semibold">{a.name}</h3>
                 <p className="mt-1 text-sm text-muted-foreground">{a.summary}</p>
               </div>
               {a.context && (
@@ -85,16 +85,16 @@ export function HomeProtocols() {
         })}
         <Link
           to="/rhythms"
-          className="group surface-panel flex flex-col gap-3 p-5 transition hover:border-primary/50 hover:bg-surface-elevated"
+          className="group surface-panel flex flex-col gap-4 transition hover:border-primary/40 hover:bg-surface-elevated"
         >
           <div className="flex items-center justify-between">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/15 text-primary">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
               <Waves className="h-5 w-5" />
             </div>
             <ChevronRight className="h-4 w-4 text-muted-foreground transition group-hover:translate-x-1 group-hover:text-primary" />
           </div>
           <div>
-            <h2 className="text-base font-semibold">Rhythm Reference</h2>
+            <h3 className="font-semibold">Rhythm Reference</h3>
             <p className="mt-1 text-sm text-muted-foreground">
               Catalog of common arrhythmias with ECG features and clinical notes.
             </p>
@@ -102,16 +102,16 @@ export function HomeProtocols() {
         </Link>
         <Link
           to="/goldman"
-          className="group surface-panel flex flex-col gap-3 p-5 transition hover:border-primary/50 hover:bg-surface-elevated"
+          className="group surface-panel flex flex-col gap-4 transition hover:border-primary/40 hover:bg-surface-elevated"
         >
           <div className="flex items-center justify-between">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/15 text-primary">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
               <Heart className="h-5 w-5" />
             </div>
             <ChevronRight className="h-4 w-4 text-muted-foreground transition group-hover:translate-x-1 group-hover:text-primary" />
           </div>
           <div>
-            <h2 className="text-base font-semibold">Goldman Cardiac Risk Index</h2>
+            <h3 className="font-semibold">Goldman Cardiac Risk Index</h3>
             <p className="mt-1 text-sm text-muted-foreground">
               Pre-operative cardiac risk stratification with ECG patterns, anti-arrhythmics, and ACLS
               algorithms.
@@ -123,16 +123,16 @@ export function HomeProtocols() {
         </Link>
         <Link
           to="/antiarrhythmics"
-          className="group surface-panel flex flex-col gap-3 p-5 transition hover:border-primary/50 hover:bg-surface-elevated"
+          className="group surface-panel flex flex-col gap-4 transition hover:border-primary/40 hover:bg-surface-elevated"
         >
           <div className="flex items-center justify-between">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/15 text-primary">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
               <Zap className="h-5 w-5" />
             </div>
             <ChevronRight className="h-4 w-4 text-muted-foreground transition group-hover:translate-x-1 group-hover:text-primary" />
           </div>
           <div>
-            <h2 className="text-base font-semibold">Anti-arrhythmic drugs</h2>
+            <h3 className="font-semibold">Anti-arrhythmic drugs</h3>
             <p className="mt-1 text-sm text-muted-foreground">
               Vaughan-Williams classes with mnemonics. Tap a drug to preselect it in the dosing
               calculator.

@@ -6,7 +6,6 @@ type Arrhythmia = "AF" | "VT" | "VF" | "SVT" | "AFlutter" | "MAT" | "Junctional"
 type DoseRule = {
   key: string;
   label: string;
-  // returns computed dose string; if perKg provided, computed from weight
   compute: (weight: number) => { value: string; detail?: string };
   reference: string;
 };
@@ -324,29 +323,29 @@ export function TreatmentMiniApp() {
   const activeDrug = drugs.find((d) => d.name === selectedDrug) ?? drugs[0];
 
   return (
-    <div className="space-y-6">
-      <section className="space-y-2">
-        <div className="flex items-center gap-2 text-xs text-primary">
+    <div className="space-y-8">
+      <section className="space-y-3">
+        <div className="flex items-center gap-2.5 text-xs text-primary">
           <span className="pulse-dot" />
           <span className="font-mono uppercase tracking-wider">Treatment · Arrhythmias</span>
         </div>
         <h1 className="text-3xl font-semibold tracking-tight">Treatment mini app</h1>
-        <p className="text-muted-foreground max-w-2xl">
+        <p className="max-w-2xl text-muted-foreground">
           Enter patient inputs to get a stability-first recommendation and live weight-based dosing.
           Supports AF, atrial flutter, SVT, MAT, junctional tachycardia, VT, and VF.
         </p>
       </section>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        <section className="surface-panel p-5 space-y-4">
+      <div className="grid gap-5 md:grid-cols-2">
+        <section className="surface-panel space-y-5">
           <h2 className="text-lg font-semibold">Patient input</h2>
 
-          <label className="block text-sm font-medium">
-            Arrhythmia
+          <label className="block">
+            <span className="text-sm font-medium">Arrhythmia</span>
             <select
               value={arrhythmia}
               onChange={(e) => setArrhythmia(e.target.value as Arrhythmia)}
-              className="mt-1 block w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+              className="mt-2 block w-full rounded-lg border border-input bg-background px-3 py-2.5"
             >
               <option value="AF">Atrial Fibrillation (AF)</option>
               <option value="AFlutter">Atrial Flutter</option>
@@ -358,8 +357,8 @@ export function TreatmentMiniApp() {
             </select>
           </label>
 
-          <label className="block text-sm font-medium">
-            Weight (kg) — {safeWeight} kg
+          <label className="block">
+            <span className="text-sm font-medium">Weight (kg) — {safeWeight} kg</span>
             <input
               type="range"
               min={30}
@@ -373,71 +372,74 @@ export function TreatmentMiniApp() {
               type="number"
               value={weight}
               onChange={(e) => setWeight(Number(e.target.value))}
-              className="mt-2 block w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+              className="mt-2 block w-full rounded-lg border border-input bg-background px-3 py-2"
             />
           </label>
 
-          <label className="block text-sm font-medium">
-            {(arrhythmia === "AF" || arrhythmia === "AFlutter") ? "Duration (hr)" : "Onset (hr)"}
+          <label className="block">
+            <span className="text-sm font-medium">
+              {(arrhythmia === "AF" || arrhythmia === "AFlutter") ? "Duration (hr)" : "Onset (hr)"}
+            </span>
             <input
               type="number"
               value={afDuration}
               onChange={(e) => setAfDuration(Number(e.target.value))}
-              className="mt-1 block w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+              className="mt-2 block w-full rounded-lg border border-input bg-background px-3 py-2"
             />
             {(arrhythmia === "AF" || arrhythmia === "AFlutter") && (
-              <p className="text-xs text-muted-foreground mt-1">
+              <p className="text-xs text-muted-foreground mt-2">
                 {afDuration >= 48 ? "≥48h: anticoagulation required before cardioversion" : "<48h: direct cardioversion may be considered"}
               </p>
             )}
           </label>
 
           {(arrhythmia === "AF" || arrhythmia === "AFlutter" || arrhythmia === "VT") && (
-            <label className="block text-sm font-medium">
-              EF (%)
+            <label className="block">
+              <span className="text-sm font-medium">EF (%)</span>
               <input
                 type="number"
                 value={ef}
                 onChange={(e) => setEf(Number(e.target.value))}
-                className="mt-1 block w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                className="mt-2 block w-full rounded-lg border border-input bg-background px-3 py-2"
               />
-              {ef <= 35 && <p className="text-xs text-muted-foreground mt-1">Reduced EF: consider amiodarone for rhythm control</p>}
+              {ef <= 35 && <p className="text-xs text-muted-foreground mt-2">Reduced EF: consider amiodarone for rhythm control</p>}
             </label>
           )}
 
           <div className="pt-2">
-            <div className="text-sm font-semibold mb-2">Instability</div>
-            <div className="space-y-1.5">
+            <div className="text-sm font-semibold mb-3">Instability</div>
+            <div className="space-y-2">
               {instabilityFields.map(([key, text]) => (
-                <label key={key} className="flex items-center gap-2 text-sm">
+                <label key={key} className="flex items-center gap-3">
                   <input
                     type="checkbox"
                     checked={unstable[key]}
                     onChange={(e) =>
                       setUnstable((prev) => ({ ...prev, [key]: e.target.checked }))
                     }
+                    className="rounded border-input"
                   />
-                  {text}
+                  <span>{text}</span>
                 </label>
               ))}
             </div>
           </div>
         </section>
 
-        <section className="surface-panel p-5 space-y-4">
+        <section className="surface-panel space-y-5">
           <h2 className="text-lg font-semibold">Recommendation</h2>
           <div
-            className={`rounded-lg p-4 border ${
+            className={`rounded-xl p-5 border ${
               unstableNow
-                ? "border-danger/40 bg-danger/10 text-danger"
+                ? "border-destructive/40 bg-destructive/10 text-destructive"
                 : "border-border bg-surface-elevated"
             }`}
           >
             <h3 className="font-semibold">{recommendation.title}</h3>
-            <p className="text-sm mt-1 opacity-90">{recommendation.note}</p>
+            <p className="text-sm mt-2 opacity-90">{recommendation.note}</p>
           </div>
 
-          <div className="rounded-lg border border-primary/30 bg-primary/5 p-4 space-y-3">
+          <div className="rounded-xl border border-primary/20 bg-primary/5 p-5 space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-semibold text-primary">Live dosing calculator</h3>
               <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
@@ -445,12 +447,12 @@ export function TreatmentMiniApp() {
               </span>
             </div>
 
-            <label className="block text-xs font-medium">
-              Drug
+            <label className="block">
+              <span className="text-xs font-medium">Drug</span>
               <select
                 value={selectedDrug}
                 onChange={(e) => setSelectedDrug(e.target.value)}
-                className="mt-1 block w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                className="mt-2 block w-full rounded-lg border border-input bg-background px-3 py-2"
               >
                 {drugs.map((d) => (
                   <option key={d.name} value={d.name}>
@@ -460,13 +462,13 @@ export function TreatmentMiniApp() {
               </select>
             </label>
 
-            <div className="space-y-2">
+            <div className="space-y-3">
               {activeDrug.doseRules.map((rule) => {
                 const { value, detail } = rule.compute(safeWeight);
                 return (
                   <div
                     key={rule.key}
-                    className="rounded-md border border-border bg-background p-3"
+                    className="rounded-lg border border-border bg-surface p-4"
                   >
                     <div className="flex items-baseline justify-between gap-3">
                       <div className="text-xs uppercase tracking-wider text-muted-foreground">
@@ -476,30 +478,30 @@ export function TreatmentMiniApp() {
                         <div className="font-mono text-[10px] text-muted-foreground">{detail}</div>
                       )}
                     </div>
-                    <div className="mt-1 font-mono text-base font-semibold text-primary">
+                    <div className="mt-1.5 font-mono text-base font-semibold text-primary">
                       {value}
                     </div>
-                    <div className="mt-0.5 text-[11px] text-muted-foreground">
+                    <div className="mt-1 text-xs text-muted-foreground">
                       ref: {rule.reference}
                     </div>
                   </div>
                 );
               })}
             </div>
-            <p className="text-[11px] text-muted-foreground">{activeDrug.comments}</p>
+            <p className="text-xs text-muted-foreground">{activeDrug.comments}</p>
           </div>
         </section>
       </div>
 
-      <section className="surface-panel p-5 space-y-4">
+      <section className="surface-panel space-y-5">
         <h2 className="text-lg font-semibold">Drug reference</h2>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {drugs.map((drug) => (
             <button
               type="button"
               key={drug.name}
               onClick={() => setSelectedDrug(drug.name)}
-              className={`text-left rounded-lg border p-4 transition ${
+              className={`text-left rounded-xl border p-5 transition ${
                 selectedDrug === drug.name
                   ? "border-primary bg-primary/10"
                   : "border-border bg-surface-elevated hover:border-primary/40"
@@ -507,9 +509,9 @@ export function TreatmentMiniApp() {
             >
               <h3 className="font-semibold">{drug.name}</h3>
               <div className="text-xs text-muted-foreground">{drug.class}</div>
-              <div className="mt-3 text-sm">
+              <div className="mt-4 text-sm">
                 <div className="font-medium">Indications</div>
-                <ul className="list-disc pl-5 text-muted-foreground">
+                <ul className="list-disc pl-5 text-muted-foreground mt-1">
                   {drug.indications.map((i) => (
                     <li key={i}>{i}</li>
                   ))}
@@ -517,7 +519,7 @@ export function TreatmentMiniApp() {
               </div>
               <div className="mt-3 text-sm">
                 <div className="font-medium">Reference dosing</div>
-                <ul className="list-disc pl-5 text-muted-foreground">
+                <ul className="list-disc pl-5 text-muted-foreground mt-1">
                   {drug.doseRules.map((r) => (
                     <li key={r.key}>
                       <span className="font-mono text-xs">{r.key}</span>: {r.reference}
