@@ -1,5 +1,16 @@
 import React, { useMemo, useState } from "react";
-import { ChevronRight, Pill, AlertTriangle, Info, Clock, Heart, Brain, Droplets } from "lucide-react";
+import { ChevronRight, Pill, AlertTriangle, Info, Clock, Heart, Brain, Droplets, Image as ImageIcon } from "lucide-react";
+
+const imageFiles = [
+  { src: "/images/anticoagulation/stroke-timing.jpg", title: "Stroke Prevention - DOAC Timing", desc: "Early DOAC initiation (≤4 days) after AF-related ischemic stroke" },
+  { src: "/images/anticoagulation/ich-restart.jpg", title: "OAC After ICH", desc: "Restart timing (4-8 weeks) and LAAC alternative" },
+  { src: "/images/anticoagulation/vte-initial.jpg", title: "VTE Initial Treatment", desc: "DOAC dosing for acute DVT/PE" },
+  { src: "/images/anticoagulation/extended-vte.jpg", title: "Extended VTE Therapy", desc: "Reduced dose options and recurrence risk" },
+  { src: "/images/anticoagulation/kidney-disease.jpg", title: "DOACs in Kidney Disease", desc: "CKD stages and dialysis considerations" },
+  { src: "/images/anticoagulation/liver-disease.jpg", title: "DOACs in Liver Disease", desc: "Child-Pugh classification" },
+  { src: "/images/anticoagulation/obesity.jpg", title: "Frailty & Obesity", desc: "BMI ≥40 kg/m² recommendations" },
+  { src: "/images/anticoagulation/cancer-thrombosis.jpg", title: "Cancer-Associated Thrombosis", desc: "DOACs vs LMWH, Khorana score" },
+];
 
 const data = {
   title: "DOACs and Anticoagulation Clinical Algorithms",
@@ -212,6 +223,7 @@ function getRecommendation(sc: string, form: Record<string, string>) {
 }
 
 export function AnticoagulationMiniApp() {
+  const [activeTab, setActiveTab] = useState<"calculator" | "images">("calculator");
   const [step, setStep] = useState(0);
   const [scenario, setScenario] = useState("vte");
   const [form, setForm] = useState({
@@ -241,6 +253,34 @@ export function AnticoagulationMiniApp() {
           </div>
         </header>
 
+        {/* Tab Navigation */}
+        <div className="flex flex-wrap gap-2">
+          <button
+            onClick={() => setActiveTab("calculator")}
+            className={`rounded-full px-4 py-2 border text-sm font-medium transition ${
+              activeTab === "calculator"
+                ? "bg-cyan-400 text-slate-950 border-cyan-300"
+                : "bg-slate-900 border-slate-700 text-slate-300 hover:border-slate-500"
+            }`}
+          >
+            <Pill className="inline h-4 w-4 mr-1" />
+            Calculator
+          </button>
+          <button
+            onClick={() => setActiveTab("images")}
+            className={`rounded-full px-4 py-2 border text-sm font-medium transition ${
+              activeTab === "images"
+                ? "bg-cyan-400 text-slate-950 border-cyan-300"
+                : "bg-slate-900 border-slate-700 text-slate-300 hover:border-slate-500"
+            }`}
+          >
+            <ImageIcon className="inline h-4 w-4 mr-1" />
+            Images
+          </button>
+        </div>
+
+        {activeTab === "calculator" && (
+        <>
         {/* Stepper */}
         <div className="flex flex-wrap gap-2">
           {steps.map((s, i) => (
@@ -586,6 +626,31 @@ export function AnticoagulationMiniApp() {
             </div>
           </div>
         </section>
+        </>
+        )}
+
+        {/* Images Tab */}
+        {activeTab === "images" && (
+          <section className="space-y-4">
+            <h2 className="text-xl font-semibold">Guideline Images</h2>
+            <p className="text-slate-400">Reference infographics for anticoagulation management.</p>
+            <div className="grid gap-6 md:grid-cols-2">
+              {imageFiles.map((img, i) => (
+                <div key={i} className="rounded-xl border border-slate-700 bg-slate-950/50 overflow-hidden">
+                  <img 
+                    src={img.src} 
+                    alt={img.title}
+                    className="w-full h-auto"
+                  />
+                  <div className="p-3 border-t border-slate-700">
+                    <h3 className="font-medium text-cyan-400">{img.title}</h3>
+                    <p className="text-sm text-slate-400">{img.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
       </div>
     </div>
   );
