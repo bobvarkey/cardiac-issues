@@ -9,6 +9,7 @@ import {
   Printer,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ECGRuleEngine } from "@/components/ECGRuleEngine";
 
 type Input = {
   trueSyncope: boolean;
@@ -402,6 +403,9 @@ export function SyncopeTriageApp() {
           </button>
         </div>
       </div>
+
+      {/* ECG Rule Engine */}
+      <ECGRuleEngine />
     </div>
   );
 }
