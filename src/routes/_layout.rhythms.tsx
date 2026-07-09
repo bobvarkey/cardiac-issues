@@ -53,15 +53,6 @@ function RhythmsPage() {
                 .filter((a) => a.category === cat)
                 .map((a) => (
                   <article key={a.id} className="surface-panel">
-                    {a.ecgImage && (
-                      <div className="mb-4 -m-5 mb-4 overflow-hidden rounded-t-xl border-b border-border bg-surface-elevated">
-                        <img
-                          src={a.ecgImage}
-                          alt={`ECG of ${a.name}`}
-                          className="w-full h-auto"
-                        />
-                      </div>
-                    )}
                     <h3 className="font-semibold">{a.name}</h3>
                     <dl className="mt-3 space-y-1.5">
                       {Object.entries(a.features).map(([k, v]) => (

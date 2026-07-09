@@ -465,7 +465,6 @@ export type Arrhythmia = {
   category: string;
   features: Record<string, string>;
   notes?: string[];
-  ecgImage?: string;
 };
 
 export const arrhythmias: Arrhythmia[] = [
@@ -480,7 +479,6 @@ export const arrhythmias: Arrhythmia[] = [
       "PR interval": "0.12–0.20 s",
       "QRS": "< 0.12 s",
     },
-    ecgImage: "/images/ecg/nsr.svg",
   },
   {
     id: "sinus_bradycardia",
@@ -493,7 +491,6 @@ export const arrhythmias: Arrhythmia[] = [
       "QRS": "< 0.12 s",
     },
     notes: ["May be normal in athletes / sleep", "Evaluate symptoms and cause"],
-    ecgImage: "/images/ecg/sinus-bradycardia.svg",
   },
   {
     id: "sinus_tachycardia",
@@ -501,7 +498,6 @@ export const arrhythmias: Arrhythmia[] = [
     category: "Tachycardia",
     features: { Rate: "> 100 bpm", Regularity: "Regular", "P wave": "Normal", "QRS": "< 0.12 s" },
     notes: ["Usually secondary to physiologic or pathologic stress"],
-    ecgImage: "/images/ecg/sinus-tachycardia.svg",
   },
   {
     id: "svt",
@@ -513,7 +509,6 @@ export const arrhythmias: Arrhythmia[] = [
       "P wave": "Often hidden in QRS / T",
       "QRS": "< 0.12 s",
     },
-    ecgImage: "/images/ecg/svt.svg",
   },
   {
     id: "atrial_flutter",
@@ -525,7 +520,6 @@ export const arrhythmias: Arrhythmia[] = [
       "P wave": "Sawtooth flutter waves",
       "QRS": "< 0.12 s",
     },
-    ecgImage: "/images/ecg/atrial-flutter.svg",
   },
   {
     id: "atrial_fibrillation",
@@ -537,14 +531,12 @@ export const arrhythmias: Arrhythmia[] = [
       Baseline: "Fibrillatory waves",
       "QRS": "< 0.12 s",
     },
-    ecgImage: "/images/ecg/atrial-fibrillation.svg",
   },
   {
     id: "first_degree_av_block",
     name: "First-Degree AV Block",
     category: "AV Block",
     features: { "PR interval": "> 0.20 s", Rhythm: "Regular", Conduction: "Every P conducts" },
-    ecgImage: "/images/ecg/first-degree-av-block.svg",
   },
   {
     id: "second_degree_type_i",
@@ -554,7 +546,6 @@ export const arrhythmias: Arrhythmia[] = [
       Rhythm: "Irregular, grouped beats",
       "PR interval": "Progressive lengthening → dropped QRS",
     },
-    ecgImage: "/images/ecg/second-degree-av-block-type-i.svg",
   },
   {
     id: "second_degree_type_ii",
@@ -564,7 +555,6 @@ export const arrhythmias: Arrhythmia[] = [
       Rhythm: "Often regular with sudden dropped QRS",
       "PR interval": "Constant on conducted beats",
     },
-    ecgImage: "/images/ecg/second-degree-av-block-type-ii.svg",
   },
   {
     id: "third_degree_av_block",
@@ -576,14 +566,12 @@ export const arrhythmias: Arrhythmia[] = [
       "PR interval": "Variable",
       Relationship: "No P–QRS conduction",
     },
-    ecgImage: "/images/ecg/third-degree-av-block.svg",
   },
   {
     id: "junctional_rhythm",
     name: "Junctional / Nodal Rhythm",
     category: "Bradycardia",
     features: { Rate: "40–60 bpm", "P wave": "Inverted or absent", "QRS": "< 0.12 s" },
-    ecgImage: "/images/ecg/junctional-rhythm.svg",
   },
   {
     id: "pvc",
@@ -594,14 +582,12 @@ export const arrhythmias: Arrhythmia[] = [
       Timing: "Early beat, no P",
       "Compensatory pause": "Often present",
     },
-    ecgImage: "/images/ecg/pvc.svg",
   },
   {
     id: "monomorphic_vt",
     name: "Monomorphic VT",
     category: "Ventricular",
     features: { Rate: "> 100 bpm", "QRS": "Wide, uniform morphology", Rhythm: "Regular" },
-    ecgImage: "/images/ecg/monomorphic-vt.svg",
   },
   {
     id: "polymorphic_vt_torsades",
@@ -612,28 +598,24 @@ export const arrhythmias: Arrhythmia[] = [
       Appearance: "Twisting of points",
       Association: "Often prolonged QT",
     },
-    ecgImage: "/images/ecg/torsades.svg",
   },
   {
     id: "ventricular_fibrillation",
     name: "Ventricular Fibrillation",
     category: "Arrest",
     features: { Electrical: "Chaotic, disorganized", "QRS": "None", Output: "No pulse" },
-    ecgImage: "/images/ecg/ventricular-fibrillation.svg",
   },
   {
     id: "pea",
     name: "Pulseless Electrical Activity",
     category: "Arrest",
     features: { ECG: "Organized electrical activity", Pulse: "Absent" },
-    ecgImage: "/images/ecg/pea.svg",
   },
   {
     id: "asystole",
     name: "Asystole",
     category: "Arrest",
     features: { ECG: "Flat line / minimal activity", Pulse: "Absent" },
-    ecgImage: "/images/ecg/asystole.svg",
   },
   {
     id: "arvc",
@@ -650,7 +632,6 @@ export const arrhythmias: Arrhythmia[] = [
       "Exclude in young patients with VT of RV origin",
       "Family screening important",
     ],
-    ecgImage: "/images/ecg/arvc.svg",
   },
   {
     id: "brugada",
@@ -667,6 +648,5 @@ export const arrhythmias: Arrhythmia[] = [
       "May be unmasked by fever or drugs",
       "Consider in young males with syncope",
     ],
-    ecgImage: "/images/ecg/brugada.svg",
   },
 ];
