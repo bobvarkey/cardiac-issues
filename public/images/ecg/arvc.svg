@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 120">
+  <defs>
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#e5e5e5" stroke-width="0.5"/>
+    </pattern>
+  </defs>
+  <rect width="600" height="120" fill="#f9fafb"/>
+  <rect width="600" height="120" fill="url(#grid)" opacity="0.5"/>
+  <!-- ARVC pattern with epsilon wave and T-wave abnormalities in V1-V3 -->
+  <path d="M 0 60 
+           L 15 60 
+           L 18 58 P 25 58 Q 28 60 R 32 42 S 36 58 T 40 52
+           L 60 60
+           L 63 58 P 70 58 Q 73 60 R 77 42 S 81 58 T 85 52
+           L 105 60
+           L 108 58 P 115 58 Q 118 60 R 122 42 S 126 62
+           L 130 55
+           L 135 58 T 142 48
+           L 165 60
+           L 168 58 P 175 58 Q 178 60 R 182 42 S 186 58 T 190 52
+           L 210 60
+           L 213 58 P 220 58 Q 223 60 R 227 42 S 231 62
+           L 235 55
+           L 240 58 T 247 48
+           L 270 60
+           L 273 58 P 280 58 Q 283 60 R 287 42 S 291 58 T 295 52
+           L 315 60
+           L 318 58 P 325 58 Q 328 60 R 332 42 S 336 62
+           L 340 55
+           L 345 58 T 352 48
+           L 375 60
+           L 378 58 P 385 58 Q 388 60 R 392 42 S 396 58 T 400 52
+           L 420 60
+           L 423 58 P 430 58 Q 433 60 R 437 42 S 441 62
+           L 445 55
+           L 450 58 T 457 48
+           L 480 60
+           L 483 58 P 490 58 Q 493 60 R 497 42 S 501 58 T 505 52
+           L 525 60
+           L 528 58 P 535 58 Q 538 60 R 542 42 S 546 62
+           L 550 55
+           L 555 58 T 562 48
+           L 585 60
+           L 588 58 P 595 58 L 600 60" 
+        fill="none" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Epsilon wave marker -->
+  <circle cx="336" cy="62" r="2" fill="#f97316"/>
+  <circle cx="441" cy="62" r="2" fill="#f97316"/>
+  <circle cx="546" cy="62" r="2" fill="#f97316"/>
+  <text x="10" y="20" font-family="monospace" font-size="10" fill="#6b7280">ARVC (Arrhythmogenic RV Cardiomyopathy)</text>
+  <text x="10" y="110" font-family="monospace" font-size="9" fill="#9ca3af">Epsilon waves in V1-V3 | T-wave inversions | RV origin VT risk</text>
+</svg>

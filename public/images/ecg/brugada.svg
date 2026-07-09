@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 120">
+  <defs>
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#e5e5e5" stroke-width="0.5"/>
+    </pattern>
+  </defs>
+  <rect width="600" height="120" fill="#f9fafb"/>
+  <rect width="600" height="120" fill="url(#grid)" opacity="0.5"/>
+  <!-- Brugada Type 1 pattern with coved ST elevation in V1-V3 -->
+  <path d="M 0 60 
+           L 15 60 
+           L 18 58 P 25 58 Q 28 60 R 32 40 S 38 75
+           L 45 60 T 52 55
+           L 75 60
+           L 78 58 P 85 58 Q 88 60 R 92 40 S 98 75
+           L 105 60 T 112 55
+           L 135 60
+           L 138 58 P 145 58 Q 148 60 R 152 40 S 158 75
+           L 165 60 T 172 55
+           L 195 60
+           L 198 58 P 205 58 Q 208 60 R 212 40 S 218 75
+           L 225 60 T 232 55
+           L 255 60
+           L 258 58 P 265 58 Q 268 60 R 272 40 S 278 75
+           L 285 60 T 292 55
+           L 315 60
+           L 318 58 P 325 58 Q 328 60 R 332 40 S 338 75
+           L 345 60 T 352 55
+           L 375 60
+           L 378 58 P 385 58 Q 388 60 R 392 40 S 398 75
+           L 405 60 T 412 55
+           L 435 60
+           L 438 58 P 445 58 Q 448 60 R 452 40 S 458 75
+           L 465 60 T 472 55
+           L 495 60
+           L 498 58 P 505 58 Q 508 60 R 512 40 S 518 75
+           L 525 60 T 532 55
+           L 555 60
+           L 558 58 P 565 58 Q 568 60 R 572 40 S 578 75
+           L 585 60 T 592 55
+           L 600 60" 
+        fill="none" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Coved ST elevation marker -->
+  <text x="10" y="20" font-family="monospace" font-size="10" fill="#6b7280">Brugada Syndrome (Type 1 Pattern)</text>
+  <text x="10" y="110" font-family="monospace" font-size="9" fill="#9ca3af">Coved ST elevation V1-V3 | ≥2mm with T-wave inversion | SCD risk</text>
+</svg>

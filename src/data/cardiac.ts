@@ -635,4 +635,38 @@ export const arrhythmias: Arrhythmia[] = [
     features: { ECG: "Flat line / minimal activity", Pulse: "Absent" },
     ecgImage: "/images/ecg/asystole.svg",
   },
+  {
+    id: "arvc",
+    name: "ARVC (Arrhythmogenic RV Cardiomyopathy)",
+    category: "Inherited Channelopathy",
+    features: {
+      "Epsilon wave": "Small deflection after QRS in V1-V3",
+      "T-wave": "Inverted in V1-V3",
+      "QRS": "Prolonged in right precordial leads",
+      "Risk": "Ventricular arrhythmias, SCD",
+    },
+    notes: [
+      "Fibrofatty replacement of RV myocardium",
+      "Exclude in young patients with VT of RV origin",
+      "Family screening important",
+    ],
+    ecgImage: "/images/ecg/arvc.svg",
+  },
+  {
+    id: "brugada",
+    name: "Brugada Syndrome",
+    category: "Inherited Channelopathy",
+    features: {
+      "Type 1": "Coved ST elevation ≥2mm in V1-V3",
+      "ST morphology": "Downward sloping to T-wave",
+      "T-wave": "Inverted in V1-V3",
+      "Risk": "Ventricular fibrillation, SCD",
+    },
+    notes: [
+      "Autosomal dominant sodium channelopathy",
+      "May be unmasked by fever or drugs",
+      "Consider in young males with syncope",
+    ],
+    ecgImage: "/images/ecg/brugada.svg",
+  },
 ];
