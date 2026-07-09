@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 120">
+  <defs>
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#e5e5e5" stroke-width="0.5"/>
+    </pattern>
+  </defs>
+  <rect width="600" height="120" fill="#f9fafb"/>
+  <rect width="600" height="120" fill="url(#grid)" opacity="0.5"/>
+  <path d="M 0 60 
+           L 30 60 
+           L 35 58 P 45 58 Q 48 60 R 52 40 S 55 60
+           L 60 62 T 65 55
+           L 90 60
+           L 95 58 P 105 58 Q 108 60 R 112 40 S 115 60
+           L 120 62 T 125 55
+           L 150 60
+           L 155 58 P 165 58 Q 168 60 R 172 40 S 175 60
+           L 180 62 T 185 55
+           L 210 60
+           L 215 58 P 225 58 Q 228 60 R 232 40 S 235 60
+           L 240 62 T 245 55
+           L 270 60
+           L 275 58 P 285 58 Q 288 60 R 292 40 S 295 60
+           L 300 62 T 305 55
+           L 330 60
+           L 335 58 P 345 58 Q 348 60 R 352 40 S 355 60
+           L 360 62 T 365 55
+           L 390 60
+           L 395 58 P 405 58 Q 408 60 R 412 40 S 415 60
+           L 420 62 T 425 55
+           L 450 60
+           L 455 58 P 465 58 Q 468 60 R 472 40 S 475 60
+           L 480 62 T 485 55
+           L 510 60
+           L 515 58 P 525 58 Q 528 60 R 532 40 S 535 60
+           L 540 62 T 545 55
+           L 570 60
+           L 575 58 P 585 58 Q 588 60 R 592 40 S 595 60
+           L 600 60" 
+        fill="none" stroke="#1f2937" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="10" y="20" font-family="monospace" font-size="10" fill="#6b7280">Normal Sinus Rhythm</text>
+  <text x="10" y="110" font-family="monospace" font-size="9" fill="#9ca3af">Rate: 60-100 bpm | Regular | Normal P before each QRS</text>
+</svg>

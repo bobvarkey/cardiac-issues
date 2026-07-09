@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 120">
+  <defs>
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#e5e5e5" stroke-width="0.5"/>
+    </pattern>
+  </defs>
+  <rect width="600" height="120" fill="#f9fafb"/>
+  <rect width="600" height="120" fill="url(#grid)" opacity="0.5"/>
+  <!-- Type II with constant PR then sudden dropped beat -->
+  <path d="M 0 60 
+           L 15 60
+           L 18 58 P 25 58 Q 28 60 R 31 40 S 34 60 T 37 55
+           L 55 60
+           L 58 58 P 65 58 Q 68 60 R 71 40 S 74 60 T 77 55
+           L 95 60
+           L 98 58 P 105 58 Q 108 60 R 111 40 S 114 60 T 117 55
+           L 135 60
+           L 138 58 P 145 58 L 155 60
+           L 175 60
+           L 178 58 P 185 58 Q 188 60 R 191 40 S 194 60 T 197 55
+           L 215 60
+           L 218 58 P 225 58 Q 228 60 R 231 40 S 234 60 T 237 55
+           L 255 60
+           L 258 58 P 265 58 Q 268 60 R 271 40 S 274 60 T 277 55
+           L 295 60
+           L 298 58 P 305 58 L 315 60
+           L 335 60
+           L 338 58 P 345 58 Q 348 60 R 351 40 S 354 60 T 357 55
+           L 375 60
+           L 378 58 P 385 58 Q 388 60 R 391 40 S 394 60 T 397 55
+           L 415 60
+           L 418 58 P 425 58 Q 428 60 R 431 40 S 434 60 T 437 55
+           L 455 60
+           L 458 58 P 465 58 L 475 60
+           L 495 60
+           L 498 58 P 505 58 Q 508 60 R 511 40 S 514 60 T 517 55
+           L 535 60
+           L 538 58 P 545 58 Q 548 60 R 551 40 S 554 60 T 557 55
+           L 575 60
+           L 578 58 P 585 58 L 595 60
+           L 600 60" 
+        fill="none" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="10" y="20" font-family="monospace" font-size="10" fill="#6b7280">Second-Degree AV Block Type II</text>
+  <text x="10" y="110" font-family="monospace" font-size="9" fill="#9ca3af">Constant PR on conducted beats | Sudden dropped QRS | Often regular pattern</text>
+</svg>

@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 120">
+  <defs>
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#e5e5e5" stroke-width="0.5"/>
+    </pattern>
+  </defs>
+  <rect width="600" height="120" fill="#f9fafb"/>
+  <rect width="600" height="120" fill="url(#grid)" opacity="0.5"/>
+  <!-- Junctional rhythm with inverted/absent P waves -->
+  <path d="M 0 60 
+           L 40 60
+           Q 43 60 R 46 38 S 49 60
+           L 52 65 T 56 52
+           L 100 60
+           Q 103 60 R 106 38 S 109 60
+           L 112 65 T 116 52
+           L 160 60
+           Q 163 60 R 166 38 S 169 60
+           L 172 65 T 176 52
+           L 220 60
+           Q 223 60 R 226 38 S 229 60
+           L 232 65 T 236 52
+           L 280 60
+           Q 283 60 R 286 38 S 289 60
+           L 292 65 T 296 52
+           L 340 60
+           Q 343 60 R 346 38 S 349 60
+           L 352 65 T 356 52
+           L 400 60
+           Q 403 60 R 406 38 S 409 60
+           L 412 65 T 416 52
+           L 460 60
+           Q 463 60 R 466 38 S 469 60
+           L 472 65 T 476 52
+           L 520 60
+           Q 523 60 R 526 38 S 529 60
+           L 532 65 T 536 52
+           L 580 60
+           Q 583 60 R 586 38 S 589 60
+           L 592 65 T 596 52
+           L 600 60" 
+        fill="none" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="10" y="20" font-family="monospace" font-size="10" fill="#6b7280">Junctional (Nodal) Rhythm</text>
+  <text x="10" y="110" font-family="monospace" font-size="9" fill="#9ca3af">Rate: 40-60 bpm | Regular | P absent or inverted | Narrow QRS</text>
+</svg>

@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 120">
+  <defs>
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#e5e5e5" stroke-width="0.5"/>
+    </pattern>
+  </defs>
+  <rect width="600" height="120" fill="#f9fafb"/>
+  <rect width="600" height="120" fill="url(#grid)" opacity="0.5"/>
+  <!-- Fibrillatory baseline -->
+  <path d="M 0 60 
+           L 5 62 L 8 58 L 12 63 L 16 57 L 20 62 L 24 58 L 28 64 L 32 56
+           Q 34 60 R 36 35 S 39 58
+           L 42 55 L 46 63 L 50 58 L 54 64 L 58 57 L 62 61 L 66 59
+           Q 70 60 R 74 38 S 78 62
+           L 82 56 L 86 63 L 90 58 L 94 61 L 98 57 L 102 64 L 106 59
+           Q 110 60 R 115 32 S 120 65
+           L 124 58 L 128 62 L 132 57 L 136 63 L 140 56 L 144 60 L 148 58
+           Q 152 60 R 158 40 S 164 58
+           L 168 63 L 172 57 L 176 61 L 180 58 L 184 64 L 188 56 L 192 62
+           Q 196 60 R 202 36 S 208 62
+           L 212 57 L 216 63 L 220 58 L 224 61 L 228 55 L 232 64 L 236 58
+           Q 240 60 R 248 42 S 256 58
+           L 260 64 L 264 56 L 268 62 L 272 57 L 276 61 L 280 58 L 284 63
+           Q 288 60 R 296 35 S 304 64
+           L 308 58 L 312 62 L 316 57 L 320 63 L 324 55 L 328 60 L 332 58
+           Q 336 60 R 344 38 S 352 62
+           L 356 56 L 360 63 L 364 58 L 368 61 L 372 54 L 376 64 L 380 57
+           Q 384 60 R 392 42 S 400 60
+           L 404 64 L 408 56 L 412 62 L 416 57 L 420 61 L 424 58 L 428 63
+           Q 432 60 R 440 35 S 448 64
+           L 452 57 L 456 63 L 460 58 L 464 62 L 468 55 L 472 64 L 476 58
+           Q 480 60 R 488 40 S 496 60
+           L 500 64 L 504 56 L 508 63 L 512 57 L 516 61 L 520 58 L 524 63
+           Q 528 60 R 536 36 S 544 64
+           L 548 57 L 552 62 L 556 58 L 560 63 L 564 55 L 568 60 L 572 57
+           Q 576 60 R 584 38 S 592 62
+           L 596 56 L 600 60" 
+        fill="none" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="10" y="20" font-family="monospace" font-size="10" fill="#6b7280">Atrial Fibrillation</text>
+  <text x="10" y="110" font-family="monospace" font-size="9" fill="#9ca3af">Irregularly irregular | No P waves | Fibrillatory baseline | Narrow QRS</text>
+</svg>

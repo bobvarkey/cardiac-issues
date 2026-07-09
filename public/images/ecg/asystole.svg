@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 120">
+  <defs>
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#e5e5e5" stroke-width="0.5"/>
+    </pattern>
+  </defs>
+  <rect width="600" height="120" fill="#f9fafb"/>
+  <rect width="600" height="120" fill="url(#grid)" opacity="0.5"/>
+  <!-- Asystole - flat line -->
+  <path d="M 0 60 L 600 60" 
+        fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round"/>
+  <text x="10" y="20" font-family="monospace" font-size="10" fill="#6b7280">Asystole</text>
+  <text x="10" y="110" font-family="monospace" font-size="9" fill="#9ca3af">Flat line / minimal activity | No electrical activity | Pulseless</text>
+</svg>

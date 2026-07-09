@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 120">
+  <defs>
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#e5e5e5" stroke-width="0.5"/>
+    </pattern>
+  </defs>
+  <rect width="600" height="120" fill="#f9fafb"/>
+  <rect width="600" height="120" fill="url(#grid)" opacity="0.5"/>
+  <!-- PVC with wide bizarre QRS and compensatory pause -->
+  <path d="M 0 60 
+           L 10 60 
+           L 13 58 P 20 58 Q 23 60 R 26 40 S 29 60
+           L 32 62 T 36 55
+           L 50 60
+           L 53 58 P 60 58 Q 63 60 R 66 40 S 69 60
+           L 72 62 T 76 55
+           L 85 60
+           Q 88 58 R 92 20 S 100 75 T 108 50
+           L 150 60
+           L 153 58 P 160 58 Q 163 60 R 166 40 S 169 60
+           L 172 62 T 176 55
+           L 190 60
+           L 193 58 P 200 58 Q 203 60 R 206 40 S 209 60
+           L 212 62 T 216 55
+           L 230 60
+           L 233 58 P 240 58 Q 243 60 R 246 40 S 249 60
+           L 252 62 T 256 55
+           L 265 60
+           Q 268 58 R 272 20 S 280 75 T 288 50
+           L 330 60
+           L 333 58 P 340 58 Q 343 60 R 346 40 S 349 60
+           L 352 62 T 356 55
+           L 370 60
+           L 373 58 P 380 58 Q 383 60 R 386 40 S 389 60
+           L 392 62 T 396 55
+           L 410 60
+           L 413 58 P 420 58 Q 423 60 R 426 40 S 429 60
+           L 432 62 T 436 55
+           L 450 60
+           L 453 58 P 460 58 Q 463 60 R 466 40 S 469 60
+           L 472 62 T 476 55
+           L 485 60
+           Q 488 58 R 492 20 S 500 75 T 508 50
+           L 550 60
+           L 553 58 P 560 58 Q 563 60 R 566 40 S 569 60
+           L 572 62 T 576 55
+           L 600 60" 
+        fill="none" stroke="#1f2937" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="10" y="20" font-family="monospace" font-size="10" fill="#6b7280">Premature Ventricular Complex (PVC)</text>
+  <text x="10" y="110" font-family="monospace" font-size="9" fill="#9ca3af">Wide bizarre QRS | Early beat | No P | Compensatory pause</text>
+</svg>

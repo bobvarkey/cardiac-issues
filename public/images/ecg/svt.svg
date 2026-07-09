@@ -1,0 +1,125 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 120">
+  <defs>
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#e5e5e5" stroke-width="0.5"/>
+    </pattern>
+  </defs>
+  <rect width="600" height="120" fill="#f9fafb"/>
+  <rect width="600" height="120" fill="url(#grid)" opacity="0.5"/>
+  <path d="M 0 60 
+           L 8 60 
+           Q 10 60 R 12 38 S 14 60
+           L 16 65 T 19 52
+           L 24 60
+           Q 26 60 R 28 38 S 30 60
+           L 32 65 T 35 52
+           L 40 60
+           Q 42 60 R 44 38 S 46 60
+           L 48 65 T 51 52
+           L 56 60
+           Q 58 60 R 60 38 S 62 60
+           L 64 65 T 67 52
+           L 72 60
+           Q 74 60 R 76 38 S 78 60
+           L 80 65 T 83 52
+           L 88 60
+           Q 90 60 R 92 38 S 94 60
+           L 96 65 T 99 52
+           L 104 60
+           Q 106 60 R 108 38 S 110 60
+           L 112 65 T 115 52
+           L 120 60
+           Q 122 60 R 124 38 S 126 60
+           L 128 65 T 131 52
+           L 136 60
+           Q 138 60 R 140 38 S 142 60
+           L 144 65 T 147 52
+           L 152 60
+           Q 154 60 R 156 38 S 158 60
+           L 160 65 T 163 52
+           L 168 60
+           Q 170 60 R 172 38 S 174 60
+           L 176 65 T 179 52
+           L 184 60
+           Q 186 60 R 188 38 S 190 60
+           L 192 65 T 195 52
+           L 200 60
+           Q 202 60 R 204 38 S 206 60
+           L 208 65 T 211 52
+           L 216 60
+           Q 218 60 R 220 38 S 222 60
+           L 224 65 T 227 52
+           L 232 60
+           Q 234 60 R 236 38 S 238 60
+           L 240 65 T 243 52
+           L 248 60
+           Q 250 60 R 252 38 S 254 60
+           L 256 65 T 259 52
+           L 264 60
+           Q 266 60 R 268 38 S 270 60
+           L 272 65 T 275 52
+           L 280 60
+           Q 282 60 R 284 38 S 286 60
+           L 288 65 T 291 52
+           L 296 60
+           Q 298 60 R 300 38 S 302 60
+           L 304 65 T 307 52
+           L 312 60
+           Q 314 60 R 316 38 S 318 60
+           L 320 65 T 323 52
+           L 328 60
+           Q 330 60 R 332 38 S 334 60
+           L 336 65 T 339 52
+           L 344 60
+           Q 346 60 R 348 38 S 350 60
+           L 352 65 T 355 52
+           L 360 60
+           Q 362 60 R 364 38 S 366 60
+           L 368 65 T 371 52
+           L 376 60
+           Q 378 60 R 380 38 S 382 60
+           L 384 65 T 387 52
+           L 392 60
+           Q 394 60 R 396 38 S 398 60
+           L 400 65 T 403 52
+           L 408 60
+           Q 410 60 R 412 38 S 414 60
+           L 416 65 T 419 52
+           L 424 60
+           Q 426 60 R 428 38 S 430 60
+           L 432 65 T 435 52
+           L 440 60
+           Q 442 60 R 444 38 S 446 60
+           L 448 65 T 451 52
+           L 456 60
+           Q 458 60 R 460 38 S 462 60
+           L 464 65 T 467 52
+           L 472 60
+           Q 474 60 R 476 38 S 478 60
+           L 480 65 T 483 52
+           L 488 60
+           Q 490 60 R 492 38 S 494 60
+           L 496 65 T 499 52
+           L 504 60
+           Q 506 60 R 508 38 S 510 60
+           L 512 65 T 515 52
+           L 520 60
+           Q 522 60 R 524 38 S 526 60
+           L 528 65 T 531 52
+           L 536 60
+           Q 538 60 R 540 38 S 542 60
+           L 544 65 T 547 52
+           L 552 60
+           Q 554 60 R 556 38 S 558 60
+           L 560 65 T 563 52
+           L 568 60
+           Q 570 60 R 572 38 S 574 60
+           L 576 65 T 579 52
+           L 584 60
+           Q 586 60 R 588 38 S 590 60
+           L 592 65 T 595 52
+           L 600 60" 
+        fill="none" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="10" y="20" font-family="monospace" font-size="10" fill="#6b7280">Supraventricular Tachycardia (SVT)</text>
+  <text x="10" y="110" font-family="monospace" font-size="9" fill="#9ca3af">Rate: 150-250 bpm | Regular | P hidden/absent | Narrow QRS &lt;0.12s</text>
+</svg>

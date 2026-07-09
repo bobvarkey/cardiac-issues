@@ -24,46 +24,55 @@ export const Route = createFileRoute("/_layout/rhythms")({
 function RhythmsPage() {
   const categories = Array.from(new Set(arrhythmias.map((a) => a.category)));
   return (
-    <div className="space-y-6">
+    <div className="space-y-10">
       <Link
         to="/"
-        className="inline-flex items-center gap-1.5 text-xs text-muted-foreground transition hover:text-foreground"
+        className="inline-flex items-center gap-2 text-sm text-muted-foreground transition hover:text-foreground"
       >
-        <ArrowLeft className="h-3 w-3" /> Home
+        <ArrowLeft className="h-4 w-4" /> Home
       </Link>
 
-      <header className="space-y-2 border-b border-border pb-6">
+      <header className="space-y-3 border-b border-border pb-6">
         <div className="font-mono text-[10px] uppercase tracking-wider text-primary">
           Reference · ECG features
         </div>
-        <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">Common arrhythmias</h1>
+        <h1 className="text-3xl font-semibold tracking-tight">Common arrhythmias</h1>
         <p className="text-muted-foreground">
-          Quick ECG feature guide organized by clinical category.
+          Quick ECG feature guide with representative rhythm strips.
         </p>
       </header>
 
-      <div className="space-y-8">
+      <div className="space-y-10">
         {categories.map((cat) => (
-          <section key={cat} className="space-y-3">
+          <section key={cat} className="space-y-4">
             <h2 className="font-mono text-xs uppercase tracking-wider text-muted-foreground">
               {cat}
             </h2>
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="grid gap-5 sm:grid-cols-2">
               {arrhythmias
                 .filter((a) => a.category === cat)
                 .map((a) => (
-                  <article key={a.id} className="surface-panel p-4">
-                    <h3 className="text-sm font-semibold">{a.name}</h3>
+                  <article key={a.id} className="surface-panel">
+                    {a.ecgImage && (
+                      <div className="mb-4 -m-5 mb-4 overflow-hidden rounded-t-xl border-b border-border bg-surface-elevated">
+                        <img
+                          src={a.ecgImage}
+                          alt={`ECG of ${a.name}`}
+                          className="w-full h-auto"
+                        />
+                      </div>
+                    )}
+                    <h3 className="font-semibold">{a.name}</h3>
                     <dl className="mt-3 space-y-1.5">
                       {Object.entries(a.features).map(([k, v]) => (
-                        <div key={k} className="flex justify-between gap-3 text-xs">
+                        <div key={k} className="flex justify-between gap-3 text-sm">
                           <dt className="text-muted-foreground">{k}</dt>
                           <dd className="text-right font-mono">{v}</dd>
                         </div>
                       ))}
                     </dl>
                     {a.notes && (
-                      <ul className="mt-3 space-y-1 border-t border-border pt-2 text-xs text-muted-foreground">
+                      <ul className="mt-3 space-y-1 border-t border-border pt-3 text-sm text-muted-foreground">
                         {a.notes.map((n) => (
                           <li key={n}>· {n}</li>
                         ))}
