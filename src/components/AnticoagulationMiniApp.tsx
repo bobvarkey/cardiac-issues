@@ -152,6 +152,21 @@ const data = {
       ],
     },
   },
+  keyTakeaways: [
+    {
+      title: "Key Takeaway",
+      drug: "Rivaroxaban",
+      statement: "Rivaroxaban is a BCS Class II compound with limited aqueous solubility (only 5-7 mg/L) but high permeability.",
+      doseEffect: {
+        lowDose: "For lower doses (≤10 mg), even this limited solubility is sufficient.",
+        higherDose: "For 15-20 mg doses, the drug cannot fully dissolve in gastric fluid alone.",
+      },
+      foodEffect: "Food, particularly fat content and bile acids, enhances solubilization and absorption.",
+      bcsDefinition: "Class II drugs have low solubility but high permeability.",
+      mechanism: "Food delays gastric emptying, increasing gastric residence time, which contributes to enhanced dissolution of rivaroxaban.",
+      acctFound: false,
+    },
+  ],
 };
 
 const steps = [
