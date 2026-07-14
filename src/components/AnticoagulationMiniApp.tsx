@@ -607,6 +607,11 @@ export function AnticoagulationMiniApp() {
                 ))}
               </div>
             </div>
+
+            {/* Drug Key Takeaways */}
+            {data.keyTakeaways.map((item, i) => (
+              <KeyTakeawayCard key={i} item={item} />
+            ))}
           </div>
         </section>
 
