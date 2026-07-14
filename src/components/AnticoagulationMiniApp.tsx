@@ -242,6 +242,40 @@ function getRecommendation(sc: string, form: Record<string, string>) {
   return out;
 }
 
+function KeyTakeawayCard({ item }: { item: (typeof data.keyTakeaways)[number] }) {
+  return (
+    <div className="p-4 rounded-lg bg-slate-950/50 border border-cyan-500/30 md:col-span-2">
+      <h3 className="font-medium text-cyan-400 mb-3 flex items-center gap-2">
+        <Info className="h-4 w-4" />
+        {item.title} — {item.drug}
+      </h3>
+      <p className="text-sm text-slate-300 mb-3">{item.statement}</p>
+      <div className="grid gap-3 md:grid-cols-2">
+        <div className="p-3 rounded bg-slate-900 border border-slate-700">
+          <div className="text-xs text-emerald-400 font-medium mb-1">Low dose (≤10 mg)</div>
+          <div className="text-sm text-slate-300">{item.doseEffect.lowDose}</div>
+        </div>
+        <div className="p-3 rounded bg-slate-900 border border-slate-700">
+          <div className="text-xs text-amber-400 font-medium mb-1">Higher dose (15-20 mg)</div>
+          <div className="text-sm text-slate-300">{item.doseEffect.higherDose}</div>
+        </div>
+      </div>
+      <div className="mt-3 p-3 rounded bg-slate-900 border border-slate-700">
+        <div className="text-xs text-cyan-400 font-medium mb-1">Food effect</div>
+        <div className="text-sm text-slate-300">{item.foodEffect}</div>
+      </div>
+      <div className="mt-3 grid gap-3 md:grid-cols-2">
+        <div className="text-xs text-slate-400">
+          <span className="text-slate-300 font-medium">BCS definition:</span> {item.bcsDefinition}
+        </div>
+        <div className="text-xs text-slate-400">
+          <span className="text-slate-300 font-medium">Mechanism:</span> {item.mechanism}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function AnticoagulationMiniApp() {
   const [activeTab, setActiveTab] = useState<"calculator" | "images">("calculator");
   const [step, setStep] = useState(0);
