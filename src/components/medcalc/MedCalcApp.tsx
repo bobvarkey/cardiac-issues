@@ -277,29 +277,32 @@ function HomeView({ onOpen, onGoTab }: { onOpen: (id: string) => void; onGoTab: 
       </section>
 
       {/* Grouped calculators */}
-      {grouped.map(([cat, list]) => (
-        <CollapsibleSection key={cat} title={cat} count={list.length} defaultOpen={false}>
-          <div className="grid gap-3 sm:grid-cols-2">
-            {list.map((c) => (
-              <button
-                key={c.id}
-                onClick={() => onOpen(c.id)}
-                className="glass-card group text-left transition active:scale-[0.98]"
-              >
-                <div className="flex items-start gap-3">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/15 text-2xl">
-                    {c.symbol}
+      {grouped.map(([cat, list], idx) => (
+        <div key={cat} {...(idx === 0 ? { "data-tour": "collapsible" } : {})}>
+          <CollapsibleSection title={cat} count={list.length} defaultOpen={false}>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {list.map((c) => (
+                <button
+                  key={c.id}
+                  onClick={() => onOpen(c.id)}
+                  className="glass-card group text-left transition active:scale-[0.98]"
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/15 text-2xl">
+                      {c.symbol}
+                    </div>
+                    <div className="min-w-0">
+                      <div className="truncate font-semibold text-white">{c.name}</div>
+                      <div className="text-sm text-white/75">{c.tagline}</div>
+                    </div>
                   </div>
-                  <div className="min-w-0">
-                    <div className="truncate font-semibold text-white">{c.name}</div>
-                    <div className="text-sm text-white/75">{c.tagline}</div>
-                  </div>
-                </div>
-              </button>
-            ))}
-          </div>
-        </CollapsibleSection>
+                </button>
+              ))}
+            </div>
+          </CollapsibleSection>
+        </div>
       ))}
+
 
       <Disclaimer />
     </div>
