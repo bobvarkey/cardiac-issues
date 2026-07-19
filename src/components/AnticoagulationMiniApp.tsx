@@ -287,9 +287,71 @@ function KeyTakeawayCard({ item }: { item: (typeof data.keyTakeaways)[number] })
           <span className="text-slate-300 font-medium">Mechanism:</span> {item.mechanism}
         </div>
       </div>
+
+      <div className="mt-4 p-3 rounded bg-slate-900 border border-cyan-500/40">
+        <div className="text-xs text-cyan-400 font-medium mb-2 flex items-center gap-1">
+          <Clock className="h-3.5 w-3.5" /> Meal timing rule
+        </div>
+        <div className="text-sm text-slate-300">{item.mealTimingRule}</div>
+      </div>
+
+      <div className="mt-4">
+        <div className="text-xs uppercase tracking-wide text-cyan-400 font-semibold mb-2">
+          Dosing by indication
+        </div>
+        <div className="overflow-x-auto rounded border border-slate-700">
+          <table className="w-full text-sm">
+            <thead className="bg-slate-900 text-slate-400 text-xs">
+              <tr>
+                <th className="text-left p-2">Indication</th>
+                <th className="text-left p-2">Dose</th>
+                <th className="text-left p-2">Meal timing</th>
+              </tr>
+            </thead>
+            <tbody>
+              {item.dosingByIndication.map((r) => (
+                <tr key={r.indication} className="border-t border-slate-800">
+                  <td className="p-2 text-slate-300">{r.indication}</td>
+                  <td className="p-2 text-emerald-300 font-medium">{r.dose}</td>
+                  <td className="p-2 text-slate-400">{r.mealTiming}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div className="mt-4">
+        <div className="text-xs uppercase tracking-wide text-cyan-400 font-semibold mb-2">
+          Dosing by renal function
+        </div>
+        <div className="overflow-x-auto rounded border border-slate-700">
+          <table className="w-full text-sm">
+            <thead className="bg-slate-900 text-slate-400 text-xs">
+              <tr>
+                <th className="text-left p-2">Renal function</th>
+                <th className="text-left p-2">AF (stroke prev.)</th>
+                <th className="text-left p-2">VTE</th>
+                <th className="text-left p-2">Note</th>
+              </tr>
+            </thead>
+            <tbody>
+              {item.dosingByRenal.map((r) => (
+                <tr key={r.range} className="border-t border-slate-800">
+                  <td className="p-2 text-slate-300 font-medium">{r.range}</td>
+                  <td className="p-2 text-emerald-300">{r.af}</td>
+                  <td className="p-2 text-emerald-300">{r.vte}</td>
+                  <td className="p-2 text-slate-400">{r.note}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 }
+
 
 export function AnticoagulationMiniApp() {
   const [activeTab, setActiveTab] = useState<"calculator" | "images">("calculator");
