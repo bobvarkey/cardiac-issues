@@ -196,9 +196,13 @@ export function MedCalcApp() {
         <TabButton icon={Clock} label="History" active={tab === "history"} onClick={() => { tap(); setTab("history"); }} dataTour="history" />
         <TabButton icon={SettingsIcon} label="Settings" active={tab === "settings"} onClick={() => { tap(); setTab("settings"); }} />
       </nav>
+
+      {/* First-run walkthrough */}
+      <HomeTour enabled={tab === "home" && !searching} />
     </div>
   );
 }
+
 
 // ---------- Home ----------
 function HomeView({ onOpen, onGoTab }: { onOpen: (id: string) => void; onGoTab: (t: Tab) => void }) {
