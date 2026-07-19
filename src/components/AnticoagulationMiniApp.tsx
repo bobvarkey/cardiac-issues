@@ -165,8 +165,23 @@ const data = {
       bcsDefinition: "Class II drugs have low solubility but high permeability.",
       mechanism: "Food delays gastric emptying, increasing gastric residence time, which contributes to enhanced dissolution of rivaroxaban.",
       acctFound: false,
+      dosingByIndication: [
+        { indication: "Nonvalvular AF — stroke prevention", dose: "20 mg once daily", mealTiming: "With evening meal" },
+        { indication: "VTE (DVT/PE) — initial treatment", dose: "15 mg BID × 21 days, then 20 mg once daily", mealTiming: "With food (both 15 mg doses ~12 h apart, then evening meal)" },
+        { indication: "Extended VTE prevention (after ≥6 months)", dose: "10 mg once daily", mealTiming: "With or without food" },
+        { indication: "VTE prophylaxis after hip/knee arthroplasty", dose: "10 mg once daily × 12–35 days", mealTiming: "With or without food" },
+        { indication: "CAD/PAD (with aspirin 81 mg)", dose: "2.5 mg BID", mealTiming: "With or without food" },
+      ],
+      dosingByRenal: [
+        { range: "CrCl >50 mL/min", af: "20 mg daily", vte: "Standard (15 mg BID → 20 mg daily)", note: "No adjustment" },
+        { range: "CrCl 30–50 mL/min", af: "15 mg daily", vte: "Standard; use with caution", note: "Reduce AF dose" },
+        { range: "CrCl 15–29 mL/min", af: "15 mg daily (use with caution)", vte: "Avoid if possible", note: "Limited data; consider apixaban" },
+        { range: "CrCl <15 mL/min / dialysis", af: "Avoid", vte: "Avoid", note: "Not recommended" },
+      ],
+      mealTimingRule: "Always give 15 mg and 20 mg doses WITH FOOD — absorption drops ~30–40% when taken fasting, risking subtherapeutic anticoagulation. 2.5 mg and 10 mg doses may be taken with or without food.",
     },
   ],
+
 };
 
 const steps = [
