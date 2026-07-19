@@ -214,7 +214,21 @@ function HomeView({ onOpen, onGoTab }: { onOpen: (id: string) => void; onGoTab: 
       <section className="hero-card relative overflow-hidden rounded-3xl border border-white/20 p-6">
         <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/25 blur-3xl" />
         <div className="absolute -bottom-14 -left-10 h-44 w-44 rounded-full bg-fuchsia-400/40 blur-3xl" />
-        <div className="relative">
+
+        {/* Glowing heart */}
+        <div className="pointer-events-none absolute -right-8 -top-6 h-56 w-56 sm:-right-4 sm:h-64 sm:w-64">
+          <div className="absolute inset-4 rounded-full bg-fuchsia-400/50 blur-3xl" />
+          <div className="absolute inset-8 rounded-full bg-amber-300/40 blur-2xl" />
+          <img
+            src={heartHero}
+            alt="Glowing sunset-gradient anatomical heart"
+            width={512}
+            height={512}
+            className="relative h-full w-full animate-[heartFloat_6s_ease-in-out_infinite] object-contain drop-shadow-[0_0_30px_rgba(255,120,180,0.55)]"
+          />
+        </div>
+
+        <div className="relative max-w-[68%]">
           <div className="inline-flex items-center gap-2 rounded-full bg-white/20 px-3 py-1 text-[11px] font-medium uppercase tracking-widest text-white backdrop-blur">
             <Sparkles className="h-3 w-3" /> Sunset Blaze
           </div>
@@ -224,7 +238,7 @@ function HomeView({ onOpen, onGoTab }: { onOpen: (id: string) => void; onGoTab: 
               beautifully calm.
             </span>
           </h1>
-          <p className="mt-2 text-[15px] text-white/85">
+          <p className="mt-2 text-[15px] text-white/90">
             Type numbers. Get answers. Save what matters. You're always one tap from a fresh
             calculation.
           </p>
