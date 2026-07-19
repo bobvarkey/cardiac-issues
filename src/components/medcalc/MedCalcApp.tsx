@@ -629,11 +629,13 @@ function TabButton({
   label,
   active,
   onClick,
+  dataTour,
 }: {
   icon: React.ComponentType<{ className?: string; strokeWidth?: number }>;
   label: string;
   active: boolean;
   onClick: () => void;
+  dataTour?: string;
 }) {
   return (
     <button
@@ -642,12 +644,14 @@ function TabButton({
         active ? "text-white" : "text-white/70"
       }`}
       aria-current={active ? "page" : undefined}
+      data-tour={dataTour}
     >
       <Icon className={`h-5 w-5 ${active ? "scale-110" : ""} transition`} strokeWidth={active ? 2.6 : 2} />
       <span className={active ? "font-semibold" : ""}>{label}</span>
     </button>
   );
 }
+
 
 function CollapsibleSection({
   title,
