@@ -191,7 +191,7 @@ export function MedCalcApp() {
       <nav className="glass-tabbar absolute bottom-0 left-0 right-0 z-30 flex items-center justify-around px-2 py-2">
         <TabButton icon={HomeIcon} label="Home" active={tab === "home"} onClick={() => { tap(); setTab("home"); }} />
         <TabButton icon={CalcIcon} label="Calc" active={tab === "calc"} onClick={() => { tap(); setTab("calc"); }} />
-        <TabButton icon={Clock} label="History" active={tab === "history"} onClick={() => { tap(); setTab("history"); }} />
+        <TabButton icon={Clock} label="History" active={tab === "history"} onClick={() => { tap(); setTab("history"); }} dataTour="history" />
         <TabButton icon={SettingsIcon} label="Settings" active={tab === "settings"} onClick={() => { tap(); setTab("settings"); }} />
       </nav>
     </div>
