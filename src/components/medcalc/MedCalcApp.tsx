@@ -16,6 +16,7 @@ import {
 
 import { calculators, getCalculator, type Calculator } from "@/lib/medcalc/calculators";
 import { history, type HistoryEntry } from "@/lib/medcalc/history";
+import heartHero from "@/assets/medcalc-heart.png";
 
 type Tab = "home" | "calc" | "history" | "settings";
 
