@@ -112,7 +112,9 @@ export function MedCalcApp() {
             placeholder="Search calculators…"
             className="w-full rounded-full border border-white/20 bg-white/10 py-2.5 pl-10 pr-4 text-[15px] text-white placeholder:text-white/60 backdrop-blur focus:border-white/40 focus:outline-none"
             aria-label="Search MedCalc"
+            data-tour="search"
           />
+
         </div>
       </header>
 
