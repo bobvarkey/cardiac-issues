@@ -18,6 +18,7 @@ import { Route as LayoutSyncopeTriageRouteImport } from './routes/_layout.syncop
 import { Route as LayoutSyncopeRouteImport } from './routes/_layout.syncope'
 import { Route as LayoutScoresRouteImport } from './routes/_layout.scores'
 import { Route as LayoutRhythmsRouteImport } from './routes/_layout.rhythms'
+import { Route as LayoutMedcalcRouteImport } from './routes/_layout.medcalc'
 import { Route as LayoutGoldmanRouteImport } from './routes/_layout.goldman'
 import { Route as LayoutAnticoagulationRouteImport } from './routes/_layout.anticoagulation'
 import { Route as LayoutAntiarrhythmicsRouteImport } from './routes/_layout.antiarrhythmics'
@@ -67,6 +68,11 @@ const LayoutRhythmsRoute = LayoutRhythmsRouteImport.update({
   path: '/rhythms',
   getParentRoute: () => LayoutRoute,
 } as any)
+const LayoutMedcalcRoute = LayoutMedcalcRouteImport.update({
+  id: '/medcalc',
+  path: '/medcalc',
+  getParentRoute: () => LayoutRoute,
+} as any)
 const LayoutGoldmanRoute = LayoutGoldmanRouteImport.update({
   id: '/goldman',
   path: '/goldman',
@@ -94,6 +100,7 @@ export interface FileRoutesByFullPath {
   '/anticoagulation': typeof LayoutAnticoagulationRoute
   '/goldman': typeof LayoutGoldmanRoute
   '/index': typeof LayoutChar91indexChar93Route
+  '/medcalc': typeof LayoutMedcalcRoute
   '/rhythms': typeof LayoutRhythmsRoute
   '/scores': typeof LayoutScoresRoute
   '/syncope': typeof LayoutSyncopeRoute
@@ -107,6 +114,7 @@ export interface FileRoutesByTo {
   '/anticoagulation': typeof LayoutAnticoagulationRoute
   '/goldman': typeof LayoutGoldmanRoute
   '/index': typeof LayoutChar91indexChar93Route
+  '/medcalc': typeof LayoutMedcalcRoute
   '/rhythms': typeof LayoutRhythmsRoute
   '/scores': typeof LayoutScoresRoute
   '/syncope': typeof LayoutSyncopeRoute
@@ -123,6 +131,7 @@ export interface FileRoutesById {
   '/_layout/anticoagulation': typeof LayoutAnticoagulationRoute
   '/_layout/goldman': typeof LayoutGoldmanRoute
   '/_layout/index': typeof LayoutChar91indexChar93Route
+  '/_layout/medcalc': typeof LayoutMedcalcRoute
   '/_layout/rhythms': typeof LayoutRhythmsRoute
   '/_layout/scores': typeof LayoutScoresRoute
   '/_layout/syncope': typeof LayoutSyncopeRoute
@@ -140,6 +149,7 @@ export interface FileRouteTypes {
     | '/anticoagulation'
     | '/goldman'
     | '/index'
+    | '/medcalc'
     | '/rhythms'
     | '/scores'
     | '/syncope'
@@ -153,6 +163,7 @@ export interface FileRouteTypes {
     | '/anticoagulation'
     | '/goldman'
     | '/index'
+    | '/medcalc'
     | '/rhythms'
     | '/scores'
     | '/syncope'
@@ -168,6 +179,7 @@ export interface FileRouteTypes {
     | '/_layout/anticoagulation'
     | '/_layout/goldman'
     | '/_layout/index'
+    | '/_layout/medcalc'
     | '/_layout/rhythms'
     | '/_layout/scores'
     | '/_layout/syncope'
@@ -247,6 +259,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutRhythmsRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/_layout/medcalc': {
+      id: '/_layout/medcalc'
+      path: '/medcalc'
+      fullPath: '/medcalc'
+      preLoaderRoute: typeof LayoutMedcalcRouteImport
+      parentRoute: typeof LayoutRoute
+    }
     '/_layout/goldman': {
       id: '/_layout/goldman'
       path: '/goldman'
@@ -283,6 +302,7 @@ interface LayoutRouteChildren {
   LayoutAnticoagulationRoute: typeof LayoutAnticoagulationRoute
   LayoutGoldmanRoute: typeof LayoutGoldmanRoute
   LayoutChar91indexChar93Route: typeof LayoutChar91indexChar93Route
+  LayoutMedcalcRoute: typeof LayoutMedcalcRoute
   LayoutRhythmsRoute: typeof LayoutRhythmsRoute
   LayoutScoresRoute: typeof LayoutScoresRoute
   LayoutSyncopeRoute: typeof LayoutSyncopeRoute
@@ -298,6 +318,7 @@ const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutAnticoagulationRoute: LayoutAnticoagulationRoute,
   LayoutGoldmanRoute: LayoutGoldmanRoute,
   LayoutChar91indexChar93Route: LayoutChar91indexChar93Route,
+  LayoutMedcalcRoute: LayoutMedcalcRoute,
   LayoutRhythmsRoute: LayoutRhythmsRoute,
   LayoutScoresRoute: LayoutScoresRoute,
   LayoutSyncopeRoute: LayoutSyncopeRoute,
@@ -317,13 +338,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
