@@ -242,20 +242,35 @@ function HomeView({ onOpen, onGoTab }: { onOpen: (id: string) => void; onGoTab: 
             Type numbers. Get answers. Save what matters. You're always one tap from a fresh
             calculation.
           </p>
-          <div className="mt-5 flex flex-wrap gap-3">
+          <div className="mt-5 flex flex-wrap gap-2">
+            {[
+              { id: "chadsvasc", label: "CHA₂DS₂-VASc" },
+              { id: "crcl", label: "CrCl" },
+              { id: "qtc", label: "QTc" },
+              { id: "bmi", label: "BMI" },
+            ].map((q) => (
+              <button
+                key={q.id}
+                onClick={() => { tap(); onOpen(q.id); }}
+                className="cta-primary !py-2 !px-3 !text-[13px]"
+              >
+                <Heart className="h-3.5 w-3.5" /> {q.label}
+              </button>
+            ))}
             <button
               onClick={() => { tap(); onGoTab("calc"); }}
-              className="cta-primary"
+              className="cta-secondary !py-2 !px-3 !text-[13px]"
             >
-              <Heart className="h-4 w-4" /> Open calculator library
+              All calculators
             </button>
             <button
               onClick={() => { tap(); onGoTab("history"); }}
-              className="cta-secondary"
+              className="cta-secondary !py-2 !px-3 !text-[13px]"
             >
-              <Clock className="h-4 w-4" /> View history
+              <Clock className="h-3.5 w-3.5" /> History
             </button>
           </div>
+
         </div>
       </section>
 
