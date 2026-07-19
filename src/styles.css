@@ -184,3 +184,90 @@
   stroke-dasharray: 1000;
   animation: ecg-sweep 4s linear infinite;
 }
+
+/* ============ Sunset Blaze (MedCalc) ============ */
+.sunset-shell {
+  box-shadow: 0 30px 80px -30px rgba(255, 90, 120, 0.35);
+}
+.sunset-bg {
+  background:
+    radial-gradient(ellipse at 20% 0%, #ff9a5a 0%, transparent 55%),
+    radial-gradient(ellipse at 80% 20%, #ff5c8a 0%, transparent 55%),
+    radial-gradient(ellipse at 60% 90%, #7a2ec4 0%, transparent 60%),
+    linear-gradient(180deg, #ff7a3c 0%, #ff3d7f 40%, #7a2ec4 100%);
+}
+.sunset-noise {
+  background-image: radial-gradient(rgba(255,255,255,0.06) 1px, transparent 1px);
+  background-size: 3px 3px;
+  mix-blend-mode: overlay;
+  opacity: 0.4;
+}
+.glass-header {
+  background: linear-gradient(180deg, rgba(0,0,0,0.25), rgba(0,0,0,0));
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+.glass-tabbar {
+  background: rgba(20, 10, 30, 0.45);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(255,255,255,0.15);
+}
+.glass-card {
+  background: rgba(255,255,255,0.10);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 1rem;
+  padding: 1rem;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: transform .15s ease, background .2s ease;
+}
+.glass-card:hover { background: rgba(255,255,255,0.14); }
+.glass-icon-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 2.25rem; width: 2.25rem; border-radius: 9999px;
+  background: rgba(255,255,255,0.12); color: white;
+  border: 1px solid rgba(255,255,255,0.2);
+  transition: background .15s ease, transform .15s ease;
+}
+.glass-icon-btn:hover { background: rgba(255,255,255,0.2); }
+.glass-icon-btn:active { transform: scale(0.94); }
+.glass-chip {
+  display: inline-flex; align-items: center; gap: .375rem;
+  padding: .375rem .75rem; border-radius: 9999px;
+  background: rgba(255,255,255,0.15); color: white;
+  border: 1px solid rgba(255,255,255,0.25);
+}
+.hero-card {
+  background: linear-gradient(135deg, rgba(255,180,120,0.35), rgba(255,90,140,0.35), rgba(140,60,200,0.35));
+}
+.cta-primary {
+  display: inline-flex; align-items: center; gap: .5rem;
+  padding: .7rem 1.1rem; border-radius: 9999px;
+  color: #2b0b1a; font-weight: 600; font-size: 15px;
+  background: linear-gradient(135deg, #ffd28a, #ff7a9c, #c94aff);
+  box-shadow: 0 10px 30px -8px rgba(255, 90, 160, 0.6);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.cta-primary:hover { transform: translateY(-1px); }
+.cta-primary:active { transform: scale(0.97); }
+.cta-secondary {
+  display: inline-flex; align-items: center; gap: .5rem;
+  padding: .65rem 1rem; border-radius: 9999px;
+  color: white; font-weight: 500;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.25);
+  backdrop-filter: blur(10px);
+  transition: background .15s ease;
+}
+.cta-secondary:hover { background: rgba(255,255,255,0.2); }
+.result-panel {
+  background: linear-gradient(135deg, rgba(255,255,255,0.14), rgba(255,255,255,0.06));
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
