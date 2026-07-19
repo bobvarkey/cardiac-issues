@@ -595,7 +595,7 @@ function TabButton({
   active,
   onClick,
 }: {
-  icon: React.ComponentType<{ className?: string }>;
+  icon: React.ComponentType<{ className?: string; strokeWidth?: number }>;
   label: string;
   active: boolean;
   onClick: () => void;
