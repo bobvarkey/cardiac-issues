@@ -17,6 +17,8 @@ import {
 import { calculators, getCalculator, type Calculator } from "@/lib/medcalc/calculators";
 import { history, type HistoryEntry } from "@/lib/medcalc/history";
 import heartHero from "@/assets/medcalc-heart.png";
+import { HomeTour } from "./HomeTour";
+
 
 type Tab = "home" | "calc" | "history" | "settings";
 
@@ -112,7 +114,9 @@ export function MedCalcApp() {
             placeholder="Search calculators…"
             className="w-full rounded-full border border-white/20 bg-white/10 py-2.5 pl-10 pr-4 text-[15px] text-white placeholder:text-white/60 backdrop-blur focus:border-white/40 focus:outline-none"
             aria-label="Search MedCalc"
+            data-tour="search"
           />
+
         </div>
       </header>
 
@@ -189,12 +193,16 @@ export function MedCalcApp() {
       <nav className="glass-tabbar absolute bottom-0 left-0 right-0 z-30 flex items-center justify-around px-2 py-2">
         <TabButton icon={HomeIcon} label="Home" active={tab === "home"} onClick={() => { tap(); setTab("home"); }} />
         <TabButton icon={CalcIcon} label="Calc" active={tab === "calc"} onClick={() => { tap(); setTab("calc"); }} />
-        <TabButton icon={Clock} label="History" active={tab === "history"} onClick={() => { tap(); setTab("history"); }} />
+        <TabButton icon={Clock} label="History" active={tab === "history"} onClick={() => { tap(); setTab("history"); }} dataTour="history" />
         <TabButton icon={SettingsIcon} label="Settings" active={tab === "settings"} onClick={() => { tap(); setTab("settings"); }} />
       </nav>
+
+      {/* First-run walkthrough */}
+      <HomeTour enabled={tab === "home" && !searching} />
     </div>
   );
 }
+
 
 // ---------- Home ----------
 function HomeView({ onOpen, onGoTab }: { onOpen: (id: string) => void; onGoTab: (t: Tab) => void }) {
@@ -275,29 +283,32 @@ function HomeView({ onOpen, onGoTab }: { onOpen: (id: string) => void; onGoTab: 
       </section>
 
       {/* Grouped calculators */}
-      {grouped.map(([cat, list]) => (
-        <CollapsibleSection key={cat} title={cat} count={list.length} defaultOpen={false}>
-          <div className="grid gap-3 sm:grid-cols-2">
-            {list.map((c) => (
-              <button
-                key={c.id}
-                onClick={() => onOpen(c.id)}
-                className="glass-card group text-left transition active:scale-[0.98]"
-              >
-                <div className="flex items-start gap-3">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/15 text-2xl">
-                    {c.symbol}
+      {grouped.map(([cat, list], idx) => (
+        <div key={cat} {...(idx === 0 ? { "data-tour": "collapsible" } : {})}>
+          <CollapsibleSection title={cat} count={list.length} defaultOpen={false}>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {list.map((c) => (
+                <button
+                  key={c.id}
+                  onClick={() => onOpen(c.id)}
+                  className="glass-card group text-left transition active:scale-[0.98]"
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/15 text-2xl">
+                      {c.symbol}
+                    </div>
+                    <div className="min-w-0">
+                      <div className="truncate font-semibold text-white">{c.name}</div>
+                      <div className="text-sm text-white/75">{c.tagline}</div>
+                    </div>
                   </div>
-                  <div className="min-w-0">
-                    <div className="truncate font-semibold text-white">{c.name}</div>
-                    <div className="text-sm text-white/75">{c.tagline}</div>
-                  </div>
-                </div>
-              </button>
-            ))}
-          </div>
-        </CollapsibleSection>
+                </button>
+              ))}
+            </div>
+          </CollapsibleSection>
+        </div>
       ))}
+
 
       <Disclaimer />
     </div>
@@ -624,11 +635,13 @@ function TabButton({
   label,
   active,
   onClick,
+  dataTour,
 }: {
   icon: React.ComponentType<{ className?: string; strokeWidth?: number }>;
   label: string;
   active: boolean;
   onClick: () => void;
+  dataTour?: string;
 }) {
   return (
     <button
@@ -637,12 +650,14 @@ function TabButton({
         active ? "text-white" : "text-white/70"
       }`}
       aria-current={active ? "page" : undefined}
+      data-tour={dataTour}
     >
       <Icon className={`h-5 w-5 ${active ? "scale-110" : ""} transition`} strokeWidth={active ? 2.6 : 2} />
       <span className={active ? "font-semibold" : ""}>{label}</span>
     </button>
   );
 }
+
 
 function CollapsibleSection({
   title,
