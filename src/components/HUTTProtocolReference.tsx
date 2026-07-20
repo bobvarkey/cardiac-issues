@@ -456,8 +456,12 @@ export function HUTTProtocolReference() {
         </div>
       </Section>
 
+      <Section title="Dose & infusion calculator (optional)" icon={Calculator} defaultOpen={false}>
+        <HUTTDoseCalculator />
+      </Section>
 
       <Section title="VASIS classification & endpoints" icon={Activity}>
+
         <ul className="space-y-2 text-sm">
           {VASIS.map((v) => (
             <li key={v.type} className="rounded-lg border border-border bg-background/40 p-3">
