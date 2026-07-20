@@ -754,6 +754,125 @@ export function HUTTMiniApp() {
   );
 }
 
+function ChecklistPanel({
+  checklist,
+  override,
+  onToggle,
+  onCheckAll,
+  onClear,
+  onOverride,
+  missing,
+  canStart,
+  started,
+}: {
+  checklist: Record<string, boolean>;
+  override: boolean;
+  onToggle: (id: string) => void;
+  onCheckAll: () => void;
+  onClear: () => void;
+  onOverride: (v: boolean) => void;
+  missing: number;
+  canStart: boolean;
+  started: boolean;
+}) {
+  const [open, setOpen] = useState(true);
+  const total = CHECKLIST.reduce((n, c) => n + c.items.length, 0);
+  const done = Object.values(checklist).filter(Boolean).length;
+  return (
+    <div className="rounded-xl border border-border bg-surface/40" data-tour="hutt-checklist">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left"
+      >
+        <span className="flex flex-wrap items-center gap-2 text-sm font-semibold">
+          <ShieldCheck className={`h-4 w-4 ${canStart ? "text-emerald-500" : "text-amber-500"}`} />
+          Pre-test checklist
+          <span className="rounded-full bg-background px-2 py-0.5 font-mono text-[10px] text-muted-foreground">
+            {done}/{total}
+          </span>
+          {!canStart && !started && (
+            <span className="rounded-full bg-amber-500/15 px-2 py-0.5 text-[10px] font-medium text-amber-600 dark:text-amber-400">
+              {missing} required missing — timer locked
+            </span>
+          )}
+          {canStart && !started && (
+            <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-medium text-emerald-600 dark:text-emerald-400">
+              Ready to start
+            </span>
+          )}
+        </span>
+        <ChevronDown
+          className={`h-4 w-4 text-muted-foreground transition-transform ${open ? "" : "-rotate-90"}`}
+        />
+      </button>
+      {open && (
+        <div className="space-y-4 border-t border-border p-4">
+          <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+            {CHECKLIST.map((cat) => (
+              <div key={cat.id} className="rounded-lg border border-border bg-background/40 p-3">
+                <div className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  {cat.title}
+                </div>
+                <ul className="space-y-1.5">
+                  {cat.items.map((item) => {
+                    const checked = !!checklist[item.id];
+                    return (
+                      <li key={item.id}>
+                        <label className="flex cursor-pointer items-start gap-2 text-xs">
+                          <input
+                            type="checkbox"
+                            checked={checked}
+                            onChange={() => onToggle(item.id)}
+                            className="mt-0.5 h-3.5 w-3.5 shrink-0"
+                          />
+                          <span className={checked ? "text-muted-foreground line-through" : ""}>
+                            {item.label}
+                            {item.required && (
+                              <span className="ml-1 text-[10px] font-semibold text-amber-500">
+                                *required
+                              </span>
+                            )}
+                          </span>
+                        </label>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            ))}
+          </div>
+          <div className="flex flex-wrap items-center gap-2 border-t border-border pt-3">
+            <button
+              type="button"
+              onClick={onCheckAll}
+              className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-xs font-medium hover:bg-surface"
+            >
+              <CheckSquare className="h-3.5 w-3.5" />
+              Check all
+            </button>
+            <button
+              type="button"
+              onClick={onClear}
+              className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground hover:bg-surface hover:text-foreground"
+            >
+              Clear
+            </button>
+            <label className="ml-auto flex items-center gap-2 text-xs text-muted-foreground">
+              <input
+                type="checkbox"
+                checked={override}
+                onChange={(e) => onOverride(e.target.checked)}
+              />
+              Override & start anyway
+            </label>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function escapeHtml(s: string) {
   return s
     .replace(/&/g, "&amp;")
