@@ -58,6 +58,21 @@ const PROTOCOLS: Record<
     endpoint:
       "Syncope/near-syncope with reproduction of symptoms + characteristic BP/HR pattern (VASIS 1–3), OTS, POTS, or completion without event.",
     references: "ESC 2018 Syncope Guidelines; Brignole et al.",
+    references: "ESC 2018 Syncope Guidelines; Brignole et al.",
+    citations: [
+      {
+        label: "ESC 2018 Syncope Guidelines (Eur Heart J)",
+        url: "https://academic.oup.com/eurheartj/article/39/21/1883/4939241",
+      },
+      {
+        label: "Brignole et al. — VASIS classification (Europace 2000)",
+        url: "https://pubmed.ncbi.nlm.nih.gov/11225598/",
+      },
+      {
+        label: "Westminster protocol — Fitzpatrick et al., JACC 1991",
+        url: "https://pubmed.ncbi.nlm.nih.gov/1901083/",
+      },
+    ],
   },
   italian: {
     name: "Italian Protocol",
