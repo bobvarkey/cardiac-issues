@@ -508,7 +508,9 @@ export function HUTTMiniApp() {
             <button
               type="button"
               onClick={startPause}
-              className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:opacity-90"
+              disabled={!state.running && !canStart}
+              title={!canStart ? `Complete ${missingRequired.length} required checklist item(s) first` : ""}
+              className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
             >
               {state.running ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}
               {state.running ? "Pause" : "Start"}
