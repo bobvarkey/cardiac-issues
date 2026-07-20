@@ -8,6 +8,7 @@ import {
   CheckCircle2,
   ChevronDown,
   Calculator,
+  ExternalLink,
 } from "lucide-react";
 import { HUTTDoseCalculator } from "./HUTTDoseCalculator";
 
@@ -31,6 +32,7 @@ const PROTOCOLS: Record<
     totalTime: string;
     endpoint: string;
     references: string;
+    citations: { label: string; url: string }[];
   }
 > = {
   standard: {
@@ -57,6 +59,20 @@ const PROTOCOLS: Record<
     endpoint:
       "Syncope/near-syncope with reproduction of symptoms + characteristic BP/HR pattern (VASIS 1–3), OTS, POTS, or completion without event.",
     references: "ESC 2018 Syncope Guidelines; Brignole et al.",
+    citations: [
+      {
+        label: "ESC 2018 Syncope Guidelines (Eur Heart J)",
+        url: "https://academic.oup.com/eurheartj/article/39/21/1883/4939241",
+      },
+      {
+        label: "Brignole et al. — VASIS classification (Europace 2000)",
+        url: "https://pubmed.ncbi.nlm.nih.gov/11225598/",
+      },
+      {
+        label: "Westminster protocol — Fitzpatrick et al., JACC 1991",
+        url: "https://pubmed.ncbi.nlm.nih.gov/1901083/",
+      },
+    ],
   },
   italian: {
     name: "Italian Protocol",
@@ -82,6 +98,20 @@ const PROTOCOLS: Record<
     endpoint:
       "Same VASIS classification. Italian protocol validated by Bartoletti et al. for improved sensitivity in reflex syncope.",
     references: "Bartoletti A, et al. Europace 2000; ESC 2018.",
+    citations: [
+      {
+        label: "Bartoletti A, et al. — 'Italian' shortened GTN protocol (Europace 2000)",
+        url: "https://pubmed.ncbi.nlm.nih.gov/11225599/",
+      },
+      {
+        label: "ESC 2018 Syncope Guidelines (Eur Heart J)",
+        url: "https://academic.oup.com/eurheartj/article/39/21/1883/4939241",
+      },
+      {
+        label: "Sutton R, Brignole M — Tilt-testing methodology review",
+        url: "https://pubmed.ncbi.nlm.nih.gov/24614482/",
+      },
+    ],
   },
 };
 
@@ -137,6 +167,7 @@ const MEDS: {
   caution: string;
   standard: MedDetail;
   italian: MedDetail;
+  citations?: { label: string; url: string }[];
 }[] = [
   {
     name: "Nitroglycerin (GTN)",
@@ -167,6 +198,16 @@ const MEDS: {
       monitoring:
         "Continuous ECG + beat-to-beat BP; strict 15-min cut-off improves throughput without loss of specificity (Bartoletti 2000).",
     },
+    citations: [
+      {
+        label: "Raviele A, et al. — SL nitroglycerin tilt protocol (Am J Cardiol 1995)",
+        url: "https://pubmed.ncbi.nlm.nih.gov/7900654/",
+      },
+      {
+        label: "Bartoletti A, et al. — 'Italian' shortened GTN protocol (Europace 2000)",
+        url: "https://pubmed.ncbi.nlm.nih.gov/11225599/",
+      },
+    ],
   },
   {
     name: "Isoproterenol",
@@ -196,6 +237,16 @@ const MEDS: {
       ],
       monitoring: "Same as Standard.",
     },
+    citations: [
+      {
+        label: "Almquist A, et al. — Isoproterenol tilt testing (NEJM 1989)",
+        url: "https://pubmed.ncbi.nlm.nih.gov/2586562/",
+      },
+      {
+        label: "Kapoor WN, Brant N — Evaluation of syncope by upright tilt (Ann Intern Med 1992)",
+        url: "https://pubmed.ncbi.nlm.nih.gov/1543309/",
+      },
+    ],
   },
   {
     name: "Atropine",
@@ -218,6 +269,12 @@ const MEDS: {
       admin: ["Identical to Standard — no protocol-specific difference"],
       monitoring: "Same as Standard.",
     },
+    citations: [
+      {
+        label: "ACLS bradycardia algorithm — atropine 0.5–1 mg IV (AHA 2020)",
+        url: "https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines",
+      },
+    ],
   },
   {
     name: "Normal saline 0.9%",
@@ -240,6 +297,12 @@ const MEDS: {
       admin: ["Identical to Standard — no protocol-specific difference"],
       monitoring: "Same as Standard.",
     },
+    citations: [
+      {
+        label: "ESC 2018 Syncope Guidelines — tilt rescue with IV fluids",
+        url: "https://academic.oup.com/eurheartj/article/39/21/1883/4939241",
+      },
+    ],
   },
   {
     name: "Phenylephrine",
@@ -264,9 +327,47 @@ const MEDS: {
       admin: ["Identical to Standard — no protocol-specific difference"],
       monitoring: "Same as Standard.",
     },
+    citations: [
+      {
+        label: "Sutton R, Brignole M — Tilt-testing methodology & rescue pressors",
+        url: "https://pubmed.ncbi.nlm.nih.gov/24614482/",
+      },
+    ],
   },
 ];
 
+
+function CitationList({
+  items,
+  label = "Sources",
+}: {
+  items: { label: string; url: string }[];
+  label?: string;
+}) {
+  if (!items?.length) return null;
+  return (
+    <div className="mt-3">
+      <div className="text-[11px] uppercase font-semibold text-muted-foreground tracking-wider">
+        {label}
+      </div>
+      <ul className="mt-1 space-y-1">
+        {items.map((c) => (
+          <li key={c.url}>
+            <a
+              href={c.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-start gap-1.5 text-xs text-primary hover:underline underline-offset-2"
+            >
+              <ExternalLink className="h-3 w-3 mt-0.5 shrink-0" />
+              <span>{c.label}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
 
 function Section({
   title,
@@ -357,6 +458,7 @@ export function HUTTProtocolReference() {
             <div className="mt-1 font-semibold">{p.totalTime}</div>
           </div>
         </div>
+        <CitationList items={p.citations} label={`${active === "standard" ? "Westminster" : "Italian"} protocol sources`} />
       </div>
 
       <Section title="Pre-test setup & monitoring" icon={ClipboardList}>
@@ -449,6 +551,7 @@ export function HUTTProtocolReference() {
                   <div className="rounded-md border border-amber-500/30 bg-amber-500/5 px-2 py-1.5 text-xs text-amber-600 dark:text-amber-400">
                     <strong>Caution:</strong> {m.caution}
                   </div>
+                  {m.citations && <CitationList items={m.citations} label="References" />}
                 </div>
               </div>
             );
@@ -502,6 +605,23 @@ export function HUTTProtocolReference() {
           </div>
         </div>
         <p className="mt-3 text-xs text-muted-foreground">{p.references}</p>
+        <CitationList
+          items={[
+            {
+              label: "ESC 2018 Syncope Guidelines — contraindications & stop rules",
+              url: "https://academic.oup.com/eurheartj/article/39/21/1883/4939241",
+            },
+            {
+              label: "Sutton R, Brignole M — Tilt-testing methodology & safety (2014)",
+              url: "https://pubmed.ncbi.nlm.nih.gov/24614482/",
+            },
+            {
+              label: "Benditt DG, et al. — ACC expert consensus on tilt-table testing (JACC 1996)",
+              url: "https://pubmed.ncbi.nlm.nih.gov/8772777/",
+            },
+          ]}
+          label="Safety & stop-rule sources"
+        />
       </Section>
     </div>
   );
