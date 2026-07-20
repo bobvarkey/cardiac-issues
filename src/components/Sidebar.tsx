@@ -29,6 +29,7 @@ type Section = {
   color: string; // tailwind text color class
   bg: string; // tailwind bg tint class
   items: SubItem[];
+  featured?: boolean;
 };
 
 const SECTIONS: Section[] = [
@@ -39,6 +40,15 @@ const SECTIONS: Section[] = [
     color: "text-rose-400",
     bg: "bg-rose-500/15",
     items: [{ label: "Overview", to: "/" }],
+  },
+  {
+    id: "hutt",
+    label: "HUTT Test",
+    icon: Activity,
+    color: "text-white",
+    bg: "bg-gradient-to-br from-rose-500 via-fuchsia-500 to-violet-500",
+    featured: true,
+    items: [{ label: "Run study", to: "/hutt" }],
   },
   {
     id: "treatment",

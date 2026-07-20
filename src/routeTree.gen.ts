@@ -19,6 +19,7 @@ import { Route as LayoutSyncopeRouteImport } from './routes/_layout.syncope'
 import { Route as LayoutScoresRouteImport } from './routes/_layout.scores'
 import { Route as LayoutRhythmsRouteImport } from './routes/_layout.rhythms'
 import { Route as LayoutMedcalcRouteImport } from './routes/_layout.medcalc'
+import { Route as LayoutHuttRouteImport } from './routes/_layout.hutt'
 import { Route as LayoutGoldmanRouteImport } from './routes/_layout.goldman'
 import { Route as LayoutAnticoagulationRouteImport } from './routes/_layout.anticoagulation'
 import { Route as LayoutAntiarrhythmicsRouteImport } from './routes/_layout.antiarrhythmics'
@@ -73,6 +74,11 @@ const LayoutMedcalcRoute = LayoutMedcalcRouteImport.update({
   path: '/medcalc',
   getParentRoute: () => LayoutRoute,
 } as any)
+const LayoutHuttRoute = LayoutHuttRouteImport.update({
+  id: '/hutt',
+  path: '/hutt',
+  getParentRoute: () => LayoutRoute,
+} as any)
 const LayoutGoldmanRoute = LayoutGoldmanRouteImport.update({
   id: '/goldman',
   path: '/goldman',
@@ -99,6 +105,7 @@ export interface FileRoutesByFullPath {
   '/antiarrhythmics': typeof LayoutAntiarrhythmicsRoute
   '/anticoagulation': typeof LayoutAnticoagulationRoute
   '/goldman': typeof LayoutGoldmanRoute
+  '/hutt': typeof LayoutHuttRoute
   '/index': typeof LayoutChar91indexChar93Route
   '/medcalc': typeof LayoutMedcalcRoute
   '/rhythms': typeof LayoutRhythmsRoute
@@ -113,6 +120,7 @@ export interface FileRoutesByTo {
   '/antiarrhythmics': typeof LayoutAntiarrhythmicsRoute
   '/anticoagulation': typeof LayoutAnticoagulationRoute
   '/goldman': typeof LayoutGoldmanRoute
+  '/hutt': typeof LayoutHuttRoute
   '/index': typeof LayoutChar91indexChar93Route
   '/medcalc': typeof LayoutMedcalcRoute
   '/rhythms': typeof LayoutRhythmsRoute
@@ -130,6 +138,7 @@ export interface FileRoutesById {
   '/_layout/antiarrhythmics': typeof LayoutAntiarrhythmicsRoute
   '/_layout/anticoagulation': typeof LayoutAnticoagulationRoute
   '/_layout/goldman': typeof LayoutGoldmanRoute
+  '/_layout/hutt': typeof LayoutHuttRoute
   '/_layout/index': typeof LayoutChar91indexChar93Route
   '/_layout/medcalc': typeof LayoutMedcalcRoute
   '/_layout/rhythms': typeof LayoutRhythmsRoute
@@ -148,6 +157,7 @@ export interface FileRouteTypes {
     | '/antiarrhythmics'
     | '/anticoagulation'
     | '/goldman'
+    | '/hutt'
     | '/index'
     | '/medcalc'
     | '/rhythms'
@@ -162,6 +172,7 @@ export interface FileRouteTypes {
     | '/antiarrhythmics'
     | '/anticoagulation'
     | '/goldman'
+    | '/hutt'
     | '/index'
     | '/medcalc'
     | '/rhythms'
@@ -178,6 +189,7 @@ export interface FileRouteTypes {
     | '/_layout/antiarrhythmics'
     | '/_layout/anticoagulation'
     | '/_layout/goldman'
+    | '/_layout/hutt'
     | '/_layout/index'
     | '/_layout/medcalc'
     | '/_layout/rhythms'
@@ -266,6 +278,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutMedcalcRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/_layout/hutt': {
+      id: '/_layout/hutt'
+      path: '/hutt'
+      fullPath: '/hutt'
+      preLoaderRoute: typeof LayoutHuttRouteImport
+      parentRoute: typeof LayoutRoute
+    }
     '/_layout/goldman': {
       id: '/_layout/goldman'
       path: '/goldman'
@@ -301,6 +320,7 @@ interface LayoutRouteChildren {
   LayoutAntiarrhythmicsRoute: typeof LayoutAntiarrhythmicsRoute
   LayoutAnticoagulationRoute: typeof LayoutAnticoagulationRoute
   LayoutGoldmanRoute: typeof LayoutGoldmanRoute
+  LayoutHuttRoute: typeof LayoutHuttRoute
   LayoutChar91indexChar93Route: typeof LayoutChar91indexChar93Route
   LayoutMedcalcRoute: typeof LayoutMedcalcRoute
   LayoutRhythmsRoute: typeof LayoutRhythmsRoute
@@ -317,6 +337,7 @@ const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutAntiarrhythmicsRoute: LayoutAntiarrhythmicsRoute,
   LayoutAnticoagulationRoute: LayoutAnticoagulationRoute,
   LayoutGoldmanRoute: LayoutGoldmanRoute,
+  LayoutHuttRoute: LayoutHuttRoute,
   LayoutChar91indexChar93Route: LayoutChar91indexChar93Route,
   LayoutMedcalcRoute: LayoutMedcalcRoute,
   LayoutRhythmsRoute: LayoutRhythmsRoute,
