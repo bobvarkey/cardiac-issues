@@ -254,6 +254,34 @@ export function Sidebar() {
             {filtered.map((section) => {
               const Icon = section.icon;
               const open = isSectionOpen(section.id);
+              const isDirect = section.items.length === 1 && (section.id === "home" || section.items[0].to === "/");
+              if (isDirect) {
+                const target = section.items[0].to;
+                const active = pathname === target;
+                return (
+                  <div key={section.id} className="px-2">
+                    <Link
+                      to={target}
+                      onClick={() => collapsed && setCollapsed(false)}
+                      className={`group flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-sm hover:bg-surface ${
+                        active ? "bg-surface" : ""
+                      }`}
+                      title={collapsed ? section.label : undefined}
+                    >
+                      <span
+                        className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md ${section.bg} ${section.color}`}
+                      >
+                        <Icon className="h-4 w-4" />
+                      </span>
+                      {!collapsed && (
+                        <span className="min-w-0 flex-1 truncate font-medium">
+                          <Highlight text={section.label} query={q} />
+                        </span>
+                      )}
+                    </Link>
+                  </div>
+                );
+              }
               return (
                 <div key={section.id} className="px-2">
                   <button
@@ -329,6 +357,7 @@ export function Sidebar() {
                 </div>
               );
             })}
+
           </nav>
 
           {!collapsed && (
