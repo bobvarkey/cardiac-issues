@@ -397,32 +397,62 @@ export function HUTTProtocolReference() {
         </ol>
       </Section>
 
-      <Section title="Medications used" icon={Pill}>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="text-left text-xs uppercase text-muted-foreground">
-                <th className="py-2 pr-3">Drug</th>
-                <th className="py-2 pr-3">Role</th>
-                <th className="py-2 pr-3">Dose</th>
-                <th className="py-2 pr-3">Onset</th>
-                <th className="py-2">Caution</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              {MEDS.map((m) => (
-                <tr key={m.name} className="align-top">
-                  <td className="py-2 pr-3 font-medium">{m.name}</td>
-                  <td className="py-2 pr-3 text-muted-foreground">{m.role}</td>
-                  <td className="py-2 pr-3 font-mono text-xs">{m.dose}</td>
-                  <td className="py-2 pr-3 text-muted-foreground">{m.onset}</td>
-                  <td className="py-2 text-xs text-muted-foreground">{m.caution}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+      <Section title={`Medications — ${active === "standard" ? "Standard" : "Italian"} protocol`} icon={Pill}>
+        <div className="grid gap-3">
+          {MEDS.map((m) => {
+            const d = active === "standard" ? m.standard : m.italian;
+            return (
+              <div
+                key={m.name}
+                className="rounded-lg border border-border bg-background/40 p-4"
+              >
+                <div className="flex flex-wrap items-baseline justify-between gap-2">
+                  <div>
+                    <div className="font-semibold">{m.name}</div>
+                    <div className="text-xs text-muted-foreground">{m.role}</div>
+                  </div>
+                  <div className="text-[11px] font-mono uppercase text-muted-foreground">
+                    Onset {m.onset} · Duration {m.duration}
+                  </div>
+                </div>
+
+                <div className="mt-3 grid gap-2 text-sm">
+                  <div>
+                    <span className="text-[11px] uppercase text-muted-foreground">Dose</span>
+                    <div className="font-mono text-xs mt-0.5">{d.dose}</div>
+                  </div>
+                  {d.infusion && (
+                    <div>
+                      <span className="text-[11px] uppercase text-muted-foreground">
+                        Infusion / mixing
+                      </span>
+                      <div className="font-mono text-xs mt-0.5">{d.infusion}</div>
+                    </div>
+                  )}
+                  <div>
+                    <span className="text-[11px] uppercase text-muted-foreground">
+                      Administration
+                    </span>
+                    <ul className="mt-1 space-y-0.5 text-xs text-muted-foreground list-disc pl-5">
+                      {d.admin.map((a) => (
+                        <li key={a}>{a}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div>
+                    <span className="text-[11px] uppercase text-muted-foreground">Monitoring</span>
+                    <div className="text-xs text-muted-foreground mt-0.5">{d.monitoring}</div>
+                  </div>
+                  <div className="rounded-md border border-amber-500/30 bg-amber-500/5 px-2 py-1.5 text-xs text-amber-600 dark:text-amber-400">
+                    <strong>Caution:</strong> {m.caution}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </Section>
+
 
       <Section title="VASIS classification & endpoints" icon={Activity}>
         <ul className="space-y-2 text-sm">
