@@ -252,11 +252,17 @@ export function Sidebar() {
                   <button
                     type="button"
                     onClick={() => (collapsed ? setCollapsed(false) : toggleSection(section.id))}
-                    className="group flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-sm hover:bg-surface"
+                    className={`group flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-sm hover:bg-surface ${
+                      section.featured
+                        ? "my-1 border border-fuchsia-500/30 bg-gradient-to-r from-rose-500/10 via-fuchsia-500/10 to-violet-500/10 shadow-[0_0_0_1px_rgba(217,70,239,0.15)]"
+                        : ""
+                    }`}
                     title={collapsed ? section.label : undefined}
                   >
                     <span
-                      className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md ${section.bg} ${section.color}`}
+                      className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md ${section.bg} ${section.color} ${
+                        section.featured ? "shadow-lg shadow-fuchsia-500/30" : ""
+                      }`}
                     >
                       <Icon className="h-4 w-4" />
                     </span>
@@ -265,6 +271,11 @@ export function Sidebar() {
                         <span className="min-w-0 flex-1 truncate">
                           <Highlight text={section.label} query={q} />
                         </span>
+                        {section.featured && (
+                          <span className="rounded-full bg-fuchsia-500/20 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider text-fuchsia-300">
+                            New
+                          </span>
+                        )}
                         <ChevronDown
                           className={`h-3.5 w-3.5 text-muted-foreground transition-transform ${
                             open ? "rotate-0" : "-rotate-90"
