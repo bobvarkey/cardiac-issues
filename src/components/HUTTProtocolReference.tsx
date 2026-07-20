@@ -236,6 +236,16 @@ const MEDS: {
       ],
       monitoring: "Same as Standard.",
     },
+    citations: [
+      {
+        label: "Almquist A, et al. — Isoproterenol tilt testing (NEJM 1989)",
+        url: "https://pubmed.ncbi.nlm.nih.gov/2586562/",
+      },
+      {
+        label: "Kapoor WN, Brant N — Evaluation of syncope by upright tilt (Ann Intern Med 1992)",
+        url: "https://pubmed.ncbi.nlm.nih.gov/1543309/",
+      },
+    ],
   },
   {
     name: "Atropine",
