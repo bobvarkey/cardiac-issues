@@ -97,6 +97,20 @@ const PROTOCOLS: Record<
     endpoint:
       "Same VASIS classification. Italian protocol validated by Bartoletti et al. for improved sensitivity in reflex syncope.",
     references: "Bartoletti A, et al. Europace 2000; ESC 2018.",
+    citations: [
+      {
+        label: "Bartoletti A, et al. — 'Italian' shortened GTN protocol (Europace 2000)",
+        url: "https://pubmed.ncbi.nlm.nih.gov/11225599/",
+      },
+      {
+        label: "ESC 2018 Syncope Guidelines (Eur Heart J)",
+        url: "https://academic.oup.com/eurheartj/article/39/21/1883/4939241",
+      },
+      {
+        label: "Sutton R, Brignole M — Tilt-testing methodology review",
+        url: "https://pubmed.ncbi.nlm.nih.gov/24614482/",
+      },
+    ],
   },
 };
 
