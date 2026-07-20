@@ -119,43 +119,151 @@ const VASIS = [
   },
 ];
 
-const MEDS = [
+type MedDetail = {
+  dose: string;
+  infusion?: string;
+  admin: string[];
+  monitoring: string;
+};
+
+const MEDS: {
+  name: string;
+  role: string;
+  onset: string;
+  duration: string;
+  caution: string;
+  standard: MedDetail;
+  italian: MedDetail;
+}[] = [
   {
     name: "Nitroglycerin (GTN)",
-    role: "Provocation agent",
-    dose: "300–400 mcg SL spray (1 spray)",
+    role: "Pharmacologic provocation",
     onset: "1–3 min",
-    caution: "Avoid if SBP < 90, severe AS, HOCM, recent PDE5 inhibitor (24–48 h).",
+    duration: "3–5 min",
+    caution:
+      "Avoid if SBP < 90 mmHg, severe AS/HOCM, RV infarct, or PDE5 inhibitor use within 24 h (sildenafil) / 48 h (tadalafil).",
+    standard: {
+      dose: "400 mcg (1 metered spray) sublingual — single dose",
+      admin: [
+        "Given at end of 20-min passive phase if no diagnostic event",
+        "Patient remains upright at 60–70° for 15–20 min further",
+        "1 spray under the tongue, mouth closed, no swallow for 10 s",
+        "Do NOT repeat dose",
+      ],
+      monitoring:
+        "Continuous ECG + beat-to-beat BP. Record symptoms, HR, BP every 1 min until endpoint or 20 min.",
+    },
+    italian: {
+      dose: "300–400 mcg sublingual (spray or 0.3 mg tablet) — single dose",
+      admin: [
+        "Given at end of 20-min passive phase (tilt maintained at 60°)",
+        "Observation limited to 15 min post-GTN (shorter than Westminster)",
+        "Single spray/tablet SL — no repeat",
+        "Same holding-position and swallow rules as Standard",
+      ],
+      monitoring:
+        "Continuous ECG + beat-to-beat BP; strict 15-min cut-off improves throughput without loss of specificity (Bartoletti 2000).",
+    },
   },
   {
-    name: "Isoproterenol (alternative)",
-    role: "Provocation (rarely used now)",
-    dose: "1–3 mcg/min IV, titrate to HR ↑ 20–25%",
+    name: "Isoproterenol",
+    role: "Alternative β-agonist provocation",
     onset: "2–5 min",
-    caution: "Avoid in CAD, arrhythmia, hyperthyroidism. Largely replaced by GTN.",
+    duration: "10–15 min after stop",
+    caution:
+      "Avoid in CAD, prior MI, tachyarrhythmia, hyperthyroidism, uncontrolled HTN, age > 50 (relative). Largely replaced by GTN in both protocols.",
+    standard: {
+      dose: "IV infusion 1 → 3 mcg/min, titrated to HR increase of 20–25% above baseline",
+      infusion:
+        "Mix 1 mg (5 mL of 1:5000) in 250 mL D5W → 4 mcg/mL. Start 15 mL/h (~1 mcg/min); titrate by 15 mL/h every 5 min. Max 3 mcg/min.",
+      admin: [
+        "Dedicated IV line; infusion pump mandatory",
+        "Give at each dose step for ≥ 5 min while tilted at 60–70°",
+        "Stop infusion immediately on syncope, VT, SBP < 70, or HR > 150",
+        "Return patient supine before restarting",
+      ],
+      monitoring: "Continuous ECG, BP every 1 min, SpO₂. Have β-blocker (esmolol) available.",
+    },
+    italian: {
+      dose: "Not part of the standard Italian protocol; GTN preferred",
+      infusion: "If used: 1–2 mcg/min IV, titrate to HR +25% — same mixing as Standard",
+      admin: [
+        "Reserved for GTN contraindication or repeat non-diagnostic study",
+        "Same pump-based titration and stop rules as Standard",
+      ],
+      monitoring: "Same as Standard.",
+    },
   },
   {
     name: "Atropine",
-    role: "Rescue — symptomatic bradycardia/asystole",
-    dose: "0.5–1 mg IV, may repeat to 3 mg",
-    onset: "< 1 min",
-    caution: "Have drawn up and at bedside.",
+    role: "Rescue — symptomatic bradycardia / asystole",
+    onset: "< 1 min IV",
+    duration: "30–60 min",
+    caution: "Paradoxical bradycardia if dose < 0.5 mg. Avoid in narrow-angle glaucoma.",
+    standard: {
+      dose: "0.5–1 mg IV push; may repeat every 3–5 min to max 3 mg",
+      admin: [
+        "Draw up 1 mg (10 mL of 0.1 mg/mL) at start of study — kept at bedside",
+        "Give IV push over 15–30 s through a running line, then 10 mL NS flush",
+        "Return patient to supine/Trendelenburg first",
+        "Prepare transcutaneous pacing if HR does not respond after 2 mg",
+      ],
+      monitoring: "ECG rhythm continuously; recheck HR/BP at 1, 3, 5 min.",
+    },
+    italian: {
+      dose: "Same — 0.5–1 mg IV push, repeat q3–5 min to 3 mg max",
+      admin: ["Identical to Standard — no protocol-specific difference"],
+      monitoring: "Same as Standard.",
+    },
   },
   {
-    name: "Normal saline bolus",
-    role: "Rescue — hypotension after return supine",
-    dose: "250–500 mL IV",
-    onset: "Immediate",
-    caution: "Return patient to supine/Trendelenburg first.",
+    name: "Normal saline 0.9%",
+    role: "Rescue — post-tilt hypotension",
+    onset: "Immediate (volume)",
+    duration: "Transient",
+    caution: "Use caution in heart failure / severe AS; smaller aliquots (100–250 mL).",
+    standard: {
+      dose: "250–500 mL IV bolus; may repeat once (max 1 L)",
+      infusion: "Wide-open through 18–20 G peripheral IV; pressure bag if needed",
+      admin: [
+        "Return patient fully supine or Trendelenburg first",
+        "Give bolus over 5–10 min",
+        "Reassess SBP and mental status after each 250 mL",
+      ],
+      monitoring: "BP q1 min, lung auscultation, SpO₂ before/after each bolus.",
+    },
+    italian: {
+      dose: "Same — 250–500 mL IV, repeat to 1 L",
+      admin: ["Identical to Standard — no protocol-specific difference"],
+      monitoring: "Same as Standard.",
+    },
   },
   {
-    name: "Phenylephrine (rare)",
-    role: "Refractory hypotension",
-    dose: "50–200 mcg IV bolus",
-    onset: "1 min",
-    caution: "Usually not needed if supine positioning restores BP.",
+    name: "Phenylephrine",
+    role: "Refractory hypotension after volume + supine",
+    onset: "1 min IV",
+    duration: "5–20 min (bolus)",
+    caution:
+      "Pure α-agonist → reflex bradycardia; avoid in severe HTN, closed-angle glaucoma, severe AS.",
+    standard: {
+      dose: "Bolus: 50–200 mcg IV every 10–15 min PRN",
+      infusion:
+        "If needed: 10 mg in 100 mL NS (100 mcg/mL). Start 0.5 mcg/kg/min (~ 20 mL/h for 70 kg); titrate to MAP ≥ 65.",
+      admin: [
+        "Bolus: dilute 10 mg in 100 mL NS (100 mcg/mL); give 0.5–2 mL IV push",
+        "Central line preferred for infusion; large peripheral acceptable short-term",
+        "Wean as soon as BP restored; typically not needed if supine positioning works",
+      ],
+      monitoring: "Arterial line or q1-min NIBP; watch for reflex bradycardia — atropine ready.",
+    },
+    italian: {
+      dose: "Same — 50–200 mcg IV bolus PRN",
+      admin: ["Identical to Standard — no protocol-specific difference"],
+      monitoring: "Same as Standard.",
+    },
   },
 ];
+
 
 function Section({
   title,
