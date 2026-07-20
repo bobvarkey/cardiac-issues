@@ -364,7 +364,7 @@ export function HUTTMiniApp() {
       </div>
 
       {/* Timer + phase */}
-      <div className="grid gap-4 md:grid-cols-[1fr_auto]">
+      <div className="grid gap-4 md:grid-cols-[1fr_auto]" data-tour="hutt-timer">
         <div className="rounded-xl border border-border bg-surface/40 p-4">
           <div className="flex items-center justify-between gap-3">
             <div>
@@ -437,7 +437,7 @@ export function HUTTMiniApp() {
       </div>
 
       {/* Vitals entry */}
-      <div>
+      <div data-tour="hutt-vitals">
         <div className="mb-2 flex items-center justify-between">
           <h3 className="text-sm font-semibold">Vitals log</h3>
           <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
@@ -525,7 +525,7 @@ export function HUTTMiniApp() {
       </div>
 
       {/* Findings */}
-      <div className="grid gap-3 md:grid-cols-2">
+      <div className="grid gap-3 md:grid-cols-2" data-tour="hutt-findings">
         <div>
           <label className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
             Typical symptoms
@@ -568,7 +568,7 @@ export function HUTTMiniApp() {
       </div>
 
       {/* Collapsible EMR note */}
-      <div className="rounded-xl border border-border">
+      <div className="rounded-xl border border-border" data-tour="hutt-export">
         <button
           type="button"
           onClick={() => setNoteOpen((v) => !v)}
