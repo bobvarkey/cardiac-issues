@@ -458,6 +458,7 @@ export function HUTTProtocolReference() {
             <div className="mt-1 font-semibold">{p.totalTime}</div>
           </div>
         </div>
+        <CitationList items={p.citations} label={`${active === "standard" ? "Westminster" : "Italian"} protocol sources`} />
       </div>
 
       <Section title="Pre-test setup & monitoring" icon={ClipboardList}>
