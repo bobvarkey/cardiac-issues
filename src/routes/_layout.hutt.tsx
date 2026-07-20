@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { HUTTMiniApp } from "@/components/HUTTMiniApp";
+import { HUTTTour } from "@/components/HUTTTour";
 
 export const Route = createFileRoute("/_layout/hutt")({
   head: () => ({
@@ -30,6 +31,7 @@ function HUTTPage() {
         </p>
       </div>
       <HUTTMiniApp />
+      <HUTTTour />
     </div>
   );
 }
