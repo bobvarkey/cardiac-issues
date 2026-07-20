@@ -193,17 +193,23 @@ export function Sidebar() {
         <div className="flex h-full flex-col">
           {/* Header */}
           <div className="flex items-center gap-2 border-b border-border px-3 py-3">
-            <div className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-rose-500 to-fuchsia-500 text-white">
-              <Activity className="h-4 w-4" />
-            </div>
-            {!collapsed && (
-              <div className="min-w-0 flex-1 leading-tight">
-                <div className="truncate text-sm font-semibold">CardiacRef</div>
-                <div className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
-                  Clinical
-                </div>
+            <Link
+              to="/"
+              className="flex min-w-0 flex-1 items-center gap-2 rounded-md hover:bg-surface/60 -mx-1 px-1 py-0.5 transition"
+              title="Home"
+            >
+              <div className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-rose-500 to-fuchsia-500 text-white">
+                <Activity className="h-4 w-4" />
               </div>
-            )}
+              {!collapsed && (
+                <div className="min-w-0 flex-1 leading-tight">
+                  <div className="truncate text-sm font-semibold">CardiacRef</div>
+                  <div className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+                    Clinical
+                  </div>
+                </div>
+              )}
+            </Link>
             <button
               type="button"
               onClick={() => setCollapsed((c) => !c)}
@@ -214,6 +220,7 @@ export function Sidebar() {
               {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
             </button>
           </div>
+
 
           {/* Search */}
           {!collapsed && (
