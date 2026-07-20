@@ -337,6 +337,38 @@ const MEDS: {
 ];
 
 
+function CitationList({
+  items,
+  label = "Sources",
+}: {
+  items: { label: string; url: string }[];
+  label?: string;
+}) {
+  if (!items?.length) return null;
+  return (
+    <div className="mt-3">
+      <div className="text-[11px] uppercase font-semibold text-muted-foreground tracking-wider">
+        {label}
+      </div>
+      <ul className="mt-1 space-y-1">
+        {items.map((c) => (
+          <li key={c.url}>
+            <a
+              href={c.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-start gap-1.5 text-xs text-primary hover:underline underline-offset-2"
+            >
+              <ExternalLink className="h-3 w-3 mt-0.5 shrink-0" />
+              <span>{c.label}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 function Section({
   title,
   icon: Icon,
