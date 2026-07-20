@@ -261,18 +261,24 @@ export function Sidebar() {
                   >
                     <span
                       className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md ${section.bg} ${section.color} ${
-                        section.featured ? "shadow-lg shadow-fuchsia-500/30" : ""
+                        section.featured
+                          ? "shadow-lg shadow-fuchsia-500/40 ring-1 ring-white/20 [&>svg]:drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]"
+                          : ""
                       }`}
                     >
                       <Icon className="h-4 w-4" />
                     </span>
                     {!collapsed && (
                       <>
-                        <span className="min-w-0 flex-1 truncate">
+                        <span
+                          className={`min-w-0 flex-1 truncate ${
+                            section.featured ? "font-semibold text-foreground" : ""
+                          }`}
+                        >
                           <Highlight text={section.label} query={q} />
                         </span>
                         {section.featured && (
-                          <span className="rounded-full bg-fuchsia-500/20 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider text-fuchsia-300">
+                          <span className="rounded-full bg-fuchsia-500/25 px-1.5 py-0.5 font-mono text-[9px] font-semibold uppercase tracking-wider text-fuchsia-100 ring-1 ring-fuchsia-400/40">
                             New
                           </span>
                         )}
