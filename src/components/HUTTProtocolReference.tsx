@@ -605,6 +605,23 @@ export function HUTTProtocolReference() {
           </div>
         </div>
         <p className="mt-3 text-xs text-muted-foreground">{p.references}</p>
+        <CitationList
+          items={[
+            {
+              label: "ESC 2018 Syncope Guidelines — contraindications & stop rules",
+              url: "https://academic.oup.com/eurheartj/article/39/21/1883/4939241",
+            },
+            {
+              label: "Sutton R, Brignole M — Tilt-testing methodology & safety (2014)",
+              url: "https://pubmed.ncbi.nlm.nih.gov/24614482/",
+            },
+            {
+              label: "Benditt DG, et al. — ACC expert consensus on tilt-table testing (JACC 1996)",
+              url: "https://pubmed.ncbi.nlm.nih.gov/8772777/",
+            },
+          ]}
+          label="Safety & stop-rule sources"
+        />
       </Section>
     </div>
   );
