@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { HeartPulse, Zap, TrendingDown, Waves, Activity, ChevronRight, Heart, Pill } from "lucide-react";
 
 import { AntiarrhythmicsChart } from "@/components/AntiarrhythmicsChart";
+import { HUTTMiniApp } from "@/components/HUTTMiniApp";
 import { algorithms } from "@/data/cardiac";
 
 const iconMap: Record<string, typeof HeartPulse> = {
