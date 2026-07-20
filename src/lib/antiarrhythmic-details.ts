@@ -44,8 +44,28 @@ export const DRUG_DETAILS: Record<string, DrugDetails> = {
       "Stable angina in sinus rhythm intolerant of β-blockers",
     ],
     dosing: [
-      { route: "PO — HFrEF", dose: "Start 5 mg BID with meals; titrate after 2 wk to target HR 50–60 bpm (max 7.5 mg BID)" },
-      { route: "PO — Age ≥75 or conduction disease", dose: "Start 2.5 mg BID" },
+      {
+        route: "PO — HFrEF (adult)",
+        dose: "Start 5 mg BID; after 2 wk titrate to target resting HR 50–60 bpm (max 7.5 mg BID)",
+        notes:
+          "Take with meals to reduce variability. Adjust in 2.5 mg steps every 2 wk based on resting HR.",
+      },
+      {
+        route: "PO — Age ≥75 or conduction disease / low BP",
+        dose: "Start 2.5 mg BID, titrate cautiously",
+        notes: "Recheck HR and BP 2 wk after each dose change before further titration.",
+      },
+      {
+        route: "PO — Stable angina (adult)",
+        dose: "Start 5 mg BID; may increase to 7.5 mg BID after 3–4 wk if HR >60 bpm and tolerated",
+        notes: "Reduce to 2.5 mg BID if resting HR persistently <50 bpm or symptomatic bradycardia.",
+      },
+      {
+        route: "Administration notes",
+        dose: "Oral tablets only — no IV formulation",
+        notes:
+          "Swallow whole with morning and evening meals. Avoid grapefruit juice. Do not stop abruptly in HFrEF — taper if possible. Ivabradine is currently the only clinically approved Class 0 agent; zatebradine and cilobradine remain investigational.",
+      },
     ],
     contraindications: [
       "Acute decompensated heart failure",
