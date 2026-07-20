@@ -326,6 +326,12 @@ const MEDS: {
       admin: ["Identical to Standard — no protocol-specific difference"],
       monitoring: "Same as Standard.",
     },
+    citations: [
+      {
+        label: "Sutton R, Brignole M — Tilt-testing methodology & rescue pressors",
+        url: "https://pubmed.ncbi.nlm.nih.gov/24614482/",
+      },
+    ],
   },
 ];
 
