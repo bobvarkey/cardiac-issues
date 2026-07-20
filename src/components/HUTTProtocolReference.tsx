@@ -8,6 +8,7 @@ import {
   CheckCircle2,
   ChevronDown,
   Calculator,
+  ExternalLink,
 } from "lucide-react";
 import { HUTTDoseCalculator } from "./HUTTDoseCalculator";
 
