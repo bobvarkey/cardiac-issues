@@ -58,7 +58,6 @@ const PROTOCOLS: Record<
     endpoint:
       "Syncope/near-syncope with reproduction of symptoms + characteristic BP/HR pattern (VASIS 1–3), OTS, POTS, or completion without event.",
     references: "ESC 2018 Syncope Guidelines; Brignole et al.",
-    references: "ESC 2018 Syncope Guidelines; Brignole et al.",
     citations: [
       {
         label: "ESC 2018 Syncope Guidelines (Eur Heart J)",
