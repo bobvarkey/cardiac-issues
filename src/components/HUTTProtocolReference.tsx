@@ -296,6 +296,12 @@ const MEDS: {
       admin: ["Identical to Standard — no protocol-specific difference"],
       monitoring: "Same as Standard.",
     },
+    citations: [
+      {
+        label: "ESC 2018 Syncope Guidelines — tilt rescue with IV fluids",
+        url: "https://academic.oup.com/eurheartj/article/39/21/1883/4939241",
+      },
+    ],
   },
   {
     name: "Phenylephrine",
