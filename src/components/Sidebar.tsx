@@ -309,7 +309,9 @@ export function Sidebar() {
                               </li>
                             );
                           })}
-                    </ul>
+                        </ul>
+                      </div>
+                    </div>
                   )}
                 </div>
               );
