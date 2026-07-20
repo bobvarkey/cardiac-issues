@@ -325,25 +325,47 @@ export function HUTTMiniApp() {
   }, [state.vitals]);
 
   const emrNote = useMemo(() => {
-    const protoLabel = state.protocol === "standard" ? "Standard" : "Italian";
+    const protoLabel = state.protocol === "standard" ? "Standard (Westminster)" : "Italian";
     const lines: string[] = [];
     lines.push(`HEAD-UP TILT TABLE TEST — ${protoLabel} Protocol`);
+    lines.push(`Date: ${new Date().toLocaleString()}`);
     if (state.patientId) lines.push(`Patient / Study ID: ${state.patientId}`);
     lines.push(`Total study time: ${fmt(state.elapsed)}`);
     lines.push("");
-    lines.push("Phases:");
+    lines.push("PROTOCOL");
+    if (state.protocol === "standard") {
+      lines.push("  Passive tilt 60–70° × 20 min; if negative, SL GTN 400 mcg × 15–20 min.");
+    } else {
+      lines.push("  Passive tilt 60° × 20 min; if negative, SL GTN 300–400 mcg × 15 min.");
+    }
+    lines.push("");
+    lines.push("PHASES");
     phases.forEach((p, i) => {
-      const mark = i < state.phaseIdx ? "✓" : i === state.phaseIdx ? "•" : " ";
+      const mark = i < state.phaseIdx ? "[x]" : i === state.phaseIdx ? "[>]" : "[ ]";
       lines.push(`  ${mark} ${p.label} (target ${Math.round(p.targetSec / 60)} min)`);
     });
     lines.push("");
-    lines.push(`Symptoms reproduced: ${state.symptomsReproduced ? "Yes" : "No"}`);
-    if (state.typicalSymptoms.trim()) lines.push(`Typical symptoms: ${state.typicalSymptoms.trim()}`);
-    lines.push(`Baseline HR/BP: ${derived.bHR || "—"} bpm / ${derived.bBP || "—"} mmHg`);
-    lines.push(`Upright HR/BP:  ${derived.uHR || "—"} bpm / ${derived.uBP || "—"} mmHg`);
+    lines.push("PRE-TEST CHECKLIST");
+    CHECKLIST.forEach((c) => {
+      lines.push(`  ${c.title}`);
+      c.items.forEach((i) => {
+        const mark = state.checklist[i.id] ? "[x]" : "[ ]";
+        const req = i.required ? " *" : "";
+        lines.push(`    ${mark} ${i.label}${req}`);
+      });
+    });
+    if (state.checklistOverride && missingRequired.length > 0) {
+      lines.push(`  (Overridden — ${missingRequired.length} required items not ticked)`);
+    }
+    lines.push("");
+    lines.push("FINDINGS");
+    lines.push(`  Symptoms reproduced: ${state.symptomsReproduced ? "Yes" : "No"}`);
+    if (state.typicalSymptoms.trim()) lines.push(`  Typical symptoms: ${state.typicalSymptoms.trim()}`);
+    lines.push(`  Baseline HR/BP: ${derived.bHR || "—"} bpm / ${derived.bBP || "—"} mmHg`);
+    lines.push(`  Upright HR/BP:  ${derived.uHR || "—"} bpm / ${derived.uBP || "—"} mmHg`);
     lines.push("");
     if (state.vitals.length) {
-      lines.push("Vitals log:");
+      lines.push("VITALS LOG");
       state.vitals.forEach((v) => {
         const bp = v.sbp || v.dbp ? `${v.sbp || "?"}/${v.dbp || "?"}` : "—";
         lines.push(
@@ -355,13 +377,13 @@ export function HUTTMiniApp() {
       lines.push("");
     }
     if (state.impression.trim()) {
-      lines.push("Impression:");
-      lines.push(state.impression.trim());
+      lines.push("IMPRESSION");
+      lines.push(`  ${state.impression.trim()}`);
       lines.push("");
     }
-    lines.push(`Interpretation: ${INTERP_LABEL[state.interpretation]}`);
+    lines.push(`INTERPRETATION: ${INTERP_LABEL[state.interpretation]}`);
     return lines.join("\n");
-  }, [state, phases, derived]);
+  }, [state, phases, derived, missingRequired.length]);
 
   function exportTxt() {
     const blob = new Blob([emrNote], { type: "text/plain;charset=utf-8" });
