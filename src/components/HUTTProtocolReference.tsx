@@ -197,6 +197,16 @@ const MEDS: {
       monitoring:
         "Continuous ECG + beat-to-beat BP; strict 15-min cut-off improves throughput without loss of specificity (Bartoletti 2000).",
     },
+    citations: [
+      {
+        label: "Raviele A, et al. — SL nitroglycerin tilt protocol (Am J Cardiol 1995)",
+        url: "https://pubmed.ncbi.nlm.nih.gov/7900654/",
+      },
+      {
+        label: "Bartoletti A, et al. — 'Italian' shortened GTN protocol (Europace 2000)",
+        url: "https://pubmed.ncbi.nlm.nih.gov/11225599/",
+      },
+    ],
   },
   {
     name: "Isoproterenol",
