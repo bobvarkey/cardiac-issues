@@ -179,6 +179,8 @@ export function HomeProtocols() {
         </Link>
       </section>
 
+      <HUTTMiniApp />
+
       <AntiarrhythmicsChart />
     </div>
   );
