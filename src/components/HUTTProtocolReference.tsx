@@ -7,7 +7,10 @@ import {
   Activity,
   CheckCircle2,
   ChevronDown,
+  Calculator,
 } from "lucide-react";
+import { HUTTDoseCalculator } from "./HUTTDoseCalculator";
+
 
 type ProtocolKey = "standard" | "italian";
 
