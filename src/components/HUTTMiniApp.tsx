@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
+  CheckSquare,
   ChevronDown,
   Download,
   FileText,
@@ -8,6 +9,7 @@ import {
   Plus,
   Printer,
   RotateCcw,
+  ShieldCheck,
   Timer,
   Trash2,
 } from "lucide-react";
@@ -63,6 +65,70 @@ const INTERP_LABEL: Record<Interp, string> = {
   pots: "POTS (ΔHR ≥30 bpm without hypotension)",
 };
 
+type ChecklistCategory = {
+  id: string;
+  title: string;
+  items: { id: string; label: string; required?: boolean }[];
+};
+
+const CHECKLIST: ChecklistCategory[] = [
+  {
+    id: "equipment",
+    title: "Equipment",
+    items: [
+      { id: "eq-tilt", label: "Tilt table verified, footboard secured, straps intact", required: true },
+      { id: "eq-emerg", label: "Crash cart & defibrillator at bedside, checked", required: true },
+      { id: "eq-suction", label: "Suction + O₂ + BVM available", required: true },
+      { id: "eq-meds", label: "Rescue meds drawn: atropine 1 mg, NS 500 mL", required: true },
+      { id: "eq-ntg", label: "SL nitroglycerin available (Italian / provocation)" },
+    ],
+  },
+  {
+    id: "monitoring",
+    title: "Monitoring",
+    items: [
+      { id: "mon-ecg", label: "Continuous 3- or 5-lead ECG attached, quality verified", required: true },
+      { id: "mon-bp", label: "Beat-to-beat BP (Finapres/Nexfin) or automated cuff q1 min", required: true },
+      { id: "mon-spo2", label: "SpO₂ probe on and reading", required: true },
+      { id: "mon-recorder", label: "Rhythm strip recording enabled" },
+    ],
+  },
+  {
+    id: "baseline",
+    title: "Baseline vitals (supine ≥ 5 min)",
+    items: [
+      { id: "bl-hr", label: "Baseline HR recorded", required: true },
+      { id: "bl-bp", label: "Baseline BP recorded (both arms first visit)", required: true },
+      { id: "bl-rhythm", label: "Baseline rhythm documented (sinus / other)", required: true },
+      { id: "bl-symptoms", label: "Baseline symptoms noted" },
+    ],
+  },
+  {
+    id: "access",
+    title: "IV access",
+    items: [
+      { id: "iv-line", label: "Patent 18–20 G peripheral IV, flushes freely", required: true },
+      { id: "iv-fluid", label: "NS carrier at TKO or capped saline-lock", required: true },
+    ],
+  },
+  {
+    id: "safety",
+    title: "Safety & consent",
+    items: [
+      { id: "sf-consent", label: "Informed consent obtained & documented", required: true },
+      { id: "sf-npo", label: "NPO ≥ 2 h confirmed", required: true },
+      { id: "sf-meds", label: "Vasoactive meds reviewed / held as appropriate", required: true },
+      { id: "sf-contra", label: "Contraindications screened (severe AS, HOCM, PDE5 <24 h, recent MI)", required: true },
+      { id: "sf-pdstaff", label: "Trained clinician present throughout study", required: true },
+      { id: "sf-pregnancy", label: "Pregnancy status considered (if applicable)" },
+    ],
+  },
+];
+
+const ALL_REQUIRED_IDS = CHECKLIST.flatMap((c) =>
+  c.items.filter((i) => i.required).map((i) => i.id),
+);
+
 type State = {
   protocol: ProtocolType;
   phaseIdx: number;
@@ -75,9 +141,11 @@ type State = {
   impression: string;
   interpretation: Interp;
   patientId: string;
+  checklist: Record<string, boolean>;
+  checklistOverride: boolean;
 };
 
-const STORAGE_KEY = "hutt.miniapp.v1";
+const STORAGE_KEY = "hutt.miniapp.v2";
 
 const DEFAULT_STATE: State = {
   protocol: "standard",
@@ -91,6 +159,8 @@ const DEFAULT_STATE: State = {
   impression: "",
   interpretation: "non-diagnostic",
   patientId: "",
+  checklist: {},
+  checklistOverride: false,
 };
 
 function loadState(): State {
