@@ -249,12 +249,38 @@ export function HUTTMiniApp() {
     update({ protocol: p, phaseIdx: 0 });
   }
 
+  const missingRequired = ALL_REQUIRED_IDS.filter((id) => !state.checklist[id]);
+  const canStart = state.checklistOverride || missingRequired.length === 0;
+
   function startPause() {
+    if (!state.running && !canStart) return;
     update({ running: !state.running, lastTick: !state.running ? Date.now() : null });
   }
 
+  function toggleCheck(id: string) {
+    update({ checklist: { ...state.checklist, [id]: !state.checklist[id] } });
+  }
+
+  function checkAll() {
+    const next: Record<string, boolean> = { ...state.checklist };
+    CHECKLIST.forEach((c) => c.items.forEach((i) => (next[i.id] = true)));
+    update({ checklist: next });
+  }
+
+  function clearChecks() {
+    update({ checklist: {}, checklistOverride: false });
+  }
+
   function reset() {
-    update({ running: false, elapsed: 0, phaseIdx: 0, lastTick: null, vitals: [] });
+    update({
+      running: false,
+      elapsed: 0,
+      phaseIdx: 0,
+      lastTick: null,
+      vitals: [],
+      checklist: {},
+      checklistOverride: false,
+    });
   }
 
   function nextPhase() {
