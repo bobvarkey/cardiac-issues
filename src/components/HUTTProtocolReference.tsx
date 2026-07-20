@@ -268,6 +268,12 @@ const MEDS: {
       admin: ["Identical to Standard — no protocol-specific difference"],
       monitoring: "Same as Standard.",
     },
+    citations: [
+      {
+        label: "ACLS bradycardia algorithm — atropine 0.5–1 mg IV (AHA 2020)",
+        url: "https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines",
+      },
+    ],
   },
   {
     name: "Normal saline 0.9%",
