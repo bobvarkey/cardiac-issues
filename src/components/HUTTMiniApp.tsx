@@ -481,6 +481,19 @@ export function HUTTMiniApp() {
         </div>
       </div>
 
+      {/* Pre-test checklist */}
+      <ChecklistPanel
+        checklist={state.checklist}
+        override={state.checklistOverride}
+        onToggle={toggleCheck}
+        onCheckAll={checkAll}
+        onClear={clearChecks}
+        onOverride={(v) => update({ checklistOverride: v })}
+        missing={missingRequired.length}
+        canStart={canStart}
+        started={state.elapsed > 0 || state.running}
+      />
+
       {/* Timer + phase */}
       <div className="grid gap-4 md:grid-cols-[1fr_auto]" data-tour="hutt-timer">
         <div className="rounded-xl border border-border bg-surface/40 p-4">
