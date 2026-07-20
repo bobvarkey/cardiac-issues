@@ -31,6 +31,7 @@ const PROTOCOLS: Record<
     totalTime: string;
     endpoint: string;
     references: string;
+    citations: { label: string; url: string }[];
   }
 > = {
   standard: {
