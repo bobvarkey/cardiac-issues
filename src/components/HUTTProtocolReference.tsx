@@ -551,6 +551,7 @@ export function HUTTProtocolReference() {
                   <div className="rounded-md border border-amber-500/30 bg-amber-500/5 px-2 py-1.5 text-xs text-amber-600 dark:text-amber-400">
                     <strong>Caution:</strong> {m.caution}
                   </div>
+                  {m.citations && <CitationList items={m.citations} label="References" />}
                 </div>
               </div>
             );
