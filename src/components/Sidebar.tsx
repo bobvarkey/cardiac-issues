@@ -277,32 +277,38 @@ export function Sidebar() {
                           </span>
                         )}
                         <ChevronDown
-                          className={`h-3.5 w-3.5 text-muted-foreground transition-transform ${
+                          className={`h-3.5 w-3.5 text-muted-foreground transition-transform duration-300 ease-out ${
                             open ? "rotate-0" : "-rotate-90"
                           }`}
                         />
                       </>
                     )}
                   </button>
-                  {!collapsed && open && (
-                    <ul className="ml-9 mb-1 space-y-0.5 border-l border-border pl-2">
-                      {section.items.map((item) => {
-                        const active = pathname === item.to;
-                        return (
-                          <li key={item.to}>
-                            <Link
-                              to={item.to}
-                              className={`block rounded-md px-2 py-1.5 text-xs transition ${
-                                active
-                                  ? "bg-surface font-medium text-foreground"
-                                  : "text-muted-foreground hover:bg-surface hover:text-foreground"
-                              }`}
-                            >
-                              <Highlight text={item.label} query={q} />
-                            </Link>
-                          </li>
-                        );
-                      })}
+                  {!collapsed && (
+                    <div
+                      className={`grid transition-all duration-300 ease-out ${
+                        open ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+                      }`}
+                    >
+                      <div className="overflow-hidden">
+                        <ul className="ml-9 mb-1 space-y-0.5 border-l border-border pl-2">
+                          {section.items.map((item) => {
+                            const active = pathname === item.to;
+                            return (
+                              <li key={item.to}>
+                                <Link
+                                  to={item.to}
+                                  className={`block rounded-md px-2 py-1.5 text-xs transition ${
+                                    active
+                                      ? "bg-surface font-medium text-foreground"
+                                      : "text-muted-foreground hover:bg-surface hover:text-foreground"
+                                  }`}
+                                >
+                                  <Highlight text={item.label} query={q} />
+                                </Link>
+                              </li>
+                            );
+                          })}
                     </ul>
                   )}
                 </div>
