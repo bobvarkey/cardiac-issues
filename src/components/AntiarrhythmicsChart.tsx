@@ -374,7 +374,7 @@ export function AntiarrhythmicsChart() {
         </div>
       </div>
 
-      <div className="rounded-xl border border-border bg-surface-elevated p-5">
+      <div className="rounded-xl border border-border bg-surface-elevated p-5 space-y-4">
         <div className="section-label">
           Vaughan-Williams Classification
         </div>
@@ -383,6 +383,20 @@ export function AntiarrhythmicsChart() {
           alt="Vaughan-Williams Antiarrhythmic Drug Classification"
           className="w-full h-auto rounded-lg"
         />
+        <div>
+          <div className="section-label mt-2">
+            Targets of different anti-arrhythmic classes
+          </div>
+          <img
+            src="/images/antiarrhythmics-targets.png"
+            alt="Targets of different anti-arrhythmic classes — cellular schematic showing Class 0 (HCN/If), Class 1 (Na+), Class 2 (β-adrenergic), Class 3 (K+), and Class 4 (L-type Ca2+) channels"
+            className="w-full h-auto rounded-lg border border-border"
+            loading="lazy"
+          />
+          <p className="mt-2 text-xs text-muted-foreground italic">
+            Schematic mapping each Vaughan-Williams class to its ionic target. Class 0 (ivabradine, If/HCN) is a modern addition to the classic scheme.
+          </p>
+        </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
