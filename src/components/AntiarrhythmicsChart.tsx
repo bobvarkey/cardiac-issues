@@ -22,8 +22,9 @@ type ClassEntry = {
 };
 
 const overallMnemonic = {
-  text: "Some Block Potassium Channels Mainly",
+  text: "Funny, Some Block Potassium Channels Mainly",
   mapping: [
+    { word: "Funny", meaning: "HCN (\"funny\" If) channel blockers", cls: "Class 0" },
     { word: "Some", meaning: "Sodium channel blockers", cls: "Class I" },
     { word: "Block", meaning: "Beta blockers", cls: "Class II" },
     { word: "Potassium", meaning: "Potassium channel blockers", cls: "Class III" },
@@ -33,6 +34,12 @@ const overallMnemonic = {
 };
 
 const classes: ClassEntry[] = [
+  {
+    key: "Class 0",
+    type: "HCN (\"funny\" If) channel blockers",
+    mnemonic: "Funny",
+    drugs: ["Ivabradine"],
+  },
   {
     key: "Class I",
     type: "Na+ channel blockers",
@@ -65,6 +72,7 @@ const classes: ClassEntry[] = [
     drugs: ["Digoxin", "Adenosine", "Magnesium Sulfate"],
   },
 ];
+
 
 function DrugChip({ name, onOpen }: { name: string; onOpen: (name: string) => void }) {
   const inCalc = CALCULATOR_DRUGS.has(name);
