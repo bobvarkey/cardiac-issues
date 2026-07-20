@@ -219,66 +219,63 @@ function HomeView({ onOpen, onGoTab }: { onOpen: (id: string) => void; onGoTab: 
   return (
     <div className="space-y-6 text-[17px] leading-[1.55]">
       {/* Hero */}
-      <section className="hero-card relative overflow-hidden rounded-3xl border border-white/20 p-6">
-        <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/25 blur-3xl" />
-        <div className="absolute -bottom-14 -left-10 h-44 w-44 rounded-full bg-fuchsia-400/40 blur-3xl" />
+      <section className="hero-card relative overflow-hidden rounded-3xl border border-white/20 p-5 sm:p-6">
+        <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/25 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-14 -left-10 h-44 w-44 rounded-full bg-fuchsia-400/40 blur-3xl" />
 
-        {/* Glowing heart */}
-        <div className="pointer-events-none absolute -right-8 -top-6 h-56 w-56 sm:-right-4 sm:h-64 sm:w-64">
-          <div className="absolute inset-4 rounded-full bg-fuchsia-400/50 blur-3xl" />
-          <div className="absolute inset-8 rounded-full bg-amber-300/40 blur-2xl" />
-          <img
-            src={heartHero}
-            alt="Glowing sunset-gradient anatomical heart"
-            width={512}
-            height={512}
-            className="relative h-full w-full animate-[heartFloat_6s_ease-in-out_infinite] object-contain drop-shadow-[0_0_30px_rgba(255,120,180,0.55)]"
-          />
+        <div className="relative grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 sm:gap-5">
+          <div className="min-w-0">
+            <div className="inline-flex items-center gap-2 rounded-full bg-white/20 px-3 py-1 text-[11px] font-medium uppercase tracking-widest text-white backdrop-blur">
+              <Sparkles className="h-3 w-3" /> Sunset Blaze
+            </div>
+            <h1 className="mt-3 text-[24px] font-semibold leading-tight text-white sm:text-[28px]">
+              Quick clinical math,{" "}
+              <span className="bg-gradient-to-r from-amber-100 to-white bg-clip-text text-transparent">
+                beautifully calm.
+              </span>
+            </h1>
+            <p className="mt-2 text-[14px] text-white/90 sm:text-[15px]">
+              Type numbers. Get answers. Save what matters.
+            </p>
+          </div>
+
+          {/* Glowing heart — reserved column, doesn't push text */}
+          <div className="pointer-events-none relative h-24 w-24 shrink-0 sm:h-32 sm:w-32">
+            <div className="absolute inset-2 rounded-full bg-fuchsia-400/50 blur-2xl" />
+            <div className="absolute inset-4 rounded-full bg-amber-300/40 blur-xl" />
+            <img
+              src={heartHero}
+              alt="Glowing sunset-gradient anatomical heart"
+              width={256}
+              height={256}
+              className="relative h-full w-full animate-[heartFloat_6s_ease-in-out_infinite] object-contain drop-shadow-[0_0_24px_rgba(255,120,180,0.55)]"
+            />
+          </div>
         </div>
 
-        <div className="relative max-w-[68%]">
-          <div className="inline-flex items-center gap-2 rounded-full bg-white/20 px-3 py-1 text-[11px] font-medium uppercase tracking-widest text-white backdrop-blur">
-            <Sparkles className="h-3 w-3" /> Sunset Blaze
-          </div>
-          <h1 className="mt-3 text-[28px] font-semibold leading-tight text-white">
-            Quick clinical math,{" "}
-            <span className="bg-gradient-to-r from-amber-100 to-white bg-clip-text text-transparent">
-              beautifully calm.
-            </span>
-          </h1>
-          <p className="mt-2 text-[15px] text-white/90">
-            Type numbers. Get answers. Save what matters. You're always one tap from a fresh
-            calculation.
-          </p>
-          <div className="mt-5 flex flex-wrap gap-2">
-            {[
-              { id: "chadsvasc", label: "CHA₂DS₂-VASc" },
-              { id: "crcl", label: "CrCl" },
-              { id: "qtc", label: "QTc" },
-              { id: "bmi", label: "BMI" },
-            ].map((q) => (
-              <button
-                key={q.id}
-                onClick={() => { tap(); onOpen(q.id); }}
-                className="cta-primary !py-2 !px-3 !text-[13px]"
-              >
-                <Heart className="h-3.5 w-3.5" /> {q.label}
-              </button>
-            ))}
+        {/* Single primary CTA + subtle secondary */}
+        <div className="relative mt-5 flex flex-col items-stretch gap-2">
+          <button
+            onClick={() => { tap(); onOpen("chadsvasc"); }}
+            className="cta-primary w-full !py-3 !text-[15px] font-semibold"
+          >
+            <Heart className="h-4 w-4" /> Start assessment
+          </button>
+          <div className="flex items-center justify-center gap-4 text-[13px] text-white/85">
             <button
               onClick={() => { tap(); onGoTab("calc"); }}
-              className="cta-secondary !py-2 !px-3 !text-[13px]"
+              className="underline-offset-4 hover:underline"
             >
               All calculators
             </button>
+            <span className="text-white/40">·</span>
             <button
               onClick={() => { tap(); onGoTab("history"); }}
-              className="cta-secondary !py-2 !px-3 !text-[13px]"
+              className="inline-flex items-center gap-1 underline-offset-4 hover:underline"
             >
               <Clock className="h-3.5 w-3.5" /> History
             </button>
           </div>
-
         </div>
       </section>
 
