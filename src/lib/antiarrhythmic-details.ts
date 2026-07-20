@@ -33,6 +33,52 @@ export const CALCULATOR_DRUGS = new Set([
 ]);
 
 export const DRUG_DETAILS: Record<string, DrugDetails> = {
+  Ivabradine: {
+    name: "Ivabradine",
+    className: "HCN (\"funny\" If) channel blocker",
+    classKey: "Class 0",
+    mnemonic: "\"Funny\" — the F in Funny, Some Block Potassium Channels Mainly",
+    indications: [
+      "Chronic stable HFrEF (LVEF ≤35%) in sinus rhythm with resting HR ≥70 bpm on max-tolerated β-blocker",
+      "Symptomatic inappropriate sinus tachycardia (off-label)",
+      "Stable angina in sinus rhythm intolerant of β-blockers",
+    ],
+    dosing: [
+      { route: "PO — HFrEF", dose: "Start 5 mg BID with meals; titrate after 2 wk to target HR 50–60 bpm (max 7.5 mg BID)" },
+      { route: "PO — Age ≥75 or conduction disease", dose: "Start 2.5 mg BID" },
+    ],
+    contraindications: [
+      "Acute decompensated heart failure",
+      "BP <90/50 mmHg",
+      "Sick sinus syndrome, SA block, or 3° AV block without pacemaker",
+      "Resting HR <60 bpm before treatment",
+      "Severe hepatic impairment",
+      "Pacemaker-dependent (HR set by pacemaker)",
+      "Atrial fibrillation (ineffective — acts on sinus node only)",
+      "Strong CYP3A4 inhibitors",
+    ],
+    interactions: [
+      "Strong CYP3A4 inhibitors (ketoconazole, itraconazole, clarithromycin, ritonavir, nefazodone) — contraindicated",
+      "Moderate CYP3A4 inhibitors (diltiazem, verapamil, grapefruit juice) — avoid or reduce dose; additive bradycardia",
+      "CYP3A4 inducers (rifampin, phenytoin, St John's wort) — reduce ivabradine effect",
+      "Other bradycardic agents (β-blockers, digoxin, amiodarone) — additive HR reduction",
+      "QT-prolonging drugs — avoid combination",
+    ],
+    adverse: [
+      "Bradycardia",
+      "Luminous phenomena / phosphenes (transient visual brightness, ~15%)",
+      "Atrial fibrillation (~5%, higher than placebo)",
+      "1° AV block, ventricular extrasystoles",
+      "Blurred vision, headache, dizziness",
+    ],
+    monitoring: [
+      { watch: "Resting HR at baseline, 2 wk, and after each titration", stopOrEscalate: "Reduce or hold if HR <50 bpm or symptomatic bradycardia" },
+      { watch: "Rhythm — new AF or conduction disease", stopOrEscalate: "Discontinue if persistent AF develops" },
+      { watch: "Visual symptoms (phosphenes) — usually resolve; warn about driving at night" },
+      { watch: "BP and volume status in HFrEF patients" },
+    ],
+  },
+
   Quinidine: {
     name: "Quinidine",
     className: "Na+ channel blocker (moderate)",

@@ -23,7 +23,9 @@ const calcDrugs = [
 
 // Anti-arrhythmic drugs in the Vaughan-Williams chart (route to /antiarrhythmics)
 const vwDrugs: { name: string; detail: string }[] = [
+  { name: "Ivabradine", detail: "Class 0 · HCN (funny If) channel blocker · HFrEF, IST" },
   { name: "Quinidine", detail: "Class Ia · Na+ blocker" },
+
   { name: "Procainamide", detail: "Class Ia · Na+ blocker" },
   { name: "Disopyramide", detail: "Class Ia · Na+ blocker" },
   { name: "Lidocaine", detail: "Class Ib · Na+ blocker" },
