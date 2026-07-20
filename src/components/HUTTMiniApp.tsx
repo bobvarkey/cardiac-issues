@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
+  CheckSquare,
   ChevronDown,
   Download,
   FileText,
@@ -8,6 +9,7 @@ import {
   Plus,
   Printer,
   RotateCcw,
+  ShieldCheck,
   Timer,
   Trash2,
 } from "lucide-react";
@@ -63,6 +65,70 @@ const INTERP_LABEL: Record<Interp, string> = {
   pots: "POTS (ΔHR ≥30 bpm without hypotension)",
 };
 
+type ChecklistCategory = {
+  id: string;
+  title: string;
+  items: { id: string; label: string; required?: boolean }[];
+};
+
+const CHECKLIST: ChecklistCategory[] = [
+  {
+    id: "equipment",
+    title: "Equipment",
+    items: [
+      { id: "eq-tilt", label: "Tilt table verified, footboard secured, straps intact", required: true },
+      { id: "eq-emerg", label: "Crash cart & defibrillator at bedside, checked", required: true },
+      { id: "eq-suction", label: "Suction + O₂ + BVM available", required: true },
+      { id: "eq-meds", label: "Rescue meds drawn: atropine 1 mg, NS 500 mL", required: true },
+      { id: "eq-ntg", label: "SL nitroglycerin available (Italian / provocation)" },
+    ],
+  },
+  {
+    id: "monitoring",
+    title: "Monitoring",
+    items: [
+      { id: "mon-ecg", label: "Continuous 3- or 5-lead ECG attached, quality verified", required: true },
+      { id: "mon-bp", label: "Beat-to-beat BP (Finapres/Nexfin) or automated cuff q1 min", required: true },
+      { id: "mon-spo2", label: "SpO₂ probe on and reading", required: true },
+      { id: "mon-recorder", label: "Rhythm strip recording enabled" },
+    ],
+  },
+  {
+    id: "baseline",
+    title: "Baseline vitals (supine ≥ 5 min)",
+    items: [
+      { id: "bl-hr", label: "Baseline HR recorded", required: true },
+      { id: "bl-bp", label: "Baseline BP recorded (both arms first visit)", required: true },
+      { id: "bl-rhythm", label: "Baseline rhythm documented (sinus / other)", required: true },
+      { id: "bl-symptoms", label: "Baseline symptoms noted" },
+    ],
+  },
+  {
+    id: "access",
+    title: "IV access",
+    items: [
+      { id: "iv-line", label: "Patent 18–20 G peripheral IV, flushes freely", required: true },
+      { id: "iv-fluid", label: "NS carrier at TKO or capped saline-lock", required: true },
+    ],
+  },
+  {
+    id: "safety",
+    title: "Safety & consent",
+    items: [
+      { id: "sf-consent", label: "Informed consent obtained & documented", required: true },
+      { id: "sf-npo", label: "NPO ≥ 2 h confirmed", required: true },
+      { id: "sf-meds", label: "Vasoactive meds reviewed / held as appropriate", required: true },
+      { id: "sf-contra", label: "Contraindications screened (severe AS, HOCM, PDE5 <24 h, recent MI)", required: true },
+      { id: "sf-pdstaff", label: "Trained clinician present throughout study", required: true },
+      { id: "sf-pregnancy", label: "Pregnancy status considered (if applicable)" },
+    ],
+  },
+];
+
+const ALL_REQUIRED_IDS = CHECKLIST.flatMap((c) =>
+  c.items.filter((i) => i.required).map((i) => i.id),
+);
+
 type State = {
   protocol: ProtocolType;
   phaseIdx: number;
@@ -75,9 +141,11 @@ type State = {
   impression: string;
   interpretation: Interp;
   patientId: string;
+  checklist: Record<string, boolean>;
+  checklistOverride: boolean;
 };
 
-const STORAGE_KEY = "hutt.miniapp.v1";
+const STORAGE_KEY = "hutt.miniapp.v2";
 
 const DEFAULT_STATE: State = {
   protocol: "standard",
@@ -91,6 +159,8 @@ const DEFAULT_STATE: State = {
   impression: "",
   interpretation: "non-diagnostic",
   patientId: "",
+  checklist: {},
+  checklistOverride: false,
 };
 
 function loadState(): State {
@@ -179,12 +249,38 @@ export function HUTTMiniApp() {
     update({ protocol: p, phaseIdx: 0 });
   }
 
+  const missingRequired = ALL_REQUIRED_IDS.filter((id) => !state.checklist[id]);
+  const canStart = state.checklistOverride || missingRequired.length === 0;
+
   function startPause() {
+    if (!state.running && !canStart) return;
     update({ running: !state.running, lastTick: !state.running ? Date.now() : null });
   }
 
+  function toggleCheck(id: string) {
+    update({ checklist: { ...state.checklist, [id]: !state.checklist[id] } });
+  }
+
+  function checkAll() {
+    const next: Record<string, boolean> = { ...state.checklist };
+    CHECKLIST.forEach((c) => c.items.forEach((i) => (next[i.id] = true)));
+    update({ checklist: next });
+  }
+
+  function clearChecks() {
+    update({ checklist: {}, checklistOverride: false });
+  }
+
   function reset() {
-    update({ running: false, elapsed: 0, phaseIdx: 0, lastTick: null, vitals: [] });
+    update({
+      running: false,
+      elapsed: 0,
+      phaseIdx: 0,
+      lastTick: null,
+      vitals: [],
+      checklist: {},
+      checklistOverride: false,
+    });
   }
 
   function nextPhase() {
@@ -229,25 +325,47 @@ export function HUTTMiniApp() {
   }, [state.vitals]);
 
   const emrNote = useMemo(() => {
-    const protoLabel = state.protocol === "standard" ? "Standard" : "Italian";
+    const protoLabel = state.protocol === "standard" ? "Standard (Westminster)" : "Italian";
     const lines: string[] = [];
     lines.push(`HEAD-UP TILT TABLE TEST — ${protoLabel} Protocol`);
+    lines.push(`Date: ${new Date().toLocaleString()}`);
     if (state.patientId) lines.push(`Patient / Study ID: ${state.patientId}`);
     lines.push(`Total study time: ${fmt(state.elapsed)}`);
     lines.push("");
-    lines.push("Phases:");
+    lines.push("PROTOCOL");
+    if (state.protocol === "standard") {
+      lines.push("  Passive tilt 60–70° × 20 min; if negative, SL GTN 400 mcg × 15–20 min.");
+    } else {
+      lines.push("  Passive tilt 60° × 20 min; if negative, SL GTN 300–400 mcg × 15 min.");
+    }
+    lines.push("");
+    lines.push("PHASES");
     phases.forEach((p, i) => {
-      const mark = i < state.phaseIdx ? "✓" : i === state.phaseIdx ? "•" : " ";
+      const mark = i < state.phaseIdx ? "[x]" : i === state.phaseIdx ? "[>]" : "[ ]";
       lines.push(`  ${mark} ${p.label} (target ${Math.round(p.targetSec / 60)} min)`);
     });
     lines.push("");
-    lines.push(`Symptoms reproduced: ${state.symptomsReproduced ? "Yes" : "No"}`);
-    if (state.typicalSymptoms.trim()) lines.push(`Typical symptoms: ${state.typicalSymptoms.trim()}`);
-    lines.push(`Baseline HR/BP: ${derived.bHR || "—"} bpm / ${derived.bBP || "—"} mmHg`);
-    lines.push(`Upright HR/BP:  ${derived.uHR || "—"} bpm / ${derived.uBP || "—"} mmHg`);
+    lines.push("PRE-TEST CHECKLIST");
+    CHECKLIST.forEach((c) => {
+      lines.push(`  ${c.title}`);
+      c.items.forEach((i) => {
+        const mark = state.checklist[i.id] ? "[x]" : "[ ]";
+        const req = i.required ? " *" : "";
+        lines.push(`    ${mark} ${i.label}${req}`);
+      });
+    });
+    if (state.checklistOverride && missingRequired.length > 0) {
+      lines.push(`  (Overridden — ${missingRequired.length} required items not ticked)`);
+    }
+    lines.push("");
+    lines.push("FINDINGS");
+    lines.push(`  Symptoms reproduced: ${state.symptomsReproduced ? "Yes" : "No"}`);
+    if (state.typicalSymptoms.trim()) lines.push(`  Typical symptoms: ${state.typicalSymptoms.trim()}`);
+    lines.push(`  Baseline HR/BP: ${derived.bHR || "—"} bpm / ${derived.bBP || "—"} mmHg`);
+    lines.push(`  Upright HR/BP:  ${derived.uHR || "—"} bpm / ${derived.uBP || "—"} mmHg`);
     lines.push("");
     if (state.vitals.length) {
-      lines.push("Vitals log:");
+      lines.push("VITALS LOG");
       state.vitals.forEach((v) => {
         const bp = v.sbp || v.dbp ? `${v.sbp || "?"}/${v.dbp || "?"}` : "—";
         lines.push(
@@ -259,13 +377,13 @@ export function HUTTMiniApp() {
       lines.push("");
     }
     if (state.impression.trim()) {
-      lines.push("Impression:");
-      lines.push(state.impression.trim());
+      lines.push("IMPRESSION");
+      lines.push(`  ${state.impression.trim()}`);
       lines.push("");
     }
-    lines.push(`Interpretation: ${INTERP_LABEL[state.interpretation]}`);
+    lines.push(`INTERPRETATION: ${INTERP_LABEL[state.interpretation]}`);
     return lines.join("\n");
-  }, [state, phases, derived]);
+  }, [state, phases, derived, missingRequired.length]);
 
   function exportTxt() {
     const blob = new Blob([emrNote], { type: "text/plain;charset=utf-8" });
@@ -363,6 +481,19 @@ export function HUTTMiniApp() {
         </div>
       </div>
 
+      {/* Pre-test checklist */}
+      <ChecklistPanel
+        checklist={state.checklist}
+        override={state.checklistOverride}
+        onToggle={toggleCheck}
+        onCheckAll={checkAll}
+        onClear={clearChecks}
+        onOverride={(v) => update({ checklistOverride: v })}
+        missing={missingRequired.length}
+        canStart={canStart}
+        started={state.elapsed > 0 || state.running}
+      />
+
       {/* Timer + phase */}
       <div className="grid gap-4 md:grid-cols-[1fr_auto]" data-tour="hutt-timer">
         <div className="rounded-xl border border-border bg-surface/40 p-4">
@@ -390,7 +521,9 @@ export function HUTTMiniApp() {
             <button
               type="button"
               onClick={startPause}
-              className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:opacity-90"
+              disabled={!state.running && !canStart}
+              title={!canStart ? `Complete ${missingRequired.length} required checklist item(s) first` : ""}
+              className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
             >
               {state.running ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}
               {state.running ? "Pause" : "Start"}
@@ -618,6 +751,125 @@ export function HUTTMiniApp() {
         )}
       </div>
     </section>
+  );
+}
+
+function ChecklistPanel({
+  checklist,
+  override,
+  onToggle,
+  onCheckAll,
+  onClear,
+  onOverride,
+  missing,
+  canStart,
+  started,
+}: {
+  checklist: Record<string, boolean>;
+  override: boolean;
+  onToggle: (id: string) => void;
+  onCheckAll: () => void;
+  onClear: () => void;
+  onOverride: (v: boolean) => void;
+  missing: number;
+  canStart: boolean;
+  started: boolean;
+}) {
+  const [open, setOpen] = useState(true);
+  const total = CHECKLIST.reduce((n, c) => n + c.items.length, 0);
+  const done = Object.values(checklist).filter(Boolean).length;
+  return (
+    <div className="rounded-xl border border-border bg-surface/40" data-tour="hutt-checklist">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left"
+      >
+        <span className="flex flex-wrap items-center gap-2 text-sm font-semibold">
+          <ShieldCheck className={`h-4 w-4 ${canStart ? "text-emerald-500" : "text-amber-500"}`} />
+          Pre-test checklist
+          <span className="rounded-full bg-background px-2 py-0.5 font-mono text-[10px] text-muted-foreground">
+            {done}/{total}
+          </span>
+          {!canStart && !started && (
+            <span className="rounded-full bg-amber-500/15 px-2 py-0.5 text-[10px] font-medium text-amber-600 dark:text-amber-400">
+              {missing} required missing — timer locked
+            </span>
+          )}
+          {canStart && !started && (
+            <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-medium text-emerald-600 dark:text-emerald-400">
+              Ready to start
+            </span>
+          )}
+        </span>
+        <ChevronDown
+          className={`h-4 w-4 text-muted-foreground transition-transform ${open ? "" : "-rotate-90"}`}
+        />
+      </button>
+      {open && (
+        <div className="space-y-4 border-t border-border p-4">
+          <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+            {CHECKLIST.map((cat) => (
+              <div key={cat.id} className="rounded-lg border border-border bg-background/40 p-3">
+                <div className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  {cat.title}
+                </div>
+                <ul className="space-y-1.5">
+                  {cat.items.map((item) => {
+                    const checked = !!checklist[item.id];
+                    return (
+                      <li key={item.id}>
+                        <label className="flex cursor-pointer items-start gap-2 text-xs">
+                          <input
+                            type="checkbox"
+                            checked={checked}
+                            onChange={() => onToggle(item.id)}
+                            className="mt-0.5 h-3.5 w-3.5 shrink-0"
+                          />
+                          <span className={checked ? "text-muted-foreground line-through" : ""}>
+                            {item.label}
+                            {item.required && (
+                              <span className="ml-1 text-[10px] font-semibold text-amber-500">
+                                *required
+                              </span>
+                            )}
+                          </span>
+                        </label>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            ))}
+          </div>
+          <div className="flex flex-wrap items-center gap-2 border-t border-border pt-3">
+            <button
+              type="button"
+              onClick={onCheckAll}
+              className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-xs font-medium hover:bg-surface"
+            >
+              <CheckSquare className="h-3.5 w-3.5" />
+              Check all
+            </button>
+            <button
+              type="button"
+              onClick={onClear}
+              className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground hover:bg-surface hover:text-foreground"
+            >
+              Clear
+            </button>
+            <label className="ml-auto flex items-center gap-2 text-xs text-muted-foreground">
+              <input
+                type="checkbox"
+                checked={override}
+                onChange={(e) => onOverride(e.target.checked)}
+              />
+              Override & start anyway
+            </label>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
 
