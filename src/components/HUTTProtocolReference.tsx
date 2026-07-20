@@ -166,6 +166,7 @@ const MEDS: {
   caution: string;
   standard: MedDetail;
   italian: MedDetail;
+  citations: { label: string; url: string }[];
 }[] = [
   {
     name: "Nitroglycerin (GTN)",
