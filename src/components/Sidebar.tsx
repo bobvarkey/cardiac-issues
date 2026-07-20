@@ -193,17 +193,23 @@ export function Sidebar() {
         <div className="flex h-full flex-col">
           {/* Header */}
           <div className="flex items-center gap-2 border-b border-border px-3 py-3">
-            <div className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-rose-500 to-fuchsia-500 text-white">
-              <Activity className="h-4 w-4" />
-            </div>
-            {!collapsed && (
-              <div className="min-w-0 flex-1 leading-tight">
-                <div className="truncate text-sm font-semibold">CardiacRef</div>
-                <div className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
-                  Clinical
-                </div>
+            <Link
+              to="/"
+              className="flex min-w-0 flex-1 items-center gap-2 rounded-md hover:bg-surface/60 -mx-1 px-1 py-0.5 transition"
+              title="Home"
+            >
+              <div className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-rose-500 to-fuchsia-500 text-white">
+                <Activity className="h-4 w-4" />
               </div>
-            )}
+              {!collapsed && (
+                <div className="min-w-0 flex-1 leading-tight">
+                  <div className="truncate text-sm font-semibold">CardiacRef</div>
+                  <div className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+                    Clinical
+                  </div>
+                </div>
+              )}
+            </Link>
             <button
               type="button"
               onClick={() => setCollapsed((c) => !c)}
@@ -214,6 +220,7 @@ export function Sidebar() {
               {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
             </button>
           </div>
+
 
           {/* Search */}
           {!collapsed && (
@@ -247,6 +254,34 @@ export function Sidebar() {
             {filtered.map((section) => {
               const Icon = section.icon;
               const open = isSectionOpen(section.id);
+              const isDirect = section.items.length === 1 && (section.id === "home" || section.items[0].to === "/");
+              if (isDirect) {
+                const target = section.items[0].to;
+                const active = pathname === target;
+                return (
+                  <div key={section.id} className="px-2">
+                    <Link
+                      to={target}
+                      onClick={() => collapsed && setCollapsed(false)}
+                      className={`group flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-sm hover:bg-surface ${
+                        active ? "bg-surface" : ""
+                      }`}
+                      title={collapsed ? section.label : undefined}
+                    >
+                      <span
+                        className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md ${section.bg} ${section.color}`}
+                      >
+                        <Icon className="h-4 w-4" />
+                      </span>
+                      {!collapsed && (
+                        <span className="min-w-0 flex-1 truncate font-medium">
+                          <Highlight text={section.label} query={q} />
+                        </span>
+                      )}
+                    </Link>
+                  </div>
+                );
+              }
               return (
                 <div key={section.id} className="px-2">
                   <button
@@ -322,6 +357,7 @@ export function Sidebar() {
                 </div>
               );
             })}
+
           </nav>
 
           {!collapsed && (
