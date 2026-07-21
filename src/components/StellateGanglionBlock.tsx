@@ -398,6 +398,80 @@ export function StellateGanglionBlock() {
         </ol>
       </section>
 
+      {/* Monitoring before / during / after */}
+      <section className="space-y-4">
+        <div className="flex items-center gap-2.5 text-xs text-primary">
+          <span className="pulse-dot" />
+          <span className="font-mono uppercase tracking-wider">Monitoring</span>
+        </div>
+        <h2 className="text-2xl font-semibold tracking-tight">Before, during, and after the block</h2>
+        <div className="grid gap-4 md:grid-cols-3">
+          <div className="surface-panel space-y-3">
+            <div className="font-mono text-[10px] uppercase tracking-wider text-primary">Before</div>
+            <ul className="space-y-2 text-sm text-muted-foreground">
+              <li className="flex gap-2">
+                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-primary" />
+                <span>Confirm continuous ECG, NIBP, pulse oximetry</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-primary" />
+                <span>Review coagulation status and anticoagulation plan</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-primary" />
+                <span>Ensure working peripheral IV, defibrillator, airway cart, lipid emulsion</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-primary" />
+                <span>Baseline neuro exam and voice (recurrent laryngeal baseline)</span>
+              </li>
+            </ul>
+          </div>
+          <div className="surface-panel space-y-3">
+            <div className="font-mono text-[10px] uppercase tracking-wider text-primary">During</div>
+            <ul className="space-y-2 text-sm text-muted-foreground">
+              <li className="flex gap-2">
+                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-primary" />
+                <span>Watch the ECG rhythm continuously — VT may terminate mid-procedure</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-primary" />
+                <span>Monitor BP every 2–5 min; watch for hypotension from sympathectomy</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-primary" />
+                <span>Aspirate before each incremental injection; watch for vascular uptake</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-primary" />
+                <span>Ask patient to report tinnitus, perioral numbness, or metallic taste</span>
+              </li>
+            </ul>
+          </div>
+          <div className="surface-panel space-y-3">
+            <div className="font-mono text-[10px] uppercase tracking-wider text-primary">After</div>
+            <ul className="space-y-2 text-sm text-muted-foreground">
+              <li className="flex gap-2">
+                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-primary" />
+                <span>Document Horner syndrome signs (ptosis, miosis, anhidrosis)</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-primary" />
+                <span>Monitor BP, SpO₂, rhythm for 30–60 min in recovery area</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-primary" />
+                <span>Reassess for hoarseness, dysphagia, or arm weakness</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-primary" />
+                <span>Repeat ECG, check for recurrence; escalate if storm persists</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
       {/* Medication table */}
       <section className="space-y-4">
         <div className="flex items-center gap-2.5 text-xs text-primary">
