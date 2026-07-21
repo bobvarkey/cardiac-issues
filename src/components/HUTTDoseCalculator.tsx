@@ -44,7 +44,11 @@ function Row({
         <div className="font-mono text-sm mt-0.5 break-words">{value}</div>
         {hint && <div className="text-[11px] text-muted-foreground mt-0.5">{hint}</div>}
       </div>
-      {status && <StatusPill status={status}>{status === "ok" ? "In range" : status === "warn" ? "Check" : "Out of range"}</StatusPill>}
+      {status && (
+        <StatusPill status={status}>
+          {status === "ok" ? "In range" : status === "warn" ? "Check" : "Out of range"}
+        </StatusPill>
+      )}
     </div>
   );
 }
@@ -194,7 +198,8 @@ export function HUTTDoseCalculator() {
             hint="Recommended: 1 → 3 mcg/min, titrate by 0.5–1 mcg/min every 5 min to HR + 20–25%."
           />
           <div className="rounded-md border border-border bg-background/40 px-3 py-2 text-xs text-muted-foreground">
-            Standard mix: <span className="font-mono">1 mg in 250 mL D5W → 4 mcg/mL</span>. At 4 mcg/mL, 1 mcg/min ≈ 15 mL/h; 3 mcg/min ≈ 45 mL/h.
+            Standard mix: <span className="font-mono">1 mg in 250 mL D5W → 4 mcg/mL</span>. At 4
+            mcg/mL, 1 mcg/min ≈ 15 mL/h; 3 mcg/min ≈ 45 mL/h.
           </div>
         </div>
       )}
@@ -208,7 +213,13 @@ export function HUTTDoseCalculator() {
             </label>
             <label className="text-xs">
               <span className="text-muted-foreground">Infusion (optional)</span>
-              <NumInput value={phenInf} onChange={setPhenInf} step="0.1" min="0" suffix="mcg/kg/min" />
+              <NumInput
+                value={phenInf}
+                onChange={setPhenInf}
+                step="0.1"
+                min="0"
+                suffix="mcg/kg/min"
+              />
             </label>
             <label className="text-xs">
               <span className="text-muted-foreground">Concentration</span>
@@ -232,14 +243,16 @@ export function HUTTDoseCalculator() {
             hint={`Typical: 0.15–0.75 mcg/kg/min, titrate to MAP ≥ 65. At 70 kg × 0.5 mcg/kg/min = 35 mcg/min ≈ 21 mL/h at 100 mcg/mL.`}
           />
           <div className="rounded-md border border-border bg-background/40 px-3 py-2 text-xs text-muted-foreground">
-            Standard mix: <span className="font-mono">10 mg in 100 mL NS → 100 mcg/mL</span>. Watch for reflex bradycardia — atropine ready.
+            Standard mix: <span className="font-mono">10 mg in 100 mL NS → 100 mcg/mL</span>. Watch
+            for reflex bradycardia — atropine ready.
           </div>
         </div>
       )}
 
       <p className="text-[11px] text-muted-foreground">
         <Calculator className="inline h-3 w-3 mr-1 -mt-0.5" />
-        Confirmation tool only — always verify against your institution's protocol and pump library before administration.
+        Confirmation tool only — always verify against your institution's protocol and pump library
+        before administration.
       </p>
     </div>
   );

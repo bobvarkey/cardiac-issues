@@ -105,9 +105,7 @@ function classify(i: Input): Result {
       category: "not_syncope",
       badge: "Not syncope",
       reason: "Event does not fit true syncope.",
-      advice: [
-        "Consider seizure, hypoglycemia, TIA, psychogenic TLOC, or intoxication.",
-      ],
+      advice: ["Consider seizure, hypoglycemia, TIA, psychogenic TLOC, or intoxication."],
     };
   }
 

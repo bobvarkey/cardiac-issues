@@ -1,12 +1,40 @@
 import React, { useState, useMemo } from "react";
-import { Heart, Droplet, AlertTriangle, CheckCircle, Info, ChevronRight, Image as ImageIcon } from "lucide-react";
+import {
+  Heart,
+  Droplet,
+  AlertTriangle,
+  CheckCircle,
+  Info,
+  ChevronRight,
+  Image as ImageIcon,
+} from "lucide-react";
 
 const scoreImages = [
-  { src: "/images/anticoagulation/af-stroke-prevention.jpg", title: "AF Stroke Prevention", desc: "2023 ACC/AHA guideline - risk-based anticoagulation thresholds" },
-  { src: "/images/anticoagulation/vte-prevention-surgery.jpg", title: "VTE Prevention After Surgery", desc: "DOACs vs LMWH for hip/knee replacement thromboprophylaxis" },
-  { src: "/images/anticoagulation/valvular-disease.jpg", title: "Valvular Heart Disease", desc: "DOAC appropriateness - mechanical valves, rheumatic MS, TAVI" },
-  { src: "/images/anticoagulation/thrombophilia-aps.jpg", title: "Thrombophilia & APS", desc: "When DOACs are not the right choice - APS, triple-positive" },
-  { src: "/images/anticoagulation/laac-ablation.jpg", title: "LAAC & AF Ablation", desc: "Alternatives and off-ramps from long-term OAC" },
+  {
+    src: "/images/anticoagulation/af-stroke-prevention.jpg",
+    title: "AF Stroke Prevention",
+    desc: "2023 ACC/AHA guideline - risk-based anticoagulation thresholds",
+  },
+  {
+    src: "/images/anticoagulation/vte-prevention-surgery.jpg",
+    title: "VTE Prevention After Surgery",
+    desc: "DOACs vs LMWH for hip/knee replacement thromboprophylaxis",
+  },
+  {
+    src: "/images/anticoagulation/valvular-disease.jpg",
+    title: "Valvular Heart Disease",
+    desc: "DOAC appropriateness - mechanical valves, rheumatic MS, TAVI",
+  },
+  {
+    src: "/images/anticoagulation/thrombophilia-aps.jpg",
+    title: "Thrombophilia & APS",
+    desc: "When DOACs are not the right choice - APS, triple-positive",
+  },
+  {
+    src: "/images/anticoagulation/laac-ablation.jpg",
+    title: "LAAC & AF Ablation",
+    desc: "Alternatives and off-ramps from long-term OAC",
+  },
 ];
 
 // CHA₂DS₂-VASc stroke risk percentages (approximate annual risk)
@@ -59,7 +87,11 @@ interface HasBledInputs {
   alcoholExcess: boolean;
 }
 
-function calculateCha2ds2Vasc(inputs: Cha2ds2VascInputs): { score: number; riskCategory: string; recommendation: string } {
+function calculateCha2ds2Vasc(inputs: Cha2ds2VascInputs): {
+  score: number;
+  riskCategory: string;
+  recommendation: string;
+} {
   let score = 0;
 
   // Age scoring
@@ -89,7 +121,8 @@ function calculateCha2ds2Vasc(inputs: Cha2ds2VascInputs): { score: number; riskC
       recommendation = "No OAC indicated; annual stroke risk very low.";
     } else if (score === 1) {
       riskCategory = "Intermediate";
-      recommendation = "Consider OAC; individualize based on AF burden, risk modifiers, and patient preference.";
+      recommendation =
+        "Consider OAC; individualize based on AF burden, risk modifiers, and patient preference.";
     } else {
       riskCategory = "High";
       recommendation = "OAC recommended unless contraindicated.";
@@ -114,7 +147,11 @@ function calculateCha2ds2Vasc(inputs: Cha2ds2VascInputs): { score: number; riskC
   return { score, riskCategory, recommendation };
 }
 
-function calculateHasBled(inputs: HasBledInputs): { score: number; riskCategory: string; message: string } {
+function calculateHasBled(inputs: HasBledInputs): {
+  score: number;
+  riskCategory: string;
+  message: string;
+} {
   let score = 0;
 
   if (inputs.uncontrolledHtn) score += 1;
@@ -251,7 +288,9 @@ export function ScoresMiniApp() {
                   <span className="block text-sm text-slate-300">Sex</span>
                   <select
                     value={chaInputs.sex}
-                    onChange={(e) => setChaInputs({ ...chaInputs, sex: e.target.value as "male" | "female" })}
+                    onChange={(e) =>
+                      setChaInputs({ ...chaInputs, sex: e.target.value as "male" | "female" })
+                    }
                     className="w-full rounded-xl bg-slate-950 border border-slate-700 p-3 focus:border-cyan-400 focus:outline-none"
                   >
                     <option value="male">Male</option>
@@ -261,7 +300,9 @@ export function ScoresMiniApp() {
               </div>
 
               <div className="space-y-3 pt-2">
-                <p className="text-sm text-slate-400">Risk Factors (each = 1 point, except stroke = 2):</p>
+                <p className="text-sm text-slate-400">
+                  Risk Factors (each = 1 point, except stroke = 2):
+                </p>
 
                 <label className="flex items-center gap-3 cursor-pointer">
                   <input
@@ -300,14 +341,19 @@ export function ScoresMiniApp() {
                     onChange={(e) => setChaInputs({ ...chaInputs, strokeTiaSe: e.target.checked })}
                     className="h-5 w-5 rounded border-slate-600 bg-slate-950 text-cyan-400 focus:ring-cyan-400"
                   />
-                  <span className="text-sm">Stroke / TIA / Systemic Embolism <span className="text-cyan-400">(2 points)</span></span>
+                  <span className="text-sm">
+                    Stroke / TIA / Systemic Embolism{" "}
+                    <span className="text-cyan-400">(2 points)</span>
+                  </span>
                 </label>
 
                 <label className="flex items-center gap-3 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={chaInputs.vascularDisease}
-                    onChange={(e) => setChaInputs({ ...chaInputs, vascularDisease: e.target.checked })}
+                    onChange={(e) =>
+                      setChaInputs({ ...chaInputs, vascularDisease: e.target.checked })
+                    }
                     className="h-5 w-5 rounded border-slate-600 bg-slate-950 text-cyan-400 focus:ring-cyan-400"
                   />
                   <span className="text-sm">Vascular Disease (MI, PAD, aortic plaque)</span>
@@ -324,11 +370,15 @@ export function ScoresMiniApp() {
                 <div className="text-sm text-slate-400 mt-1">CHA₂DS₂-VASc Score</div>
               </div>
 
-              <div className={`p-3 rounded-lg ${
-                chaResult.riskCategory === "High" ? "bg-red-950/30 border border-red-500/50" :
-                chaResult.riskCategory === "Intermediate" ? "bg-amber-950/30 border border-amber-500/50" :
-                "bg-green-950/30 border border-green-500/50"
-              }`}>
+              <div
+                className={`p-3 rounded-lg ${
+                  chaResult.riskCategory === "High"
+                    ? "bg-red-950/30 border border-red-500/50"
+                    : chaResult.riskCategory === "Intermediate"
+                      ? "bg-amber-950/30 border border-amber-500/50"
+                      : "bg-green-950/30 border border-green-500/50"
+                }`}
+              >
                 <div className="flex items-center gap-2">
                   {chaResult.riskCategory === "High" ? (
                     <AlertTriangle className="h-4 w-4 text-red-400" />
@@ -344,9 +394,7 @@ export function ScoresMiniApp() {
                 </div>
               </div>
 
-              <div className="text-sm text-slate-300">
-                {chaResult.recommendation}
-              </div>
+              <div className="text-sm text-slate-300">{chaResult.recommendation}</div>
 
               <div className="pt-3 border-t border-slate-700 text-xs text-slate-500">
                 <Info className="inline h-3 w-3 mr-1" />
@@ -370,12 +418,16 @@ export function ScoresMiniApp() {
                   <input
                     type="checkbox"
                     checked={hasInputs.uncontrolledHtn}
-                    onChange={(e) => setHasInputs({ ...hasInputs, uncontrolledHtn: e.target.checked })}
+                    onChange={(e) =>
+                      setHasInputs({ ...hasInputs, uncontrolledHtn: e.target.checked })
+                    }
                     className="h-5 w-5 rounded border-slate-600 bg-slate-950 text-red-400 focus:ring-red-400"
                   />
                   <div>
                     <span className="text-sm font-medium">H</span>
-                    <span className="text-sm text-slate-400 ml-1">— Hypertension (uncontrolled, SBP &gt;160)</span>
+                    <span className="text-sm text-slate-400 ml-1">
+                      — Hypertension (uncontrolled, SBP &gt;160)
+                    </span>
                   </div>
                 </label>
 
@@ -383,12 +435,16 @@ export function ScoresMiniApp() {
                   <input
                     type="checkbox"
                     checked={hasInputs.abnormalRenal}
-                    onChange={(e) => setHasInputs({ ...hasInputs, abnormalRenal: e.target.checked })}
+                    onChange={(e) =>
+                      setHasInputs({ ...hasInputs, abnormalRenal: e.target.checked })
+                    }
                     className="h-5 w-5 rounded border-slate-600 bg-slate-950 text-red-400 focus:ring-red-400"
                   />
                   <div>
                     <span className="text-sm font-medium">A</span>
-                    <span className="text-sm text-slate-400 ml-1">— Abnormal Renal (dialysis, Cr ≥200 µmol/L)</span>
+                    <span className="text-sm text-slate-400 ml-1">
+                      — Abnormal Renal (dialysis, Cr ≥200 µmol/L)
+                    </span>
                   </div>
                 </label>
 
@@ -396,12 +452,16 @@ export function ScoresMiniApp() {
                   <input
                     type="checkbox"
                     checked={hasInputs.abnormalLiver}
-                    onChange={(e) => setHasInputs({ ...hasInputs, abnormalLiver: e.target.checked })}
+                    onChange={(e) =>
+                      setHasInputs({ ...hasInputs, abnormalLiver: e.target.checked })
+                    }
                     className="h-5 w-5 rounded border-slate-600 bg-slate-950 text-red-400 focus:ring-red-400"
                   />
                   <div>
                     <span className="text-sm font-medium text-red-400">S</span>
-                    <span className="text-sm text-slate-400 ml-1">— Abnormal Liver (cirrhosis, bilirubin &gt;2× ULN)</span>
+                    <span className="text-sm text-slate-400 ml-1">
+                      — Abnormal Liver (cirrhosis, bilirubin &gt;2× ULN)
+                    </span>
                   </div>
                 </label>
 
@@ -409,7 +469,9 @@ export function ScoresMiniApp() {
                   <input
                     type="checkbox"
                     checked={hasInputs.strokeHistory}
-                    onChange={(e) => setHasInputs({ ...hasInputs, strokeHistory: e.target.checked })}
+                    onChange={(e) =>
+                      setHasInputs({ ...hasInputs, strokeHistory: e.target.checked })
+                    }
                     className="h-5 w-5 rounded border-slate-600 bg-slate-950 text-red-400 focus:ring-red-400"
                   />
                   <div>
@@ -422,12 +484,16 @@ export function ScoresMiniApp() {
                   <input
                     type="checkbox"
                     checked={hasInputs.bleedingHistory}
-                    onChange={(e) => setHasInputs({ ...hasInputs, bleedingHistory: e.target.checked })}
+                    onChange={(e) =>
+                      setHasInputs({ ...hasInputs, bleedingHistory: e.target.checked })
+                    }
                     className="h-5 w-5 rounded border-slate-600 bg-slate-950 text-red-400 focus:ring-red-400"
                   />
                   <div>
                     <span className="text-sm font-medium text-red-400">L</span>
-                    <span className="text-sm text-slate-400 ml-1">— Bleeding History or Predisposition</span>
+                    <span className="text-sm text-slate-400 ml-1">
+                      — Bleeding History or Predisposition
+                    </span>
                   </div>
                 </label>
 
@@ -440,7 +506,9 @@ export function ScoresMiniApp() {
                   />
                   <div>
                     <span className="text-sm font-medium text-red-400">E</span>
-                    <span className="text-sm text-slate-400 ml-1">— Labile INR (TTR &lt;60% on warfarin)</span>
+                    <span className="text-sm text-slate-400 ml-1">
+                      — Labile INR (TTR &lt;60% on warfarin)
+                    </span>
                   </div>
                 </label>
 
@@ -466,7 +534,9 @@ export function ScoresMiniApp() {
                   />
                   <div>
                     <span className="text-sm font-medium text-red-400">Drugs</span>
-                    <span className="text-sm text-slate-400 ml-1">— Antiplatelets, NSAIDs (1 point for both)</span>
+                    <span className="text-sm text-slate-400 ml-1">
+                      — Antiplatelets, NSAIDs (1 point for both)
+                    </span>
                   </div>
                 </label>
 
@@ -474,12 +544,16 @@ export function ScoresMiniApp() {
                   <input
                     type="checkbox"
                     checked={hasInputs.alcoholExcess}
-                    onChange={(e) => setHasInputs({ ...hasInputs, alcoholExcess: e.target.checked })}
+                    onChange={(e) =>
+                      setHasInputs({ ...hasInputs, alcoholExcess: e.target.checked })
+                    }
                     className="h-5 w-5 rounded border-slate-600 bg-slate-950 text-red-400 focus:ring-red-400"
                   />
                   <div>
                     <span className="text-sm font-medium text-red-400">Alcohol</span>
-                    <span className="text-sm text-slate-400 ml-1">— Excess use (≥8 drinks/week)</span>
+                    <span className="text-sm text-slate-400 ml-1">
+                      — Excess use (≥8 drinks/week)
+                    </span>
                   </div>
                 </label>
               </div>
@@ -494,11 +568,15 @@ export function ScoresMiniApp() {
                 <div className="text-sm text-slate-400 mt-1">HAS-BLED Score</div>
               </div>
 
-              <div className={`p-3 rounded-lg ${
-                hasResult.riskCategory === "High" ? "bg-red-950/30 border border-red-500/50" :
-                hasResult.riskCategory === "Moderate" ? "bg-amber-950/30 border border-amber-500/50" :
-                "bg-green-950/30 border border-green-500/50"
-              }`}>
+              <div
+                className={`p-3 rounded-lg ${
+                  hasResult.riskCategory === "High"
+                    ? "bg-red-950/30 border border-red-500/50"
+                    : hasResult.riskCategory === "Moderate"
+                      ? "bg-amber-950/30 border border-amber-500/50"
+                      : "bg-green-950/30 border border-green-500/50"
+                }`}
+              >
                 <div className="flex items-center gap-2">
                   {hasResult.riskCategory === "High" ? (
                     <AlertTriangle className="h-4 w-4 text-red-400" />
@@ -514,15 +592,13 @@ export function ScoresMiniApp() {
                 </div>
               </div>
 
-              <div className="text-sm text-slate-300">
-                {hasResult.message}
-              </div>
+              <div className="text-sm text-slate-300">{hasResult.message}</div>
 
               <div className="p-3 rounded-lg bg-amber-950/30 border border-amber-500/30">
                 <div className="flex items-start gap-2">
                   <AlertTriangle className="h-4 w-4 text-amber-400 flex-shrink-0 mt-0.5" />
                   <div className="text-xs text-amber-200">
-                    <strong>Important:</strong> High HAS-BLED alone is not a reason to withhold OAC. 
+                    <strong>Important:</strong> High HAS-BLED alone is not a reason to withhold OAC.
                     Use to identify and address modifiable risk factors.
                   </div>
                 </div>
@@ -540,14 +616,18 @@ export function ScoresMiniApp() {
                 <div className="text-xs text-slate-400 mb-1">CHA₂DS₂-VASc</div>
                 <div className="flex items-baseline gap-2">
                   <span className="text-2xl font-bold text-cyan-400">{chaResult.score}</span>
-                  <span className="text-sm text-slate-400">{chaResult.riskCategory} stroke risk</span>
+                  <span className="text-sm text-slate-400">
+                    {chaResult.riskCategory} stroke risk
+                  </span>
                 </div>
               </div>
               <div className="p-3 rounded-lg bg-slate-950/50 border border-slate-700">
                 <div className="text-xs text-slate-400 mb-1">HAS-BLED</div>
                 <div className="flex items-baseline gap-2">
                   <span className="text-2xl font-bold text-red-400">{hasResult.score}</span>
-                  <span className="text-sm text-slate-400">{hasResult.riskCategory} bleeding risk</span>
+                  <span className="text-sm text-slate-400">
+                    {hasResult.riskCategory} bleeding risk
+                  </span>
                 </div>
               </div>
             </div>
@@ -558,15 +638,16 @@ export function ScoresMiniApp() {
         {activeTab === "images" && (
           <section className="space-y-4">
             <h2 className="text-xl font-semibold">Guideline Images</h2>
-            <p className="text-slate-400">Reference infographics for anticoagulation and stroke prevention.</p>
+            <p className="text-slate-400">
+              Reference infographics for anticoagulation and stroke prevention.
+            </p>
             <div className="grid gap-6 md:grid-cols-2">
               {scoreImages.map((img, i) => (
-                <div key={i} className="rounded-xl border border-slate-700 bg-slate-950/50 overflow-hidden">
-                  <img 
-                    src={img.src} 
-                    alt={img.title}
-                    className="w-full h-auto"
-                  />
+                <div
+                  key={i}
+                  className="rounded-xl border border-slate-700 bg-slate-950/50 overflow-hidden"
+                >
+                  <img src={img.src} alt={img.title} className="w-full h-auto" />
                   <div className="p-3 border-t border-slate-700">
                     <h3 className="font-medium text-cyan-400">{img.title}</h3>
                     <p className="text-sm text-slate-400">{img.desc}</p>
@@ -580,8 +661,8 @@ export function ScoresMiniApp() {
         {/* Reference */}
         <footer className="rounded-lg border border-slate-800 bg-slate-900/50 p-3 text-xs text-slate-500">
           <p>
-            <strong>References:</strong> CHA₂DS₂-VASc (Lip et al., 2010) • HAS-BLED (Pisters et al., 2010) • 
-            For educational reference only. Not a substitute for clinical judgment.
+            <strong>References:</strong> CHA₂DS₂-VASc (Lip et al., 2010) • HAS-BLED (Pisters et al.,
+            2010) • For educational reference only. Not a substitute for clinical judgment.
           </p>
         </footer>
       </div>

@@ -26,8 +26,10 @@ export const COMPANION_MEDS: CompanionMed[] = [
     keywords: ["digoxin"],
     severity: "major",
     action: "monitor",
-    management: "Reduce digoxin dose ~50%; check level in 5–7 days; watch for nausea, vision changes, bradyarrhythmia.",
-    rationale: "Amiodarone, quinidine, verapamil, and dronedarone raise digoxin levels via P-gp inhibition — toxicity risk.",
+    management:
+      "Reduce digoxin dose ~50%; check level in 5–7 days; watch for nausea, vision changes, bradyarrhythmia.",
+    rationale:
+      "Amiodarone, quinidine, verapamil, and dronedarone raise digoxin levels via P-gp inhibition — toxicity risk.",
   },
   {
     name: "Warfarin",
@@ -35,8 +37,10 @@ export const COMPANION_MEDS: CompanionMed[] = [
     keywords: ["warfarin", "inr"],
     severity: "major",
     action: "monitor",
-    management: "Empirically reduce warfarin ~30–50% when starting amiodarone; recheck INR in 3–5 days, then weekly.",
-    rationale: "CYP2C9 inhibition potentiates warfarin; INR rises within days and bleeding risk climbs.",
+    management:
+      "Empirically reduce warfarin ~30–50% when starting amiodarone; recheck INR in 3–5 days, then weekly.",
+    rationale:
+      "CYP2C9 inhibition potentiates warfarin; INR rises within days and bleeding risk climbs.",
   },
   {
     name: "Amiodarone",
@@ -44,7 +48,8 @@ export const COMPANION_MEDS: CompanionMed[] = [
     keywords: ["amiodarone"],
     severity: "major",
     action: "avoid",
-    management: "Avoid stacking QT-prolonging antiarrhythmics; if unavoidable, telemetry + serial QTc, replete K⁺/Mg²⁺.",
+    management:
+      "Avoid stacking QT-prolonging antiarrhythmics; if unavoidable, telemetry + serial QTc, replete K⁺/Mg²⁺.",
     rationale: "Additive QT prolongation and bradycardia; risk of torsades.",
   },
   {
@@ -53,7 +58,8 @@ export const COMPANION_MEDS: CompanionMed[] = [
     keywords: ["verapamil", "non-dhp", "ccb"],
     severity: "contraindicated",
     action: "avoid",
-    management: "Do NOT co-administer IV with a β-blocker; if oral pairing is essential, monitor HR/BP and PR interval closely.",
+    management:
+      "Do NOT co-administer IV with a β-blocker; if oral pairing is essential, monitor HR/BP and PR interval closely.",
     rationale: "Synergistic AV nodal blockade → high-grade block, asystole, cardiogenic shock.",
   },
   {
@@ -62,7 +68,8 @@ export const COMPANION_MEDS: CompanionMed[] = [
     keywords: ["diltiazem", "non-dhp", "ccb"],
     severity: "major",
     action: "avoid",
-    management: "Avoid IV combination with β-blocker; if oral, start low, monitor HR/BP and conduction.",
+    management:
+      "Avoid IV combination with β-blocker; if oral, start low, monitor HR/BP and conduction.",
     rationale: "Additive negative inotropy/chronotropy → bradycardia and hypotension.",
   },
   {
@@ -71,7 +78,8 @@ export const COMPANION_MEDS: CompanionMed[] = [
     keywords: ["β-blocker", "b-blocker", "beta-blocker", "β-blockers"],
     severity: "contraindicated",
     action: "avoid",
-    management: "Do not push IV β-blocker with IV non-DHP CCB; separate agents, use continuous telemetry.",
+    management:
+      "Do not push IV β-blocker with IV non-DHP CCB; separate agents, use continuous telemetry.",
     rationale: "Combined AV nodal blockade risks complete heart block.",
   },
   {
@@ -80,7 +88,8 @@ export const COMPANION_MEDS: CompanionMed[] = [
     keywords: ["simvastatin", "statin"],
     severity: "major",
     action: "monitor",
-    management: "Cap simvastatin at 20 mg/day with amiodarone; consider rosuvastatin/pravastatin; monitor CK if myalgia.",
+    management:
+      "Cap simvastatin at 20 mg/day with amiodarone; consider rosuvastatin/pravastatin; monitor CK if myalgia.",
     rationale: "CYP3A4 inhibition raises statin levels → myopathy/rhabdomyolysis.",
   },
   {
@@ -89,7 +98,8 @@ export const COMPANION_MEDS: CompanionMed[] = [
     keywords: ["clarithromycin", "macrolide", "qt-prolonging"],
     severity: "major",
     action: "avoid",
-    management: "Choose azithromycin or doxycycline; if unavoidable, baseline + follow-up ECG, correct electrolytes.",
+    management:
+      "Choose azithromycin or doxycycline; if unavoidable, baseline + follow-up ECG, correct electrolytes.",
     rationale: "Additive QT prolongation and CYP3A4 inhibition → torsades risk.",
   },
   {
@@ -107,7 +117,8 @@ export const COMPANION_MEDS: CompanionMed[] = [
     keywords: ["ketoconazole", "azole", "cyp3a4"],
     severity: "major",
     action: "avoid",
-    management: "Switch to a non-CYP3A4 antifungal (e.g. terbinafine) or reduce antiarrhythmic dose; monitor for toxicity.",
+    management:
+      "Switch to a non-CYP3A4 antifungal (e.g. terbinafine) or reduce antiarrhythmic dose; monitor for toxicity.",
     rationale: "Potent CYP3A4 inhibition raises antiarrhythmic levels.",
   },
   {
@@ -116,7 +127,8 @@ export const COMPANION_MEDS: CompanionMed[] = [
     keywords: ["azole", "qt-prolonging"],
     severity: "major",
     action: "monitor",
-    management: "Use lowest effective dose, shortest course; ECG and electrolytes before/during therapy.",
+    management:
+      "Use lowest effective dose, shortest course; ECG and electrolytes before/during therapy.",
     rationale: "Additive QT prolongation.",
   },
   {
@@ -134,7 +146,8 @@ export const COMPANION_MEDS: CompanionMed[] = [
     keywords: ["fluoxetine", "cyp2d6"],
     severity: "moderate",
     action: "monitor",
-    management: "Consider sertraline/escitalopram; if continuing, watch for antiarrhythmic toxicity and QTc.",
+    management:
+      "Consider sertraline/escitalopram; if continuing, watch for antiarrhythmic toxicity and QTc.",
     rationale: "CYP2D6 inhibition raises levels of β-blockers and flecainide.",
   },
   {
@@ -152,7 +165,8 @@ export const COMPANION_MEDS: CompanionMed[] = [
     keywords: ["methadone", "qt-prolonging"],
     severity: "major",
     action: "monitor",
-    management: "Baseline and follow-up ECG; keep QTc <500 ms; correct electrolytes; reassess opioid regimen.",
+    management:
+      "Baseline and follow-up ECG; keep QTc <500 ms; correct electrolytes; reassess opioid regimen.",
     rationale: "Independent QT prolongation additive with class Ia/III agents.",
   },
   {
@@ -161,7 +175,8 @@ export const COMPANION_MEDS: CompanionMed[] = [
     keywords: ["hydrochlorothiazide", "hctz", "diuretic"],
     severity: "moderate",
     action: "monitor",
-    management: "Check K⁺/Mg²⁺ before starting and periodically; replete aggressively; consider K-sparing agent.",
+    management:
+      "Check K⁺/Mg²⁺ before starting and periodically; replete aggressively; consider K-sparing agent.",
     rationale: "Diuretic-induced hypokalemia/hypomagnesemia lowers torsades threshold.",
   },
   {
@@ -206,7 +221,8 @@ export const COMPANION_MEDS: CompanionMed[] = [
     keywords: ["rifampin"],
     severity: "major",
     action: "monitor",
-    management: "Anticipate loss of antiarrhythmic efficacy; consider alternative or dose increase.",
+    management:
+      "Anticipate loss of antiarrhythmic efficacy; consider alternative or dose increase.",
     rationale: "Potent CYP3A4/P-gp inducer lowers antiarrhythmic levels.",
   },
   {
@@ -215,7 +231,8 @@ export const COMPANION_MEDS: CompanionMed[] = [
     keywords: ["insulin", "hypoglycemi"],
     severity: "moderate",
     action: "monitor",
-    management: "Educate on masked hypoglycemia signs; check glucose more frequently, especially with non-selective β-blockers.",
+    management:
+      "Educate on masked hypoglycemia signs; check glucose more frequently, especially with non-selective β-blockers.",
     rationale: "β-blockers blunt adrenergic hypoglycemia symptoms.",
   },
   {
@@ -224,7 +241,8 @@ export const COMPANION_MEDS: CompanionMed[] = [
     keywords: ["clonidine"],
     severity: "major",
     action: "avoid",
-    management: "Do not stop clonidine abruptly with a β-blocker on board; taper β-blocker first, then clonidine.",
+    management:
+      "Do not stop clonidine abruptly with a β-blocker on board; taper β-blocker first, then clonidine.",
     rationale: "Rebound hypertensive crisis from unopposed α-stimulation.",
   },
   {
@@ -233,7 +251,8 @@ export const COMPANION_MEDS: CompanionMed[] = [
     keywords: ["nsaid"],
     severity: "moderate",
     action: "monitor",
-    management: "Prefer acetaminophen; if NSAID needed, shortest course, monitor BP and renal function.",
+    management:
+      "Prefer acetaminophen; if NSAID needed, shortest course, monitor BP and renal function.",
     rationale: "NSAIDs blunt antihypertensive effect and raise BP.",
   },
   {
@@ -260,7 +279,8 @@ export const COMPANION_MEDS: CompanionMed[] = [
     keywords: ["tca"],
     severity: "major",
     action: "avoid",
-    management: "Avoid class Ia/III co-administration; if needed, ECG monitoring and lowest effective dose.",
+    management:
+      "Avoid class Ia/III co-administration; if needed, ECG monitoring and lowest effective dose.",
     rationale: "Additive QT prolongation and Na⁺ channel blockade.",
   },
   {
@@ -288,10 +308,7 @@ function escalate(base: Severity, text: string): Severity {
   return base;
 }
 
-export function findInteractions(
-  details: DrugDetails,
-  selected: string[],
-): InteractionHit[] {
+export function findInteractions(details: DrugDetails, selected: string[]): InteractionHit[] {
   const hits: InteractionHit[] = [];
   const lowered = details.interactions.map((i) => i.toLowerCase());
   for (const name of selected) {
@@ -304,14 +321,11 @@ export function findInteractions(
       }
     });
     if (matches.length) {
-      const severity = matches.reduce<Severity>(
-        (acc, m) => {
-          const next = escalate(companion.severity, m);
-          const rank = { moderate: 0, major: 1, contraindicated: 2 } as const;
-          return rank[next] > rank[acc] ? next : acc;
-        },
-        companion.severity,
-      );
+      const severity = matches.reduce<Severity>((acc, m) => {
+        const next = escalate(companion.severity, m);
+        const rank = { moderate: 0, major: 1, contraindicated: 2 } as const;
+        return rank[next] > rank[acc] ? next : acc;
+      }, companion.severity);
       const action: Action = severity === "contraindicated" ? "avoid" : companion.action;
       hits.push({ companion, matches, severity, action });
     }

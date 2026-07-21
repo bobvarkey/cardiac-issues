@@ -76,7 +76,11 @@ const CHECKLIST: ChecklistCategory[] = [
     id: "equipment",
     title: "Equipment",
     items: [
-      { id: "eq-tilt", label: "Tilt table verified, footboard secured, straps intact", required: true },
+      {
+        id: "eq-tilt",
+        label: "Tilt table verified, footboard secured, straps intact",
+        required: true,
+      },
       { id: "eq-emerg", label: "Crash cart & defibrillator at bedside, checked", required: true },
       { id: "eq-suction", label: "Suction + O₂ + BVM available", required: true },
       { id: "eq-meds", label: "Rescue meds drawn: atropine 1 mg, NS 500 mL", required: true },
@@ -87,8 +91,16 @@ const CHECKLIST: ChecklistCategory[] = [
     id: "monitoring",
     title: "Monitoring",
     items: [
-      { id: "mon-ecg", label: "Continuous 3- or 5-lead ECG attached, quality verified", required: true },
-      { id: "mon-bp", label: "Beat-to-beat BP (Finapres/Nexfin) or automated cuff q1 min", required: true },
+      {
+        id: "mon-ecg",
+        label: "Continuous 3- or 5-lead ECG attached, quality verified",
+        required: true,
+      },
+      {
+        id: "mon-bp",
+        label: "Beat-to-beat BP (Finapres/Nexfin) or automated cuff q1 min",
+        required: true,
+      },
       { id: "mon-spo2", label: "SpO₂ probe on and reading", required: true },
       { id: "mon-recorder", label: "Rhythm strip recording enabled" },
     ],
@@ -118,7 +130,11 @@ const CHECKLIST: ChecklistCategory[] = [
       { id: "sf-consent", label: "Informed consent obtained & documented", required: true },
       { id: "sf-npo", label: "NPO ≥ 2 h confirmed", required: true },
       { id: "sf-meds", label: "Vasoactive meds reviewed / held as appropriate", required: true },
-      { id: "sf-contra", label: "Contraindications screened (severe AS, HOCM, PDE5 <24 h, recent MI)", required: true },
+      {
+        id: "sf-contra",
+        label: "Contraindications screened (severe AS, HOCM, PDE5 <24 h, recent MI)",
+        required: true,
+      },
       { id: "sf-pdstaff", label: "Trained clinician present throughout study", required: true },
       { id: "sf-pregnancy", label: "Pregnancy status considered (if applicable)" },
     ],
@@ -360,7 +376,8 @@ export function HUTTMiniApp() {
     lines.push("");
     lines.push("FINDINGS");
     lines.push(`  Symptoms reproduced: ${state.symptomsReproduced ? "Yes" : "No"}`);
-    if (state.typicalSymptoms.trim()) lines.push(`  Typical symptoms: ${state.typicalSymptoms.trim()}`);
+    if (state.typicalSymptoms.trim())
+      lines.push(`  Typical symptoms: ${state.typicalSymptoms.trim()}`);
     lines.push(`  Baseline HR/BP: ${derived.bHR || "—"} bpm / ${derived.bBP || "—"} mmHg`);
     lines.push(`  Upright HR/BP:  ${derived.uHR || "—"} bpm / ${derived.uBP || "—"} mmHg`);
     lines.push("");
@@ -407,7 +424,7 @@ export function HUTTMiniApp() {
           <td>${fmt(v.t)}</td>
           <td>${v.phaseId}</td>
           <td>${v.hr || "—"}</td>
-          <td>${(v.sbp || v.dbp) ? `${v.sbp || "?"}/${v.dbp || "?"}` : "—"}</td>
+          <td>${v.sbp || v.dbp ? `${v.sbp || "?"}/${v.dbp || "?"}` : "—"}</td>
           <td>${escapeHtml(v.symptoms) || "—"}</td>
         </tr>`,
       )
@@ -522,7 +539,11 @@ export function HUTTMiniApp() {
               type="button"
               onClick={startPause}
               disabled={!state.running && !canStart}
-              title={!canStart ? `Complete ${missingRequired.length} required checklist item(s) first` : ""}
+              title={
+                !canStart
+                  ? `Complete ${missingRequired.length} required checklist item(s) first`
+                  : ""
+              }
               className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
             >
               {state.running ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}
@@ -620,7 +641,9 @@ export function HUTTMiniApp() {
               <thead className="bg-surface/60 text-muted-foreground">
                 <tr>
                   <th className="px-2 py-1.5 text-left font-mono uppercase tracking-wider">t</th>
-                  <th className="px-2 py-1.5 text-left font-mono uppercase tracking-wider">Phase</th>
+                  <th className="px-2 py-1.5 text-left font-mono uppercase tracking-wider">
+                    Phase
+                  </th>
                   <th className="px-2 py-1.5 text-left font-mono uppercase tracking-wider">HR</th>
                   <th className="px-2 py-1.5 text-left font-mono uppercase tracking-wider">BP</th>
                   <th className="px-2 py-1.5 text-left font-mono uppercase tracking-wider">

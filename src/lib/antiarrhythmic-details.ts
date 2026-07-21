@@ -35,9 +35,9 @@ export const CALCULATOR_DRUGS = new Set([
 export const DRUG_DETAILS: Record<string, DrugDetails> = {
   Ivabradine: {
     name: "Ivabradine",
-    className: "HCN (\"funny\" If) channel blocker",
+    className: 'HCN ("funny" If) channel blocker',
     classKey: "Class 0",
-    mnemonic: "\"Funny\" — the F in Funny, Some Block Potassium Channels Mainly",
+    mnemonic: '"Funny" — the F in Funny, Some Block Potassium Channels Mainly',
     indications: [
       "Chronic stable HFrEF (LVEF ≤35%) in sinus rhythm with resting HR ≥70 bpm on max-tolerated β-blocker",
       "Symptomatic inappropriate sinus tachycardia (off-label)",
@@ -58,7 +58,8 @@ export const DRUG_DETAILS: Record<string, DrugDetails> = {
       {
         route: "PO — Stable angina (adult)",
         dose: "Start 5 mg BID; may increase to 7.5 mg BID after 3–4 wk if HR >60 bpm and tolerated",
-        notes: "Reduce to 2.5 mg BID if resting HR persistently <50 bpm or symptomatic bradycardia.",
+        notes:
+          "Reduce to 2.5 mg BID if resting HR persistently <50 bpm or symptomatic bradycardia.",
       },
       {
         route: "Administration notes",
@@ -96,8 +97,14 @@ export const DRUG_DETAILS: Record<string, DrugDetails> = {
       "Blurred vision, headache, dizziness",
     ],
     monitoring: [
-      { watch: "Resting HR at baseline, 2 wk, and after each titration", stopOrEscalate: "Reduce or hold if HR <50 bpm or symptomatic bradycardia" },
-      { watch: "Rhythm — new AF or conduction disease", stopOrEscalate: "Discontinue if persistent AF develops" },
+      {
+        watch: "Resting HR at baseline, 2 wk, and after each titration",
+        stopOrEscalate: "Reduce or hold if HR <50 bpm or symptomatic bradycardia",
+      },
+      {
+        watch: "Rhythm — new AF or conduction disease",
+        stopOrEscalate: "Discontinue if persistent AF develops",
+      },
       { watch: "Visual symptoms (phosphenes) — usually resolve; warn about driving at night" },
       { watch: "BP and volume status in HFrEF patients" },
     ],
@@ -107,7 +114,7 @@ export const DRUG_DETAILS: Record<string, DrugDetails> = {
     name: "Quinidine",
     className: "Na+ channel blocker (moderate)",
     classKey: "Class Ia",
-    mnemonic: "\"Quinidine\" in Quinidine likes fever",
+    mnemonic: '"Quinidine" in Quinidine likes fever',
     indications: ["Brugada syndrome", "Short QT syndrome", "Selected AF (rare)"],
     dosing: [
       { route: "PO (sulfate)", dose: "200–400 mg q6h" },
@@ -125,9 +132,17 @@ export const DRUG_DETAILS: Record<string, DrugDetails> = {
       "Other QT-prolonging drugs (macrolides, azoles, methadone)",
       "Warfarin — ↑ INR",
     ],
-    adverse: ["QT prolongation / torsades", "Cinchonism (tinnitus, headache)", "Thrombocytopenia", "Diarrhea"],
+    adverse: [
+      "QT prolongation / torsades",
+      "Cinchonism (tinnitus, headache)",
+      "Thrombocytopenia",
+      "Diarrhea",
+    ],
     monitoring: [
-      { watch: "ECG QTc and QRS width at baseline and after each dose change", stopOrEscalate: "Stop if QTc >500 ms or QRS widens >25%" },
+      {
+        watch: "ECG QTc and QRS width at baseline and after each dose change",
+        stopOrEscalate: "Stop if QTc >500 ms or QRS widens >25%",
+      },
       { watch: "Electrolytes (K+ >4, Mg2+ >2)", stopOrEscalate: "Replete before continuing" },
       { watch: "CBC weekly ×1 month then monthly", stopOrEscalate: "Stop if platelets <100k" },
       { watch: "Digoxin level if co-administered" },
@@ -139,7 +154,10 @@ export const DRUG_DETAILS: Record<string, DrugDetails> = {
     classKey: "Class Ia",
     indications: ["Stable monomorphic VT", "Pre-excited AF (WPW)"],
     dosing: [
-      { route: "IV load", dose: "20–50 mg/min until arrhythmia suppressed, hypotension, QRS widens >50%, or max 17 mg/kg" },
+      {
+        route: "IV load",
+        dose: "20–50 mg/min until arrhythmia suppressed, hypotension, QRS widens >50%, or max 17 mg/kg",
+      },
       { route: "IV maintenance", dose: "1–4 mg/min infusion" },
     ],
     contraindications: [
@@ -153,9 +171,18 @@ export const DRUG_DETAILS: Record<string, DrugDetails> = {
       "Amiodarone — ↑ procainamide/NAPA level",
       "Cimetidine, trimethoprim — reduce renal clearance",
     ],
-    adverse: ["Drug-induced lupus", "QT prolongation / torsades", "Hypotension (IV)", "Agranulocytosis"],
+    adverse: [
+      "Drug-induced lupus",
+      "QT prolongation / torsades",
+      "Hypotension (IV)",
+      "Agranulocytosis",
+    ],
     monitoring: [
-      { watch: "Continuous ECG during load", stopOrEscalate: "STOP infusion if QRS widens >50%, QTc >500 ms, hypotension, or arrhythmia terminates" },
+      {
+        watch: "Continuous ECG during load",
+        stopOrEscalate:
+          "STOP infusion if QRS widens >50%, QTc >500 ms, hypotension, or arrhythmia terminates",
+      },
       { watch: "BP q5min during load", stopOrEscalate: "Slow/stop if SBP <90" },
       { watch: "CBC weekly ×3 months", stopOrEscalate: "Stop if WBC <3000 or ANC <1500" },
       { watch: "ANA if therapy >6 months", stopOrEscalate: "Stop for lupus-like symptoms" },
@@ -182,10 +209,17 @@ export const DRUG_DETAILS: Record<string, DrugDetails> = {
       "Other QT-prolonging drugs",
       "Anticholinergics — additive effects",
     ],
-    adverse: ["Anticholinergic (dry mouth, urinary retention)", "Negative inotrope — heart failure", "QT prolongation"],
+    adverse: [
+      "Anticholinergic (dry mouth, urinary retention)",
+      "Negative inotrope — heart failure",
+      "QT prolongation",
+    ],
     monitoring: [
       { watch: "ECG QTc and QRS", stopOrEscalate: "Stop if QTc >500 ms or QRS >25% widening" },
-      { watch: "LV function / signs of HF", stopOrEscalate: "Stop for new dyspnea, edema, decreased EF" },
+      {
+        watch: "LV function / signs of HF",
+        stopOrEscalate: "Stop for new dyspnea, edema, decreased EF",
+      },
       { watch: "Urinary symptoms, IOP" },
     ],
   },
@@ -210,8 +244,14 @@ export const DRUG_DETAILS: Record<string, DrugDetails> = {
     ],
     adverse: ["CNS: perioral numbness, tremor, seizures", "Confusion", "Bradycardia at high doses"],
     monitoring: [
-      { watch: "Neurologic status q1h", stopOrEscalate: "STOP for tremor, dysarthria, confusion, seizures" },
-      { watch: "ECG for bradycardia, wide QRS", stopOrEscalate: "Stop if new AV block or QRS widening" },
+      {
+        watch: "Neurologic status q1h",
+        stopOrEscalate: "STOP for tremor, dysarthria, confusion, seizures",
+      },
+      {
+        watch: "ECG for bradycardia, wide QRS",
+        stopOrEscalate: "Stop if new AV block or QRS widening",
+      },
       { watch: "Level if infusion >24h or hepatic dysfunction (target 1.5–5 mcg/mL)" },
     ],
   },
@@ -220,13 +260,8 @@ export const DRUG_DETAILS: Record<string, DrugDetails> = {
     className: "Na+ channel blocker (weak, fast)",
     classKey: "Class Ib",
     indications: ["Chronic ventricular arrhythmias", "LQT3", "Adjunct to amiodarone"],
-    dosing: [
-      { route: "PO", dose: "150–300 mg q8h with food" },
-    ],
-    contraindications: [
-      "Cardiogenic shock",
-      "2nd/3rd degree AV block without pacemaker",
-    ],
+    dosing: [{ route: "PO", dose: "150–300 mg q8h with food" }],
+    contraindications: ["Cardiogenic shock", "2nd/3rd degree AV block without pacemaker"],
     interactions: [
       "CYP1A2 inhibitors (ciprofloxacin, fluvoxamine) — ↑ level",
       "Rifampin, phenytoin — ↓ level",
@@ -243,7 +278,11 @@ export const DRUG_DETAILS: Record<string, DrugDetails> = {
     name: "Flecainide",
     className: "Na+ channel blocker (strong, slow)",
     classKey: "Class Ic",
-    indications: ["Paroxysmal AF (pill-in-pocket) — structurally normal heart", "SVT", "Idiopathic VT"],
+    indications: [
+      "Paroxysmal AF (pill-in-pocket) — structurally normal heart",
+      "SVT",
+      "Idiopathic VT",
+    ],
     dosing: [
       { route: "PO maintenance", dose: "50–150 mg q12h" },
       { route: "PO pill-in-pocket", dose: "200–300 mg single dose (with AV-nodal blocker)" },
@@ -259,11 +298,18 @@ export const DRUG_DETAILS: Record<string, DrugDetails> = {
       "Digoxin — ↑ digoxin level",
       "β-blockers, verapamil — additive negative inotropy",
     ],
-    adverse: ["Proarrhythmia (1:1 atrial flutter conduction)", "Negative inotrope", "AVOID in structural heart disease / CAD"],
+    adverse: [
+      "Proarrhythmia (1:1 atrial flutter conduction)",
+      "Negative inotrope",
+      "AVOID in structural heart disease / CAD",
+    ],
     monitoring: [
       { watch: "ECG QRS width", stopOrEscalate: "Stop if QRS widens >25% from baseline" },
       { watch: "Echo before starting (require normal structure/function)" },
-      { watch: "Co-prescribe AV-nodal blocker for AF to prevent 1:1 flutter", stopOrEscalate: "Stop for wide-complex tachycardia or syncope" },
+      {
+        watch: "Co-prescribe AV-nodal blocker for AF to prevent 1:1 flutter",
+        stopOrEscalate: "Stop for wide-complex tachycardia or syncope",
+      },
     ],
   },
   Propafenone: {
@@ -282,14 +328,18 @@ export const DRUG_DETAILS: Record<string, DrugDetails> = {
       "SA/AV node dysfunction without pacemaker",
       "Brugada syndrome",
     ],
-    interactions: [
-      "Warfarin — ↑ INR",
-      "Digoxin — ↑ digoxin level",
-      "CYP2D6 substrates/inhibitors",
+    interactions: ["Warfarin — ↑ INR", "Digoxin — ↑ digoxin level", "CYP2D6 substrates/inhibitors"],
+    adverse: [
+      "Metallic taste",
+      "Bronchospasm (β-effect)",
+      "Proarrhythmia — avoid in structural heart disease",
+      "Bradycardia",
     ],
-    adverse: ["Metallic taste", "Bronchospasm (β-effect)", "Proarrhythmia — avoid in structural heart disease", "Bradycardia"],
     monitoring: [
-      { watch: "ECG (QRS, PR)", stopOrEscalate: "Stop if QRS >25% widening or high-grade AV block" },
+      {
+        watch: "ECG (QRS, PR)",
+        stopOrEscalate: "Stop if QRS >25% widening or high-grade AV block",
+      },
       { watch: "Echo before starting" },
       { watch: "Respiratory symptoms in COPD/asthma", stopOrEscalate: "Stop for bronchospasm" },
     ],
@@ -298,7 +348,7 @@ export const DRUG_DETAILS: Record<string, DrugDetails> = {
     name: "Propranolol",
     className: "Non-selective β-blocker",
     classKey: "Class II",
-    mnemonic: "\"LOL\"",
+    mnemonic: '"LOL"',
     indications: ["Rate control", "Thyroid storm", "Long QT syndrome", "HOCM"],
     dosing: [
       { route: "PO", dose: "10–40 mg q6–8h (up to 320 mg/day)" },
@@ -327,7 +377,7 @@ export const DRUG_DETAILS: Record<string, DrugDetails> = {
     name: "Metoprolol",
     className: "β1-selective blocker",
     classKey: "Class II",
-    mnemonic: "\"LOL\"",
+    mnemonic: '"LOL"',
     indications: ["Rate control in AF/flutter", "Post-MI", "SVT", "HFrEF (succinate)"],
     dosing: [
       { route: "IV (tartrate)", dose: "2.5–5 mg over 2 min q5min ×3 doses" },
@@ -347,7 +397,10 @@ export const DRUG_DETAILS: Record<string, DrugDetails> = {
     adverse: ["Bradycardia / AV block", "Hypotension", "Fatigue", "Bronchospasm at high doses"],
     monitoring: [
       { watch: "HR, BP before each IV dose", stopOrEscalate: "Hold if HR <50 or SBP <100" },
-      { watch: "ECG for PR prolongation / AV block", stopOrEscalate: "Stop for 2nd/3rd degree block" },
+      {
+        watch: "ECG for PR prolongation / AV block",
+        stopOrEscalate: "Stop for 2nd/3rd degree block",
+      },
       { watch: "Signs of decompensated HF when initiating chronic therapy" },
     ],
   },
@@ -355,11 +408,9 @@ export const DRUG_DETAILS: Record<string, DrugDetails> = {
     name: "Atenolol",
     className: "β1-selective blocker",
     classKey: "Class II",
-    mnemonic: "\"LOL\"",
+    mnemonic: '"LOL"',
     indications: ["Rate control", "Hypertension", "Angina"],
-    dosing: [
-      { route: "PO", dose: "25–100 mg daily (dose-adjust for CrCl <35)" },
-    ],
+    dosing: [{ route: "PO", dose: "25–100 mg daily (dose-adjust for CrCl <35)" }],
     contraindications: [
       "Sinus bradycardia, 2nd/3rd degree AV block without pacemaker",
       "Cardiogenic shock / decompensated HF",
@@ -379,7 +430,11 @@ export const DRUG_DETAILS: Record<string, DrugDetails> = {
     name: "Esmolol",
     className: "Ultra-short acting β1 blocker (IV)",
     classKey: "Class II",
-    indications: ["Acute rate control (perioperative)", "Aortic dissection", "SVT in unstable patients"],
+    indications: [
+      "Acute rate control (perioperative)",
+      "Aortic dissection",
+      "SVT in unstable patients",
+    ],
     dosing: [
       { route: "IV load", dose: "0.5 mg/kg over 1 min" },
       { route: "IV infusion", dose: "50–200 mcg/kg/min (titrate q4min)" },
@@ -404,8 +459,13 @@ export const DRUG_DETAILS: Record<string, DrugDetails> = {
     name: "Amiodarone",
     className: "K+ channel blocker (also Na+, β, Ca2+ effects)",
     classKey: "Class III",
-    mnemonic: "\"A\" in AIDS",
-    indications: ["VT/VF in cardiac arrest", "Stable wide-complex tachycardia", "AF rhythm/rate control", "Post-cardiac surgery arrhythmias"],
+    mnemonic: '"A" in AIDS',
+    indications: [
+      "VT/VF in cardiac arrest",
+      "Stable wide-complex tachycardia",
+      "AF rhythm/rate control",
+      "Post-cardiac surgery arrhythmias",
+    ],
     dosing: [
       { route: "IV (arrest)", dose: "300 mg IV/IO push; may repeat 150 mg" },
       { route: "IV (stable)", dose: "150 mg over 10 min → 1 mg/min ×6h → 0.5 mg/min ×18h" },
@@ -424,11 +484,23 @@ export const DRUG_DETAILS: Record<string, DrugDetails> = {
       "Other QT-prolonging drugs",
       "Flecainide, procainamide — ↑ their levels",
     ],
-    adverse: ["Pulmonary fibrosis", "Thyroid dysfunction (hypo/hyper)", "Hepatotoxicity", "Corneal deposits, blue-grey skin", "QT prolongation"],
+    adverse: [
+      "Pulmonary fibrosis",
+      "Thyroid dysfunction (hypo/hyper)",
+      "Hepatotoxicity",
+      "Corneal deposits, blue-grey skin",
+      "QT prolongation",
+    ],
     monitoring: [
       { watch: "ECG QTc, HR", stopOrEscalate: "Stop if QTc >500 ms or symptomatic bradycardia" },
-      { watch: "TFTs, LFTs at baseline then q6mo", stopOrEscalate: "Stop for TSH abnormality or LFTs >3× ULN" },
-      { watch: "CXR baseline + yearly; PFTs if dyspnea", stopOrEscalate: "STOP for new dyspnea, cough, or infiltrates (pulmonary toxicity)" },
+      {
+        watch: "TFTs, LFTs at baseline then q6mo",
+        stopOrEscalate: "Stop for TSH abnormality or LFTs >3× ULN",
+      },
+      {
+        watch: "CXR baseline + yearly; PFTs if dyspnea",
+        stopOrEscalate: "STOP for new dyspnea, cough, or infiltrates (pulmonary toxicity)",
+      },
       { watch: "Ophthalmology yearly", stopOrEscalate: "Stop for visual changes / optic neuritis" },
       { watch: "INR closely if on warfarin" },
     ],
@@ -437,7 +509,7 @@ export const DRUG_DETAILS: Record<string, DrugDetails> = {
     name: "Ibutilide",
     className: "K+ channel blocker (IV)",
     classKey: "Class III",
-    mnemonic: "\"I\" in AIDS",
+    mnemonic: '"I" in AIDS',
     indications: ["Chemical cardioversion of AF/flutter"],
     dosing: [
       { route: "IV (≥60 kg)", dose: "1 mg over 10 min; may repeat ×1 after 10 min" },
@@ -455,7 +527,10 @@ export const DRUG_DETAILS: Record<string, DrugDetails> = {
     ],
     adverse: ["Torsades de pointes (2–4%)", "QT prolongation", "Hypotension"],
     monitoring: [
-      { watch: "Continuous ECG for ≥4 h post-dose (or until QTc normalizes)", stopOrEscalate: "STOP infusion for QTc >500 ms, VT, or any wide-complex ectopy" },
+      {
+        watch: "Continuous ECG for ≥4 h post-dose (or until QTc normalizes)",
+        stopOrEscalate: "STOP infusion for QTc >500 ms, VT, or any wide-complex ectopy",
+      },
       { watch: "K+ >4 mEq/L and Mg2+ >2 mg/dL before dosing", stopOrEscalate: "Replete first" },
       { watch: "Defibrillator + magnesium at bedside" },
     ],
@@ -464,7 +539,7 @@ export const DRUG_DETAILS: Record<string, DrugDetails> = {
     name: "Dofetilide",
     className: "Pure K+ channel blocker (oral)",
     classKey: "Class III",
-    mnemonic: "\"D\" in AIDS",
+    mnemonic: '"D" in AIDS',
     indications: ["Maintenance of sinus rhythm in AF/flutter", "Chemical cardioversion"],
     dosing: [
       { route: "PO (CrCl >60)", dose: "500 mcg BID" },
@@ -484,7 +559,10 @@ export const DRUG_DETAILS: Record<string, DrugDetails> = {
     ],
     adverse: ["Torsades de pointes", "QT prolongation", "Headache"],
     monitoring: [
-      { watch: "In-hospital initiation ×3 days with continuous ECG", stopOrEscalate: "STOP if QTc >500 ms (>550 if BBB) after any dose" },
+      {
+        watch: "In-hospital initiation ×3 days with continuous ECG",
+        stopOrEscalate: "STOP if QTc >500 ms (>550 if BBB) after any dose",
+      },
       { watch: "CrCl before each dose adjustment", stopOrEscalate: "Recalculate dose or stop" },
       { watch: "K+ >4, Mg2+ >2 always" },
     ],
@@ -493,7 +571,7 @@ export const DRUG_DETAILS: Record<string, DrugDetails> = {
     name: "Sotalol",
     className: "K+ channel blocker + non-selective β-blocker",
     classKey: "Class III",
-    mnemonic: "\"S\" in AIDS",
+    mnemonic: '"S" in AIDS',
     indications: ["AF/flutter maintenance", "Ventricular arrhythmias"],
     dosing: [
       { route: "PO (CrCl >60)", dose: "80 mg BID, titrate q3d to 160 mg BID" },
@@ -514,7 +592,10 @@ export const DRUG_DETAILS: Record<string, DrugDetails> = {
     ],
     adverse: ["Torsades de pointes", "Bradycardia", "Bronchospasm", "Fatigue"],
     monitoring: [
-      { watch: "In-hospital initiation ×3 days with continuous ECG", stopOrEscalate: "STOP if QTc >500 ms" },
+      {
+        watch: "In-hospital initiation ×3 days with continuous ECG",
+        stopOrEscalate: "STOP if QTc >500 ms",
+      },
       { watch: "CrCl before dose changes" },
       { watch: "K+ >4, Mg2+ >2", stopOrEscalate: "Replete before continuing" },
       { watch: "HR", stopOrEscalate: "Hold if HR <50" },
@@ -543,9 +624,17 @@ export const DRUG_DETAILS: Record<string, DrugDetails> = {
       "Statins (simvastatin) — ↑ myopathy",
       "CYP3A4 substrates broadly",
     ],
-    adverse: ["Constipation", "Bradycardia / AV block", "Negative inotrope — AVOID in HFrEF", "Hypotension"],
+    adverse: [
+      "Constipation",
+      "Bradycardia / AV block",
+      "Negative inotrope — AVOID in HFrEF",
+      "Hypotension",
+    ],
     monitoring: [
-      { watch: "HR, BP, ECG during IV dose", stopOrEscalate: "STOP for SBP <90, HR <50, or new AV block" },
+      {
+        watch: "HR, BP, ECG during IV dose",
+        stopOrEscalate: "STOP for SBP <90, HR <50, or new AV block",
+      },
       { watch: "LV function before starting (require EF preserved)" },
       { watch: "Digoxin level if co-administered" },
     ],
@@ -572,9 +661,17 @@ export const DRUG_DETAILS: Record<string, DrugDetails> = {
       "Digoxin — ↑ digoxin level",
       "CYP3A4 substrates (simvastatin, cyclosporine, tacrolimus) — ↑ levels",
     ],
-    adverse: ["Bradycardia / AV block", "Hypotension", "Peripheral edema", "AVOID in HFrEF and WPW with AF"],
+    adverse: [
+      "Bradycardia / AV block",
+      "Hypotension",
+      "Peripheral edema",
+      "AVOID in HFrEF and WPW with AF",
+    ],
     monitoring: [
-      { watch: "HR, BP, ECG during IV load and infusion", stopOrEscalate: "STOP infusion for SBP <90, HR <50, or new AV block" },
+      {
+        watch: "HR, BP, ECG during IV load and infusion",
+        stopOrEscalate: "STOP infusion for SBP <90, HR <50, or new AV block",
+      },
       { watch: "LV function before starting" },
       { watch: "LFTs with chronic use" },
     ],
@@ -585,8 +682,14 @@ export const DRUG_DETAILS: Record<string, DrugDetails> = {
     classKey: "Class V",
     indications: ["Rate control in AF (esp. sedentary or HFrEF)", "HFrEF symptom control"],
     dosing: [
-      { route: "IV load", dose: "0.25 mg IV q2h up to total 1–1.5 mg (0.5 mg initial then 0.25 mg doses)" },
-      { route: "PO maintenance", dose: "0.125–0.25 mg daily (0.0625–0.125 mg if elderly or renal impairment)" },
+      {
+        route: "IV load",
+        dose: "0.25 mg IV q2h up to total 1–1.5 mg (0.5 mg initial then 0.25 mg doses)",
+      },
+      {
+        route: "PO maintenance",
+        dose: "0.125–0.25 mg daily (0.0625–0.125 mg if elderly or renal impairment)",
+      },
     ],
     contraindications: [
       "VF / sustained VT",
@@ -600,11 +703,25 @@ export const DRUG_DETAILS: Record<string, DrugDetails> = {
       "Diuretics — hypokalemia potentiates toxicity",
       "Clarithromycin, cyclosporine — ↑ level",
     ],
-    adverse: ["Digoxin toxicity: nausea, visual halos, confusion", "Bradyarrhythmias, PVCs, junctional rhythms", "Narrow therapeutic index"],
+    adverse: [
+      "Digoxin toxicity: nausea, visual halos, confusion",
+      "Bradyarrhythmias, PVCs, junctional rhythms",
+      "Narrow therapeutic index",
+    ],
     monitoring: [
-      { watch: "Digoxin level 6–8h post-dose; target 0.5–0.9 ng/mL in HF", stopOrEscalate: "Hold and consider Fab if >2 ng/mL or symptomatic" },
-      { watch: "K+ (keep >4), Mg2+, renal function", stopOrEscalate: "Replete K+; reduce dose if renal function declines" },
-      { watch: "ECG for bradyarrhythmias, junctional rhythms, PVCs", stopOrEscalate: "STOP and give Digoxin-Fab for life-threatening arrhythmia or hyperkalemia >5 in acute toxicity" },
+      {
+        watch: "Digoxin level 6–8h post-dose; target 0.5–0.9 ng/mL in HF",
+        stopOrEscalate: "Hold and consider Fab if >2 ng/mL or symptomatic",
+      },
+      {
+        watch: "K+ (keep >4), Mg2+, renal function",
+        stopOrEscalate: "Replete K+; reduce dose if renal function declines",
+      },
+      {
+        watch: "ECG for bradyarrhythmias, junctional rhythms, PVCs",
+        stopOrEscalate:
+          "STOP and give Digoxin-Fab for life-threatening arrhythmia or hyperkalemia >5 in acute toxicity",
+      },
       { watch: "Symptoms: nausea, visual halos, confusion" },
     ],
   },
@@ -614,9 +731,21 @@ export const DRUG_DETAILS: Record<string, DrugDetails> = {
     classKey: "Class V",
     indications: ["SVT termination (AVNRT, AVRT)", "SVT diagnostic (differentiate SVT vs VT)"],
     dosing: [
-      { route: "IV rapid push", dose: "6 mg rapid IV push followed immediately by 20 mL saline flush", notes: "Use large vein, rapid administration essential" },
-      { route: "Repeat dose", dose: "12 mg rapid IV push if no response to 6 mg", notes: "May repeat once (max 2 doses of 12 mg)" },
-      { route: "Third dose", dose: "12 mg rapid IV push if no response to first 12 mg", notes: "Max single dose 12 mg" },
+      {
+        route: "IV rapid push",
+        dose: "6 mg rapid IV push followed immediately by 20 mL saline flush",
+        notes: "Use large vein, rapid administration essential",
+      },
+      {
+        route: "Repeat dose",
+        dose: "12 mg rapid IV push if no response to 6 mg",
+        notes: "May repeat once (max 2 doses of 12 mg)",
+      },
+      {
+        route: "Third dose",
+        dose: "12 mg rapid IV push if no response to first 12 mg",
+        notes: "Max single dose 12 mg",
+      },
     ],
     contraindications: [
       "WPW with pre-excited AF (may accelerate accessory pathway)",
@@ -629,10 +758,18 @@ export const DRUG_DETAILS: Record<string, DrugDetails> = {
       "Theophylline, caffeine — antagonize adenosine effect",
       "Carbamazepine — may increase AV block risk",
     ],
-    adverse: ["Transient chest discomfort, flushing, dyspnea", "Brief asystole (usually <5 sec)", "Bronchospasm in asthmatics", "PACs/PVCs after termination"],
+    adverse: [
+      "Transient chest discomfort, flushing, dyspnea",
+      "Brief asystole (usually <5 sec)",
+      "Bronchospasm in asthmatics",
+      "PACs/PVCs after termination",
+    ],
     monitoring: [
       { watch: "Continuous ECG during and after administration" },
-      { watch: "BP during administration", stopOrEscalate: "Unlikely to cause sustained hypotension" },
+      {
+        watch: "BP during administration",
+        stopOrEscalate: "Unlikely to cause sustained hypotension",
+      },
       { watch: "Airway if asthma history", stopOrEscalate: "Have bronchodilator ready" },
     ],
   },
@@ -640,11 +777,29 @@ export const DRUG_DETAILS: Record<string, DrugDetails> = {
     name: "Magnesium Sulfate",
     className: "Electrolyte (multichannel effects)",
     classKey: "Class V",
-    indications: ["Torsades de pointes", "Refractory VT/VF (especially if hypomagnesemic)", "Digitalis-induced arrhythmias", "AV node block (adjunct)", "Polymorphic VT with normal QT"],
+    indications: [
+      "Torsades de pointes",
+      "Refractory VT/VF (especially if hypomagnesemic)",
+      "Digitalis-induced arrhythmias",
+      "AV node block (adjunct)",
+      "Polymorphic VT with normal QT",
+    ],
     dosing: [
-      { route: "IV bolus (torsades)", dose: "1–2 g (8–16 mEq) IV over 5–20 min", notes: "May repeat if needed" },
-      { route: "IV infusion", dose: "0.5–1 g/hr continuous infusion", notes: "Follow bolus for sustained effect" },
-      { route: "IV bolus (cardiac arrest)", dose: "1–2 g IV push for refractory VF/pulseless VT", notes: "Not in ACLS algorithm, but consider if torsades suspected" },
+      {
+        route: "IV bolus (torsades)",
+        dose: "1–2 g (8–16 mEq) IV over 5–20 min",
+        notes: "May repeat if needed",
+      },
+      {
+        route: "IV infusion",
+        dose: "0.5–1 g/hr continuous infusion",
+        notes: "Follow bolus for sustained effect",
+      },
+      {
+        route: "IV bolus (cardiac arrest)",
+        dose: "1–2 g IV push for refractory VF/pulseless VT",
+        notes: "Not in ACLS algorithm, but consider if torsades suspected",
+      },
     ],
     contraindications: [
       "Hypermagnesemia",
@@ -656,12 +811,20 @@ export const DRUG_DETAILS: Record<string, DrugDetails> = {
       "Calcium channel blockers — additive AV block",
       "Digoxin — Mg2+ potentiates but also treats digoxin toxicity",
     ],
-    adverse: ["Flushing, warmth", "Hypotension (dose-related)", "Muscle weakness, areflexia at high levels", "Respiratory depression (>4 mEq/L)"],
+    adverse: [
+      "Flushing, warmth",
+      "Hypotension (dose-related)",
+      "Muscle weakness, areflexia at high levels",
+      "Respiratory depression (>4 mEq/L)",
+    ],
     monitoring: [
       { watch: "BP during and after infusion", stopOrEscalate: "Stop or slow infusion if SBP <90" },
       { watch: "Deep tendon reflexes", stopOrEscalate: "Absence suggests Mg2+ >4 mEq/L" },
       { watch: "Serum Mg2+ level with renal impairment", stopOrEscalate: "Hold if >4 mEq/L" },
-      { watch: "ECG for AV block", stopOrEscalate: "May need calcium gluconate if symptomatic AV block" },
+      {
+        watch: "ECG for AV block",
+        stopOrEscalate: "May need calcium gluconate if symptomatic AV block",
+      },
     ],
   },
 };

@@ -104,17 +104,20 @@ const consentChecklist: ChecklistItem[] = [
   },
   {
     id: "benefits",
-    label: "Potential benefits discussed: reduce sympathetic drive, terminate VT storm, reduce shocks",
+    label:
+      "Potential benefits discussed: reduce sympathetic drive, terminate VT storm, reduce shocks",
     required: true,
   },
   {
     id: "alternatives",
-    label: "Alternatives discussed: additional antiarrhythmics, sedation/analgesia, repeat DC shocks, catheter ablation, thoracic epidural",
+    label:
+      "Alternatives discussed: additional antiarrhythmics, sedation/analgesia, repeat DC shocks, catheter ablation, thoracic epidural",
     required: true,
   },
   {
     id: "risks",
-    label: "Risks reviewed: Horner syndrome, recurrent laryngeal nerve block/hoarseness, vascular injury/hematoma, pneumothorax, brachial plexus block, LAST, seizure, cardiac arrest",
+    label:
+      "Risks reviewed: Horner syndrome, recurrent laryngeal nerve block/hoarseness, vascular injury/hematoma, pneumothorax, brachial plexus block, LAST, seizure, cardiac arrest",
     required: true,
   },
   {
@@ -461,8 +464,8 @@ export function StellateGanglionBlock() {
         {preProcedureSafe ? (
           <div className="flex items-center gap-2 rounded-lg border border-ok/25 bg-ok/5 p-3 text-sm text-ok">
             <CheckCircle2 className="h-4 w-4" />
-            All required contraindication, bleeding, and consent checks complete. Review equipment and
-            monitoring before needling.
+            All required contraindication, bleeding, and consent checks complete. Review equipment
+            and monitoring before needling.
           </div>
         ) : (
           <div className="rounded-lg border border-destructive/25 bg-destructive/5 p-3 text-sm text-destructive">

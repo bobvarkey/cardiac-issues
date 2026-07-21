@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { Activity, AlertTriangle, CheckCircle2, Info } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { evaluateECG, getDefaultECGInput, type ECGInput, type ECGResult } from "@/lib/ecg-rule-engine";
+import {
+  evaluateECG,
+  getDefaultECGInput,
+  type ECGInput,
+  type ECGResult,
+} from "@/lib/ecg-rule-engine";
 
 export function ECGRuleEngine() {
   const [showForm, setShowForm] = useState(true);
@@ -39,7 +40,11 @@ export function ECGRuleEngine() {
                   <Activity className="w-4 h-4 text-muted-foreground" />
                   ECG Rule Engine — Syncope Risk Stratification
                 </span>
-                {showForm ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
+                {showForm ? (
+                  <ChevronUp className="w-4 h-4 text-muted-foreground" />
+                ) : (
+                  <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                )}
               </CardTitle>
             </CardHeader>
           </button>
@@ -47,7 +52,8 @@ export function ECGRuleEngine() {
         <CollapsibleContent>
           <CardContent className="pt-2 space-y-4">
             <p className="text-xs text-muted-foreground">
-              Enter ECG parameters to evaluate for high-risk features in syncope. Based on ESC/AHA guidelines.
+              Enter ECG parameters to evaluate for high-risk features in syncope. Based on ESC/AHA
+              guidelines.
             </p>
 
             {/* Input Form */}
@@ -55,7 +61,7 @@ export function ECGRuleEngine() {
               {/* Basic Parameters */}
               <div className="space-y-3">
                 <div className="text-xs font-medium text-foreground">Basic Parameters</div>
-                
+
                 <div className="space-y-2">
                   <label className="text-xs text-muted-foreground">Heart Rate (bpm)</label>
                   <input
@@ -99,7 +105,9 @@ export function ECGRuleEngine() {
                   <input
                     type="number"
                     value={input.pr_interval_ms || ""}
-                    onChange={(e) => handleInputChange("pr_interval_ms", parseInt(e.target.value) || 0)}
+                    onChange={(e) =>
+                      handleInputChange("pr_interval_ms", parseInt(e.target.value) || 0)
+                    }
                     className="w-full px-2 py-1.5 text-xs rounded-md border border-border bg-background"
                     placeholder="e.g., 180"
                   />
@@ -115,7 +123,9 @@ export function ECGRuleEngine() {
                   <input
                     type="number"
                     value={input.qrs_duration_ms_v1 || ""}
-                    onChange={(e) => handleInputChange("qrs_duration_ms_v1", parseInt(e.target.value) || 0)}
+                    onChange={(e) =>
+                      handleInputChange("qrs_duration_ms_v1", parseInt(e.target.value) || 0)
+                    }
                     className="w-full px-2 py-1.5 text-xs rounded-md border border-border bg-background"
                     placeholder="e.g., 100"
                   />
@@ -126,7 +136,9 @@ export function ECGRuleEngine() {
                   <input
                     type="number"
                     value={input.qrs_duration_ms_global || ""}
-                    onChange={(e) => handleInputChange("qrs_duration_ms_global", parseInt(e.target.value) || 0)}
+                    onChange={(e) =>
+                      handleInputChange("qrs_duration_ms_global", parseInt(e.target.value) || 0)
+                    }
                     className="w-full px-2 py-1.5 text-xs rounded-md border border-border bg-background"
                     placeholder="e.g., 100"
                   />
@@ -136,7 +148,12 @@ export function ECGRuleEngine() {
                   <label className="text-xs text-muted-foreground">ST Pattern V1-V3</label>
                   <select
                     value={input.st_pattern_v1_v3}
-                    onChange={(e) => handleInputChange("st_pattern_v1_v3", e.target.value as "normal" | "coved" | "saddleback")}
+                    onChange={(e) =>
+                      handleInputChange(
+                        "st_pattern_v1_v3",
+                        e.target.value as "normal" | "coved" | "saddleback",
+                      )
+                    }
                     className="w-full px-2 py-1.5 text-xs rounded-md border border-border bg-background"
                   >
                     <option value="normal">Normal</option>
@@ -149,7 +166,12 @@ export function ECGRuleEngine() {
                   <label className="text-xs text-muted-foreground">T Wave V1-V3</label>
                   <select
                     value={input.t_wave_v1_v3}
-                    onChange={(e) => handleInputChange("t_wave_v1_v3", e.target.value as "upright" | "inverted" | "biphasic")}
+                    onChange={(e) =>
+                      handleInputChange(
+                        "t_wave_v1_v3",
+                        e.target.value as "upright" | "inverted" | "biphasic",
+                      )
+                    }
                     className="w-full px-2 py-1.5 text-xs rounded-md border border-border bg-background"
                   >
                     <option value="upright">Upright</option>
@@ -228,7 +250,9 @@ export function ECGRuleEngine() {
                     <input
                       type="checkbox"
                       checked={input.q_waves_infarct_pattern}
-                      onChange={(e) => handleInputChange("q_waves_infarct_pattern", e.target.checked)}
+                      onChange={(e) =>
+                        handleInputChange("q_waves_infarct_pattern", e.target.checked)
+                      }
                       className="rounded border-border"
                     />
                     <span>Q waves (infarct pattern)</span>
@@ -240,7 +264,9 @@ export function ECGRuleEngine() {
                     <input
                       type="checkbox"
                       checked={input.early_repol_inferolateral}
-                      onChange={(e) => handleInputChange("early_repol_inferolateral", e.target.checked)}
+                      onChange={(e) =>
+                        handleInputChange("early_repol_inferolateral", e.target.checked)
+                      }
                       className="rounded border-border"
                     />
                     <span>Early repolarization (inferolateral)</span>
@@ -308,14 +334,18 @@ export function ECGRuleEngine() {
 
             {/* Results */}
             {result && (
-              <div className={`mt-4 p-4 rounded-lg border ${result.is_high_risk ? "bg-destructive/5 border-destructive/30" : "bg-success/5 border-success/30"}`}>
+              <div
+                className={`mt-4 p-4 rounded-lg border ${result.is_high_risk ? "bg-destructive/5 border-destructive/30" : "bg-success/5 border-success/30"}`}
+              >
                 <div className="flex items-center gap-2 mb-3">
                   {result.is_high_risk ? (
                     <AlertTriangle className="w-5 h-5 text-destructive" />
                   ) : (
                     <CheckCircle2 className="w-5 h-5 text-success" />
                   )}
-                  <span className={`font-medium ${result.is_high_risk ? "text-destructive" : "text-success"}`}>
+                  <span
+                    className={`font-medium ${result.is_high_risk ? "text-destructive" : "text-success"}`}
+                  >
                     {result.is_high_risk ? "High-Risk ECG Findings" : "No High-Risk ECG Findings"}
                   </span>
                 </div>
@@ -373,7 +403,7 @@ export function ECGRuleEngine() {
                 <div className="text-xs text-muted-foreground">
                   <div className="font-medium text-foreground mb-1">Clinical Context</div>
                   <p>
-                    This rule engine is based on ESC/AHA guidelines for syncope evaluation. 
+                    This rule engine is based on ESC/AHA guidelines for syncope evaluation.
                     High-risk findings warrant urgent cardiac evaluation and may require admission.
                     Always correlate with clinical presentation.
                   </p>

@@ -12,7 +12,6 @@ import {
 } from "lucide-react";
 import { HUTTDoseCalculator } from "./HUTTDoseCalculator";
 
-
 type ProtocolKey = "standard" | "italian";
 
 const PROTOCOLS: Record<
@@ -144,7 +143,8 @@ const VASIS = [
   },
   {
     type: "POTS",
-    detail: "HR rise ≥ 30 bpm (≥ 40 in adolescents) within 10 min, without orthostatic hypotension.",
+    detail:
+      "HR rise ≥ 30 bpm (≥ 40 in adolescents) within 10 min, without orthostatic hypotension.",
   },
   {
     type: "Orthostatic hypotension",
@@ -336,7 +336,6 @@ const MEDS: {
   },
 ];
 
-
 function CitationList({
   items,
   label = "Sources",
@@ -458,7 +457,10 @@ export function HUTTProtocolReference() {
             <div className="mt-1 font-semibold">{p.totalTime}</div>
           </div>
         </div>
-        <CitationList items={p.citations} label={`${active === "standard" ? "Westminster" : "Italian"} protocol sources`} />
+        <CitationList
+          items={p.citations}
+          label={`${active === "standard" ? "Westminster" : "Italian"} protocol sources`}
+        />
       </div>
 
       <Section title="Pre-test setup & monitoring" icon={ClipboardList}>
@@ -496,21 +498,22 @@ export function HUTTProtocolReference() {
           <li className="rounded-lg border border-border bg-background/40 p-3">
             <div className="font-semibold">4. Recovery</div>
             <div className="text-muted-foreground">
-              Return supine immediately on syncope/pre-syncope. Monitor 5–10 min until HR/BP baseline.
+              Return supine immediately on syncope/pre-syncope. Monitor 5–10 min until HR/BP
+              baseline.
             </div>
           </li>
         </ol>
       </Section>
 
-      <Section title={`Medications — ${active === "standard" ? "Standard" : "Italian"} protocol`} icon={Pill}>
+      <Section
+        title={`Medications — ${active === "standard" ? "Standard" : "Italian"} protocol`}
+        icon={Pill}
+      >
         <div className="grid gap-3">
           {MEDS.map((m) => {
             const d = active === "standard" ? m.standard : m.italian;
             return (
-              <div
-                key={m.name}
-                className="rounded-lg border border-border bg-background/40 p-4"
-              >
+              <div key={m.name} className="rounded-lg border border-border bg-background/40 p-4">
                 <div className="flex flex-wrap items-baseline justify-between gap-2">
                   <div>
                     <div className="font-semibold">{m.name}</div>
@@ -564,7 +567,6 @@ export function HUTTProtocolReference() {
       </Section>
 
       <Section title="VASIS classification & endpoints" icon={Activity}>
-
         <ul className="space-y-2 text-sm">
           {VASIS.map((v) => (
             <li key={v.type} className="rounded-lg border border-border bg-background/40 p-3">
@@ -578,7 +580,11 @@ export function HUTTProtocolReference() {
         </p>
       </Section>
 
-      <Section title="Safety, contraindications & stopping rules" icon={ShieldAlert} defaultOpen={false}>
+      <Section
+        title="Safety, contraindications & stopping rules"
+        icon={ShieldAlert}
+        defaultOpen={false}
+      >
         <div className="grid gap-3 md:grid-cols-2 text-sm">
           <div className="rounded-lg border border-destructive/40 bg-destructive/5 p-3">
             <div className="text-xs uppercase font-semibold text-destructive">

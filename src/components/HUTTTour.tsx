@@ -132,8 +132,7 @@ export function HUTTTour() {
           className="pointer-events-none absolute rounded-2xl ring-2 ring-primary/80 transition-all duration-300"
           style={{
             ...spot,
-            boxShadow:
-              "0 0 0 9999px rgba(10,6,30,0.55), 0 0 40px 4px rgba(217, 70, 239, 0.45)",
+            boxShadow: "0 0 0 9999px rgba(10,6,30,0.55), 0 0 40px 4px rgba(217, 70, 239, 0.45)",
           }}
         />
       )}

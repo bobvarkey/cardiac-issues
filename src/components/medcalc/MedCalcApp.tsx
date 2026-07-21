@@ -19,7 +19,6 @@ import { history, type HistoryEntry } from "@/lib/medcalc/history";
 import heartHero from "@/assets/medcalc-heart.png";
 import { HomeTour } from "./HomeTour";
 
-
 type Tab = "home" | "calc" | "history" | "settings";
 
 // ---------- haptics + scroll helpers ----------
@@ -80,11 +79,7 @@ export function MedCalcApp() {
       <header className="glass-header sticky top-0 z-30 px-5 pb-3 pt-4">
         <div className="flex items-center gap-3">
           {tab !== "home" && (
-            <button
-              onClick={goHome}
-              className="glass-icon-btn"
-              aria-label="Back to home"
-            >
+            <button onClick={goHome} className="glass-icon-btn" aria-label="Back to home">
               <ArrowLeft className="h-4 w-4" />
             </button>
           )}
@@ -116,7 +111,6 @@ export function MedCalcApp() {
             aria-label="Search MedCalc"
             data-tour="search"
           />
-
         </div>
       </header>
 
@@ -191,10 +185,43 @@ export function MedCalcApp() {
 
       {/* Bottom tab bar */}
       <nav className="glass-tabbar absolute bottom-0 left-0 right-0 z-30 flex items-center justify-around px-2 py-2">
-        <TabButton icon={HomeIcon} label="Home" active={tab === "home"} onClick={() => { tap(); setTab("home"); }} />
-        <TabButton icon={CalcIcon} label="Calc" active={tab === "calc"} onClick={() => { tap(); setTab("calc"); }} />
-        <TabButton icon={Clock} label="History" active={tab === "history"} onClick={() => { tap(); setTab("history"); }} dataTour="history" />
-        <TabButton icon={SettingsIcon} label="Settings" active={tab === "settings"} onClick={() => { tap(); setTab("settings"); }} />
+        <TabButton
+          icon={HomeIcon}
+          label="Home"
+          active={tab === "home"}
+          onClick={() => {
+            tap();
+            setTab("home");
+          }}
+        />
+        <TabButton
+          icon={CalcIcon}
+          label="Calc"
+          active={tab === "calc"}
+          onClick={() => {
+            tap();
+            setTab("calc");
+          }}
+        />
+        <TabButton
+          icon={Clock}
+          label="History"
+          active={tab === "history"}
+          onClick={() => {
+            tap();
+            setTab("history");
+          }}
+          dataTour="history"
+        />
+        <TabButton
+          icon={SettingsIcon}
+          label="Settings"
+          active={tab === "settings"}
+          onClick={() => {
+            tap();
+            setTab("settings");
+          }}
+        />
       </nav>
 
       {/* First-run walkthrough */}
@@ -203,9 +230,14 @@ export function MedCalcApp() {
   );
 }
 
-
 // ---------- Home ----------
-function HomeView({ onOpen, onGoTab }: { onOpen: (id: string) => void; onGoTab: (t: Tab) => void }) {
+function HomeView({
+  onOpen,
+  onGoTab,
+}: {
+  onOpen: (id: string) => void;
+  onGoTab: (t: Tab) => void;
+}) {
   const grouped = useMemo(() => {
     const map = new Map<string, Calculator[]>();
     for (const c of calculators) {
@@ -256,21 +288,30 @@ function HomeView({ onOpen, onGoTab }: { onOpen: (id: string) => void; onGoTab: 
         {/* Single primary CTA + subtle secondary */}
         <div className="relative mt-5 flex flex-col items-stretch gap-2">
           <button
-            onClick={() => { tap(); onOpen("chadsvasc"); }}
+            onClick={() => {
+              tap();
+              onOpen("chadsvasc");
+            }}
             className="cta-primary w-full !py-3 !text-[15px] font-semibold"
           >
             <Heart className="h-4 w-4" /> Start assessment
           </button>
           <div className="flex items-center justify-center gap-4 text-[13px] text-white/85">
             <button
-              onClick={() => { tap(); onGoTab("calc"); }}
+              onClick={() => {
+                tap();
+                onGoTab("calc");
+              }}
               className="underline-offset-4 hover:underline"
             >
               All calculators
             </button>
             <span className="text-white/40">·</span>
             <button
-              onClick={() => { tap(); onGoTab("history"); }}
+              onClick={() => {
+                tap();
+                onGoTab("history");
+              }}
               className="inline-flex items-center gap-1 underline-offset-4 hover:underline"
             >
               <Clock className="h-3.5 w-3.5" /> History
@@ -305,7 +346,6 @@ function HomeView({ onOpen, onGoTab }: { onOpen: (id: string) => void; onGoTab: 
           </CollapsibleSection>
         </div>
       ))}
-
 
       <Disclaimer />
     </div>
@@ -405,8 +445,7 @@ function CalculatorForm({ calc, onSwitch }: { calc: Calculator; onSwitch: () => 
         {calc.fields.map((f) => (
           <div key={f.key}>
             <label className="mb-1.5 block text-sm font-medium text-white/90">
-              {f.label}{" "}
-              {f.unit && <span className="text-white/60">({f.unit})</span>}
+              {f.label} {f.unit && <span className="text-white/60">({f.unit})</span>}
             </label>
             {f.type === "number" ? (
               <input
@@ -457,9 +496,7 @@ function CalculatorForm({ calc, onSwitch }: { calc: Calculator; onSwitch: () => 
 
       {/* Result panel */}
       <div className="result-panel relative overflow-hidden rounded-2xl border border-white/25 p-5">
-        {skeleton && (
-          <div className="absolute inset-0 animate-pulse bg-white/10" aria-hidden />
-        )}
+        {skeleton && <div className="absolute inset-0 animate-pulse bg-white/10" aria-hidden />}
         {result ? (
           <div className="relative animate-[fadeIn_.35s_ease-out]">
             <div className="text-xs uppercase tracking-widest text-white/75">Result</div>
@@ -601,7 +638,9 @@ function SettingsView() {
     <div className="space-y-4">
       <div className="glass-card">
         <div className="text-sm text-white/80">Local history</div>
-        <div className="mt-1 text-lg font-semibold text-white">{count} entries saved on this device</div>
+        <div className="mt-1 text-lg font-semibold text-white">
+          {count} entries saved on this device
+        </div>
         <button
           onClick={() => {
             if (confirm("Clear all saved calculations?")) {
@@ -649,12 +688,14 @@ function TabButton({
       aria-current={active ? "page" : undefined}
       data-tour={dataTour}
     >
-      <Icon className={`h-5 w-5 ${active ? "scale-110" : ""} transition`} strokeWidth={active ? 2.6 : 2} />
+      <Icon
+        className={`h-5 w-5 ${active ? "scale-110" : ""} transition`}
+        strokeWidth={active ? 2.6 : 2}
+      />
       <span className={active ? "font-semibold" : ""}>{label}</span>
     </button>
   );
 }
-
 
 function CollapsibleSection({
   title,

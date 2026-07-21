@@ -48,17 +48,25 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
           This page didn't load
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Something went wrong while loading this screen. Your data is safe — try one
-          of the steps below to recover.
+          Something went wrong while loading this screen. Your data is safe — try one of the steps
+          below to recover.
         </p>
 
         <div className="mt-5 rounded-md bg-muted/50 p-4">
           <h2 className="text-sm font-medium text-foreground">Troubleshooting steps</h2>
           <ol className="mt-2 list-decimal space-y-1 pl-5 text-sm text-muted-foreground">
-            <li>Tap <span className="font-medium text-foreground">Try again</span> to reload this screen.</li>
+            <li>
+              Tap <span className="font-medium text-foreground">Try again</span> to reload this
+              screen.
+            </li>
             <li>Check your internet connection, then retry.</li>
-            <li>Return to the <span className="font-medium text-foreground">home screen</span> and re-open the protocol.</li>
-            <li>If the issue continues, fully refresh the browser (pull down or press ⌘/Ctrl+R).</li>
+            <li>
+              Return to the <span className="font-medium text-foreground">home screen</span> and
+              re-open the protocol.
+            </li>
+            <li>
+              If the issue continues, fully refresh the browser (pull down or press ⌘/Ctrl+R).
+            </li>
           </ol>
         </div>
 
