@@ -60,6 +60,7 @@ const SECTIONS: Section[] = [
     items: [
       { label: "Arrhythmia", to: "/treatment" },
       { label: "Anti-arrhythmic Drugs", to: "/antiarrhythmics" },
+      { label: "Stellate Block", to: "/stellate" },
     ],
   },
   {
