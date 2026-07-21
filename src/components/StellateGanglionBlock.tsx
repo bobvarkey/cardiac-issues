@@ -257,6 +257,12 @@ export function StellateGanglionBlock() {
 
   const toggle = (id: string) => setChecked((c) => ({ ...c, [id]: !c[id] }));
   const ready = preChecklist.filter((i) => i.required).every((i) => checked[i.id]);
+  const contraindicationsSafe = contraindicationsChecklist
+    .filter((i) => i.required)
+    .every((i) => checked[i.id]);
+  const bleedingOk = bleedingChecklist.filter((i) => i.required).every((i) => checked[i.id]);
+  const consentDone = consentChecklist.filter((i) => i.required).every((i) => checked[i.id]);
+  const preProcedureSafe = contraindicationsSafe && bleedingOk && consentDone;
 
   return (
     <div className="space-y-8">
