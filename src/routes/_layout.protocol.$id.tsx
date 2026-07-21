@@ -1,24 +1,56 @@
 import { Link, createFileRoute, notFound } from "@tanstack/react-router";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, HelpCircle } from "lucide-react";
 import { algorithms } from "@/data/cardiac";
+import { protocolFaqs } from "@/data/protocol-faqs";
 import { AlgorithmView } from "@/components/AlgorithmView";
+
+const SITE = "https://cardiac-issues.lovable.app";
 
 export const Route = createFileRoute("/_layout/protocol/$id")({
   loader: ({ params }) => {
     const algo = algorithms.find((a) => a.id === params.id);
     if (!algo) throw notFound();
-    return { algo };
+    const faqs = protocolFaqs[algo.id] ?? [];
+    return { algo, faqs };
   },
-  head: ({ loaderData }) => ({
-    meta: loaderData
-      ? [
-          { title: `${loaderData.algo.name} — CardiacRef` },
-          { name: "description", content: loaderData.algo.summary },
-          { property: "og:title", content: `${loaderData.algo.name} — CardiacRef` },
-          { property: "og:description", content: loaderData.algo.summary },
-        ]
-      : [{ title: "Protocol not found" }, { name: "robots", content: "noindex" }],
-  }),
+  head: ({ params, loaderData }) => {
+    if (!loaderData) {
+      return {
+        meta: [{ title: "Protocol not found" }, { name: "robots", content: "noindex" }],
+      };
+    }
+    const { algo, faqs } = loaderData;
+    const url = `${SITE}/protocol/${params.id}`;
+    const title = `${algo.name} — Algorithm, Steps & FAQ`;
+    const description = `${algo.summary} Step-by-step clinician reference with dosing, decision points, and common questions.`;
+    const scripts: { type: string; children: string }[] = [];
+    if (faqs.length) {
+      scripts.push({
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: faqs.map((f) => ({
+            "@type": "Question",
+            name: f.q,
+            acceptedAnswer: { "@type": "Answer", text: f.a },
+          })),
+        }),
+      });
+    }
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+        { property: "og:type", content: "article" },
+        { property: "og:url", content: url },
+      ],
+      links: [{ rel: "canonical", href: url }],
+      scripts,
+    };
+  },
   notFoundComponent: () => (
     <div className="py-16 text-center text-muted-foreground">Protocol not found.</div>
   ),
@@ -26,7 +58,7 @@ export const Route = createFileRoute("/_layout/protocol/$id")({
 });
 
 function ProtocolPage() {
-  const { algo } = Route.useLoaderData();
+  const { algo, faqs } = Route.useLoaderData();
   return (
     <div className="space-y-6">
       <Link
@@ -47,6 +79,33 @@ function ProtocolPage() {
       </header>
 
       <AlgorithmView algo={algo} />
+
+      {faqs.length > 0 && (
+        <section className="space-y-4 border-t border-border pt-6">
+          <div className="flex items-center gap-2">
+            <HelpCircle className="h-4 w-4 text-primary" />
+            <h2 className="text-lg font-semibold tracking-tight">Frequently asked questions</h2>
+          </div>
+          <div className="space-y-3">
+            {faqs.map((f) => (
+              <details
+                key={f.q}
+                className="group rounded-lg border border-border bg-surface/60 p-4 open:bg-surface"
+              >
+                <summary className="cursor-pointer list-none text-sm font-medium text-foreground marker:hidden">
+                  <span className="mr-2 text-primary group-open:hidden">+</span>
+                  <span className="mr-2 hidden text-primary group-open:inline">−</span>
+                  {f.q}
+                </summary>
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{f.a}</p>
+              </details>
+            ))}
+          </div>
+          <p className="text-[11px] text-muted-foreground">
+            Educational reference only. Follow local protocols and clinical judgment.
+          </p>
+        </section>
+      )}
     </div>
   );
 }
