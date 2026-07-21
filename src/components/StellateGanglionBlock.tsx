@@ -16,6 +16,7 @@ import {
   Zap,
 } from "lucide-react";
 import stellateUltrasoundAsset from "@/assets/stellate-ganglion-ultrasound.jpeg.asset.json";
+import stellateSonoanatomyAsset from "@/assets/stellate-ganglion-sonoanatomy.jpeg.asset.json";
 
 type ChecklistItem = { id: string; label: string; required: boolean };
 
@@ -156,6 +157,78 @@ export function StellateGanglionBlock() {
         </div>
       </section>
 
+      {/* Decision protocol: when to block vs shock */}
+      <section className="space-y-4">
+        <div className="flex items-center gap-2.5 text-xs text-primary">
+          <span className="pulse-dot" />
+          <span className="font-mono uppercase tracking-wider">Decision protocol</span>
+        </div>
+        <h2 className="text-2xl font-semibold tracking-tight">Block first, or shock again?</h2>
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="surface-panel space-y-3 border-ok/25">
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="h-4 w-4 text-ok" />
+              <span className="font-semibold text-sm">Consider SGB now</span>
+            </div>
+            <ul className="space-y-2 text-sm text-muted-foreground">
+              <li className="flex gap-2">
+                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-ok" />
+                <span>≥3 appropriate AICD shocks in ≤1 hour or electrical storm</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-ok" />
+                <span>VT/VF recurs despite IV amiodarone ± lidocaine and sedation</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-ok" />
+                <span>Hemodynamics tolerated enough to allow a 10–15 min procedure</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-ok" />
+                <span>
+                  Operator trained in ultrasound-guided neck blocks, airway support present
+                </span>
+              </li>
+            </ul>
+          </div>
+          <div className="surface-panel space-y-3 border-destructive/25">
+            <div className="flex items-center gap-2">
+              <Zap className="h-4 w-4 text-destructive" />
+              <span className="font-semibold text-sm">Keep shocking / escalate instead</span>
+            </div>
+            <ul className="space-y-2 text-sm text-muted-foreground">
+              <li className="flex gap-2">
+                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-destructive" />
+                <span>
+                  Unstable VT with pulse: syncopal, hypotensive, or rapidly decompensating
+                </span>
+              </li>
+              <li className="flex gap-2">
+                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-destructive" />
+                <span>Untrained operator, no monitoring, or no airway/resuscitation backup</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-destructive" />
+                <span>
+                  Uncorrected coagulopathy, local infection, or contralateral pneumothorax
+                </span>
+              </li>
+              <li className="flex gap-2">
+                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-destructive" />
+                <span>Patient unable to lie supine or cooperate for neck block</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div className="rounded-lg border border-border bg-surface-elevated/40 p-3 text-sm text-muted-foreground">
+          <ArrowRight className="mb-1 inline h-4 w-4 text-primary" />
+          <strong className="text-foreground"> Practical rule:</strong> Do not delay life-saving DC
+          shocks for an unstable patient. In a tolerated electrical storm, however, every additional
+          shock fuels catecholamine surge and myocardial injury — that is the window where SGB often
+          breaks the cycle.
+        </div>
+      </section>
+
       {/* Pre-procedure checklist */}
       <section className="space-y-4">
         <div className="flex items-center gap-2.5 text-xs text-primary">
@@ -255,17 +328,32 @@ export function StellateGanglionBlock() {
               Pneumothorax risk rises below C7.
             </div>
           </div>
-          <div className="surface-panel overflow-hidden p-0">
-            <img
-              src={stellateUltrasoundAsset.url}
-              alt="Ultrasound of right stellate ganglion: SCM, IJ, carotid artery, longus colli, and stellate ganglion labelled"
-              className="h-auto w-full object-cover"
-              loading="lazy"
-            />
-            <div className="p-3 text-[11px] text-muted-foreground">
-              RT STELLATE ultrasound view. SCM = sternocleidomastoid; IJ = internal jugular vein; CA
-              = carotid artery; Longus Colli m. = prevertebral muscle; asterisks mark the stellate
-              ganglion.
+          <div className="space-y-4">
+            <div className="surface-panel overflow-hidden p-0">
+              <img
+                src={stellateSonoanatomyAsset.url}
+                alt="Sonoanatomy and block target: SCM, IJV, carotid artery, prevertebral fascia, longus colli muscle, and stellate ganglion at C6 transverse process"
+                className="h-auto w-full object-cover"
+                loading="lazy"
+              />
+              <div className="p-3 text-[11px] text-muted-foreground">
+                Sonoanatomy and block target at C6. Left: SCM, IJV, carotid artery (CA),
+                prevertebral fascia, longus colli, and stellate ganglion. Right: needle target deep
+                to the prevertebral fascia, lateral to the carotid sheath.
+              </div>
+            </div>
+            <div className="surface-panel overflow-hidden p-0">
+              <img
+                src={stellateUltrasoundAsset.url}
+                alt="Ultrasound of right stellate ganglion: SCM, IJ, carotid artery, longus colli, and stellate ganglion labelled"
+                className="h-auto w-full object-cover"
+                loading="lazy"
+              />
+              <div className="p-3 text-[11px] text-muted-foreground">
+                RT STELLATE ultrasound view. SCM = sternocleidomastoid; IJ = internal jugular vein;
+                CA = carotid artery; Longus Colli m. = prevertebral muscle; asterisks mark the
+                stellate ganglion.
+              </div>
             </div>
           </div>
         </div>
@@ -307,7 +395,7 @@ export function StellateGanglionBlock() {
             {
               n: 5,
               title: "Assess effect and monitor",
-              text: "Watch for Horner signs (ptosis, miosis, anhidrosis) within 5–15 min. Monitor BP, rhythm, and SpO₂. If VT persists, consider bilateral block or escalation to thoracic epidural.",
+              text: "Watch for Horner signs (ptosis, miosis, anhidrosis) ipsilateral to the block within 5–15 min. Continue ECG, NIBP, and SpO₂ monitoring for at least 30–60 min. If VT persists after 15–20 min, consider bilateral block or escalation to thoracic epidural / general anaesthesia.",
               icon: Thermometer,
             },
           ].map((step) => {
@@ -329,6 +417,88 @@ export function StellateGanglionBlock() {
             );
           })}
         </ol>
+      </section>
+
+      {/* Monitoring before / during / after */}
+      <section className="space-y-4">
+        <div className="flex items-center gap-2.5 text-xs text-primary">
+          <span className="pulse-dot" />
+          <span className="font-mono uppercase tracking-wider">Monitoring</span>
+        </div>
+        <h2 className="text-2xl font-semibold tracking-tight">
+          Before, during, and after the block
+        </h2>
+        <div className="grid gap-4 md:grid-cols-3">
+          <div className="surface-panel space-y-3">
+            <div className="font-mono text-[10px] uppercase tracking-wider text-primary">
+              Before
+            </div>
+            <ul className="space-y-2 text-sm text-muted-foreground">
+              <li className="flex gap-2">
+                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-primary" />
+                <span>Confirm continuous ECG, NIBP, pulse oximetry</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-primary" />
+                <span>Review coagulation status and anticoagulation plan</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-primary" />
+                <span>
+                  Ensure working peripheral IV, defibrillator, airway cart, lipid emulsion
+                </span>
+              </li>
+              <li className="flex gap-2">
+                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-primary" />
+                <span>Baseline neuro exam and voice (recurrent laryngeal baseline)</span>
+              </li>
+            </ul>
+          </div>
+          <div className="surface-panel space-y-3">
+            <div className="font-mono text-[10px] uppercase tracking-wider text-primary">
+              During
+            </div>
+            <ul className="space-y-2 text-sm text-muted-foreground">
+              <li className="flex gap-2">
+                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-primary" />
+                <span>Watch the ECG rhythm continuously — VT may terminate mid-procedure</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-primary" />
+                <span>Monitor BP every 2–5 min; watch for hypotension from sympathectomy</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-primary" />
+                <span>Aspirate before each incremental injection; watch for vascular uptake</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-primary" />
+                <span>Ask patient to report tinnitus, perioral numbness, or metallic taste</span>
+              </li>
+            </ul>
+          </div>
+          <div className="surface-panel space-y-3">
+            <div className="font-mono text-[10px] uppercase tracking-wider text-primary">After</div>
+            <ul className="space-y-2 text-sm text-muted-foreground">
+              <li className="flex gap-2">
+                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-primary" />
+                <span>Document Horner syndrome signs (ptosis, miosis, anhidrosis)</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-primary" />
+                <span>Monitor BP, SpO₂, rhythm for 30–60 min in recovery area</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-primary" />
+                <span>Reassess for hoarseness, dysphagia, or arm weakness</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-primary" />
+                <span>Repeat ECG, check for recurrence; escalate if storm persists</span>
+              </li>
+            </ul>
+          </div>
+        </div>
       </section>
 
       {/* Medication table */}
