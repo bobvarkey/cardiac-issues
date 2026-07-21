@@ -22,8 +22,16 @@ type ChecklistItem = { id: string; label: string; required: boolean };
 const preChecklist: ChecklistItem[] = [
   { id: "consent", label: "Informed consent / documented indication", required: true },
   { id: "coag", label: "Coagulation status acceptable (INR/platelets reviewed)", required: true },
-  { id: "allergy", label: "No local anaesthetic allergy; resuscitation cart checked", required: true },
-  { id: "ultrasound", label: "Ultrasound, sterile probe cover, high-frequency linear probe", required: true },
+  {
+    id: "allergy",
+    label: "No local anaesthetic allergy; resuscitation cart checked",
+    required: true,
+  },
+  {
+    id: "ultrasound",
+    label: "Ultrasound, sterile probe cover, high-frequency linear probe",
+    required: true,
+  },
   { id: "monitor", label: "Continuous monitoring: ECG, NIBP, SpO₂", required: true },
   { id: "access", label: "Peripheral IV access; airway support available", required: true },
 ];
@@ -50,12 +58,32 @@ const medications = [
 ];
 
 const complications = [
-  { name: "Horner syndrome", signs: "Ptosis, miosis, anhidrosis (ipsilateral face)", type: "expected" },
-  { name: "Recurrent laryngeal nerve block", signs: "Hoarseness, dysphagia, aspiration risk", type: "warn" },
-  { name: "Vascular injury / hematoma", signs: "Carotid or vertebral puncture; expanding neck mass", type: "danger" },
-  { name: "Pneumothorax", signs: "Pleural puncture, sudden desaturation, chest pain", type: "danger" },
+  {
+    name: "Horner syndrome",
+    signs: "Ptosis, miosis, anhidrosis (ipsilateral face)",
+    type: "expected",
+  },
+  {
+    name: "Recurrent laryngeal nerve block",
+    signs: "Hoarseness, dysphagia, aspiration risk",
+    type: "warn",
+  },
+  {
+    name: "Vascular injury / hematoma",
+    signs: "Carotid or vertebral puncture; expanding neck mass",
+    type: "danger",
+  },
+  {
+    name: "Pneumothorax",
+    signs: "Pleural puncture, sudden desaturation, chest pain",
+    type: "danger",
+  },
   { name: "Brachial plexus block", signs: "Arm weakness / sensory loss", type: "warn" },
-  { name: "LAST (local anaesthetic systemic toxicity)", signs: "Tinnitus, perioral numbness, seizures, arrhythmia, cardiac arrest", type: "danger" },
+  {
+    name: "LAST (local anaesthetic systemic toxicity)",
+    signs: "Tinnitus, perioral numbness, seizures, arrhythmia, cardiac arrest",
+    type: "danger",
+  },
 ];
 
 const evidence = [
@@ -87,13 +115,17 @@ export function StellateGanglionBlock() {
       <section className="space-y-3">
         <div className="flex items-center gap-2.5 text-xs text-primary">
           <span className="pulse-dot" />
-          <span className="font-mono uppercase tracking-wider">Rescue therapy · Electrical storm</span>
+          <span className="font-mono uppercase tracking-wider">
+            Rescue therapy · Electrical storm
+          </span>
         </div>
-        <h1 className="text-3xl font-semibold tracking-tight">Stellate Ganglion Block for arrhythmias</h1>
+        <h1 className="text-3xl font-semibold tracking-tight">
+          Stellate Ganglion Block for arrhythmias
+        </h1>
         <p className="max-w-2xl text-muted-foreground">
-          Not every V-tach needs a shock. A quick ultrasound-guided stellate ganglion block can break the
-          sympathetic surge driving refractory VT/VF storm — especially in patients being repeatedly shocked by
-          their AICD.
+          Not every V-tach needs a shock. A quick ultrasound-guided stellate ganglion block can
+          break the sympathetic surge driving refractory VT/VF storm — especially in patients being
+          repeatedly shocked by their AICD.
         </p>
       </section>
 
@@ -101,21 +133,26 @@ export function StellateGanglionBlock() {
       <section className="surface-panel border-primary/30 space-y-4">
         <div className="flex items-center gap-2">
           <Flame className="h-4 w-4 text-warn" />
-          <span className="font-mono text-[10px] uppercase tracking-wider text-warn">Case vignette</span>
+          <span className="font-mono text-[10px] uppercase tracking-wider text-warn">
+            Case vignette
+          </span>
         </div>
         <div className="space-y-2">
-          <p className="text-sm font-medium">65-year-old male · recurrent AICD shocks in V-tach storm</p>
+          <p className="text-sm font-medium">
+            65-year-old male · recurrent AICD shocks in V-tach storm
+          </p>
           <p className="text-sm text-muted-foreground">
-            He has received 8 shocks in 2 hours despite IV amiodarone, lidocaine, and deep sedation. The rhythm
-            repeatedly degenerates into VT after each DC cardioversion. Catheter ablation is being arranged but is
-            not immediately available. An ultrasound-guided right stellate ganglion block is performed with 15 mL
-            bupivacaine 0.25%.
+            He has received 8 shocks in 2 hours despite IV amiodarone, lidocaine, and deep sedation.
+            The rhythm repeatedly degenerates into VT after each DC cardioversion. Catheter ablation
+            is being arranged but is not immediately available. An ultrasound-guided right stellate
+            ganglion block is performed with 15 mL bupivacaine 0.25%.
           </p>
         </div>
         <div className="rounded-lg border border-warn/25 bg-warn/5 p-3 text-sm">
-          <span className="font-semibold text-warn">Why it fits:</span> Stellate ganglion block interrupts
-          preganglionic sympathetic efferents to the heart, reducing myocardial catecholamine drive and
-          suppressing triggered activity in electrically unstable myocardium.
+          <span className="font-semibold text-warn">Why it fits:</span> Stellate ganglion block
+          interrupts preganglionic sympathetic efferents to the heart, reducing myocardial
+          catecholamine drive and suppressing triggered activity in electrically unstable
+          myocardium.
         </div>
       </section>
 
@@ -145,9 +182,7 @@ export function StellateGanglionBlock() {
               {item.required && !checked[item.id] && (
                 <ShieldAlert className="h-4 w-4 text-destructive" />
               )}
-              {item.required && checked[item.id] && (
-                <CheckCircle2 className="h-4 w-4 text-ok" />
-              )}
+              {item.required && checked[item.id] && <CheckCircle2 className="h-4 w-4 text-ok" />}
             </label>
           ))}
           {!ready && (
@@ -174,45 +209,50 @@ export function StellateGanglionBlock() {
         <h2 className="text-2xl font-semibold tracking-tight">What you are looking for</h2>
         <div className="grid gap-5 md:grid-cols-2">
           <div className="surface-panel space-y-3">
-            <div className="font-mono text-[10px] uppercase tracking-wider text-primary">Key landmarks</div>
+            <div className="font-mono text-[10px] uppercase tracking-wider text-primary">
+              Key landmarks
+            </div>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li className="flex gap-2">
                 <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-primary" />
                 <span>
-                  <strong className="text-foreground">SCM</strong> — sternocleidomastoid muscle, superficial layer.
+                  <strong className="text-foreground">SCM</strong> — sternocleidomastoid muscle,
+                  superficial layer.
                 </span>
               </li>
               <li className="flex gap-2">
                 <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-primary" />
                 <span>
-                  <strong className="text-foreground">IJ</strong> — internal jugular vein, compressible.
+                  <strong className="text-foreground">IJ</strong> — internal jugular vein,
+                  compressible.
                 </span>
               </li>
               <li className="flex gap-2">
                 <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-primary" />
                 <span>
-                  <strong className="text-foreground">CA</strong> — carotid artery, pulsatile, non-compressible.
+                  <strong className="text-foreground">CA</strong> — carotid artery, pulsatile,
+                  non-compressible.
                 </span>
               </li>
               <li className="flex gap-2">
                 <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-primary" />
                 <span>
-                  <strong className="text-foreground">Longus colli m.</strong> — deep prevertebral muscle; the
-                  stellate ganglion sits just anterior to it at C6/C7.
+                  <strong className="text-foreground">Longus colli m.</strong> — deep prevertebral
+                  muscle; the stellate ganglion sits just anterior to it at C6/C7.
                 </span>
               </li>
               <li className="flex gap-2">
                 <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-primary" />
                 <span>
-                  <strong className="text-foreground">Stellate ganglion</strong> — fusion of inferior cervical and
-                  first thoracic ganglia.
+                  <strong className="text-foreground">Stellate ganglion</strong> — fusion of
+                  inferior cervical and first thoracic ganglia.
                 </span>
               </li>
             </ul>
             <div className="rounded-lg border border-warn/25 bg-warn/5 p-3 text-sm text-warn">
               <Info className="mb-1 h-4 w-4" />
-              Keep the needle lateral to the carotid sheath and avoid the vertebral artery. Pneumothorax risk rises
-              below C7.
+              Keep the needle lateral to the carotid sheath and avoid the vertebral artery.
+              Pneumothorax risk rises below C7.
             </div>
           </div>
           <div className="surface-panel overflow-hidden p-0">
@@ -223,8 +263,9 @@ export function StellateGanglionBlock() {
               loading="lazy"
             />
             <div className="p-3 text-[11px] text-muted-foreground">
-              RT STELLATE ultrasound view. SCM = sternocleidomastoid; IJ = internal jugular vein; CA = carotid artery;
-              Longus Colli m. = prevertebral muscle; asterisks mark the stellate ganglion.
+              RT STELLATE ultrasound view. SCM = sternocleidomastoid; IJ = internal jugular vein; CA
+              = carotid artery; Longus Colli m. = prevertebral muscle; asterisks mark the stellate
+              ganglion.
             </div>
           </div>
         </div>
@@ -300,7 +341,9 @@ export function StellateGanglionBlock() {
         <div className="grid gap-4 sm:grid-cols-3">
           {medications.map((m) => (
             <div key={m.name} className="surface-panel space-y-2">
-              <div className="font-mono text-[10px] uppercase tracking-wider text-primary">{m.name}</div>
+              <div className="font-mono text-[10px] uppercase tracking-wider text-primary">
+                {m.name}
+              </div>
               <div className="text-2xl font-semibold">{m.volume}</div>
               <div className="text-sm font-medium text-primary">{m.concentration}</div>
               <p className="text-xs text-muted-foreground">{m.note}</p>
@@ -309,9 +352,9 @@ export function StellateGanglionBlock() {
         </div>
         <div className="rounded-lg border border-border bg-surface-elevated/40 p-3 text-sm text-muted-foreground">
           <HeartPulse className="mb-1 inline h-4 w-4 text-primary" />
-          <strong className="text-foreground"> Typical cardiac rescue dose:</strong> 10–20 mL per side of a
-          long-acting amide. Do not exceed maximum local anaesthetic doses; keep lipid emulsion (20% intralipid)
-          immediately available.
+          <strong className="text-foreground"> Typical cardiac rescue dose:</strong> 10–20 mL per
+          side of a long-acting amide. Do not exceed maximum local anaesthetic doses; keep lipid
+          emulsion (20% intralipid) immediately available.
         </div>
       </section>
 
@@ -376,9 +419,10 @@ export function StellateGanglionBlock() {
       </section>
 
       <p className="text-[11px] text-muted-foreground">
-        Educational reference only. Stellate ganglion block for electrical storm should be performed by clinicians
-        trained in regional anaesthesia/ultrasound-guided neck blocks, with airway and resuscitation support
-        immediately available. Always follow local protocols and institutional privileges.
+        Educational reference only. Stellate ganglion block for electrical storm should be performed
+        by clinicians trained in regional anaesthesia/ultrasound-guided neck blocks, with airway and
+        resuscitation support immediately available. Always follow local protocols and institutional
+        privileges.
       </p>
     </div>
   );
