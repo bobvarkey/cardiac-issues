@@ -40,6 +40,90 @@ const preChecklist: ChecklistItem[] = [
   { id: "access", label: "Peripheral IV access; airway support available", required: true },
 ];
 
+const contraindicationsChecklist: ChecklistItem[] = [
+  {
+    id: "no_infection",
+    label: "No local infection, cellulitis, or abscess over the planned insertion site",
+    required: true,
+  },
+  {
+    id: "no_pneumothorax",
+    label: "No contralateral pneumothorax, significant lung disease, or pneumonectomy",
+    required: true,
+  },
+  {
+    id: "no_coagulopathy",
+    label: "No uncorrected coagulopathy or severe thrombocytopenia",
+    required: true,
+  },
+  {
+    id: "no_allergy",
+    label: "No known allergy to the planned local anaesthetic (e.g., amide allergy)",
+    required: true,
+  },
+  {
+    id: "able_position",
+    label: "Patient can tolerate supine positioning with slight neck rotation / extension",
+    required: true,
+  },
+  {
+    id: "no_distorted_anatomy",
+    label: "Neck anatomy not severely distorted by surgery, radiation, or mass (relative)",
+    required: false,
+  },
+];
+
+const bleedingChecklist: ChecklistItem[] = [
+  {
+    id: "inr",
+    label: "INR reviewed and acceptable per local neuraxial/plexus policy (commonly ≤ 1.4)",
+    required: false,
+  },
+  {
+    id: "platelets",
+    label: "Platelet count ≥ 50,000/µL (≥ 100,000/µL preferred) if thrombocytopenic",
+    required: false,
+  },
+  {
+    id: "anticoag_review",
+    label: "Anticoagulation/antiplatelet agents reviewed; timing/reversal plan documented",
+    required: true,
+  },
+  {
+    id: "compress_obs",
+    label: "Post-procedure compression site available and observation plan set",
+    required: true,
+  },
+];
+
+const consentChecklist: ChecklistItem[] = [
+  {
+    id: "indication",
+    label: "Indication explained: rescue SGB for refractory VT/VF electrical storm",
+    required: true,
+  },
+  {
+    id: "benefits",
+    label: "Potential benefits discussed: reduce sympathetic drive, terminate VT storm, reduce shocks",
+    required: true,
+  },
+  {
+    id: "alternatives",
+    label: "Alternatives discussed: additional antiarrhythmics, sedation/analgesia, repeat DC shocks, catheter ablation, thoracic epidural",
+    required: true,
+  },
+  {
+    id: "risks",
+    label: "Risks reviewed: Horner syndrome, recurrent laryngeal nerve block/hoarseness, vascular injury/hematoma, pneumothorax, brachial plexus block, LAST, seizure, cardiac arrest",
+    required: true,
+  },
+  {
+    id: "capacity",
+    label: "Patient has decision-making capacity (or surrogate present) and agrees to proceed",
+    required: true,
+  },
+];
+
 const medications = [
   {
     name: "Bupivacaine",
