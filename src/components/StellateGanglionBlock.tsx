@@ -374,7 +374,7 @@ export function StellateGanglionBlock() {
             {
               n: 5,
               title: "Assess effect and monitor",
-              text: "Watch for Horner signs (ptosis, miosis, anhidrosis) within 5–15 min. Monitor BP, rhythm, and SpO₂. If VT persists, consider bilateral block or escalation to thoracic epidural.",
+              text: "Watch for Horner signs (ptosis, miosis, anhidrosis) ipsilateral to the block within 5–15 min. Continue ECG, NIBP, and SpO₂ monitoring for at least 30–60 min. If VT persists after 15–20 min, consider bilateral block or escalation to thoracic epidural / general anaesthesia.",
               icon: Thermometer,
             },
           ].map((step) => {
