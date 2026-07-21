@@ -13,6 +13,7 @@ import {
   X,
   Stethoscope,
   Timer,
+  Brain,
 } from "lucide-react";
 
 import { AntiarrhythmicsChart } from "@/components/AntiarrhythmicsChart";
