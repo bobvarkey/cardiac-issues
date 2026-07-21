@@ -192,6 +192,66 @@ const evidence = [
   },
 ];
 
+function ChecklistGroup({
+  items,
+  checked,
+  toggle,
+  title,
+  icon: Icon,
+  colorClass,
+}: {
+  items: ChecklistItem[];
+  checked: Record<string, boolean>;
+  toggle: (id: string) => void;
+  title: string;
+  icon: React.ComponentType<{ className?: string }>;
+  colorClass?: string;
+}) {
+  const isReady = items.filter((i) => i.required).every((i) => checked[i.id]);
+  return (
+    <div className="surface-panel space-y-3">
+      <div className="flex items-center gap-2">
+        <Icon className={`h-4 w-4 ${colorClass ?? "text-primary"}`} />
+        <span className="font-semibold text-sm">{title}</span>
+      </div>
+      <div className="space-y-2">
+        {items.map((item) => (
+          <label
+            key={item.id}
+            className="flex cursor-pointer items-start gap-3 rounded-lg border border-border bg-surface-elevated/40 p-3 transition hover:bg-surface-elevated"
+          >
+            <input
+              type="checkbox"
+              checked={!!checked[item.id]}
+              onChange={() => toggle(item.id)}
+              className="mt-0.5 h-4 w-4 accent-primary"
+            />
+            <div className="flex-1">
+              <div className="text-sm font-medium">{item.label}</div>
+              {item.required && <div className="text-[10px] text-muted-foreground">Required</div>}
+            </div>
+            {item.required && !checked[item.id] && (
+              <ShieldAlert className="h-4 w-4 text-destructive" />
+            )}
+            {item.required && checked[item.id] && <CheckCircle2 className="h-4 w-4 text-ok" />}
+          </label>
+        ))}
+      </div>
+      {isReady ? (
+        <div className="flex items-center gap-2 rounded-lg border border-ok/25 bg-ok/5 p-3 text-sm text-ok">
+          <CheckCircle2 className="h-4 w-4" />
+          All required items complete.
+        </div>
+      ) : (
+        <div className="rounded-lg border border-destructive/25 bg-destructive/5 p-3 text-sm text-destructive">
+          <AlertTriangle className="mb-1 h-4 w-4" />
+          Complete all required items before needling.
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function StellateGanglionBlock() {
   const [checked, setChecked] = useState<Record<string, boolean>>({});
 
