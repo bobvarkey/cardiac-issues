@@ -157,6 +157,72 @@ export function StellateGanglionBlock() {
         </div>
       </section>
 
+      {/* Decision protocol: when to block vs shock */}
+      <section className="space-y-4">
+        <div className="flex items-center gap-2.5 text-xs text-primary">
+          <span className="pulse-dot" />
+          <span className="font-mono uppercase tracking-wider">Decision protocol</span>
+        </div>
+        <h2 className="text-2xl font-semibold tracking-tight">Block first, or shock again?</h2>
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="surface-panel space-y-3 border-ok/25">
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="h-4 w-4 text-ok" />
+              <span className="font-semibold text-sm">Consider SGB now</span>
+            </div>
+            <ul className="space-y-2 text-sm text-muted-foreground">
+              <li className="flex gap-2">
+                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-ok" />
+                <span>≥3 appropriate AICD shocks in ≤1 hour or electrical storm</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-ok" />
+                <span>VT/VF recurs despite IV amiodarone ± lidocaine and sedation</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-ok" />
+                <span>Hemodynamics tolerated enough to allow a 10–15 min procedure</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-ok" />
+                <span>Operator trained in ultrasound-guided neck blocks, airway support present</span>
+              </li>
+            </ul>
+          </div>
+          <div className="surface-panel space-y-3 border-destructive/25">
+            <div className="flex items-center gap-2">
+              <Zap className="h-4 w-4 text-destructive" />
+              <span className="font-semibold text-sm">Keep shocking / escalate instead</span>
+            </div>
+            <ul className="space-y-2 text-sm text-muted-foreground">
+              <li className="flex gap-2">
+                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-destructive" />
+                <span>Unstable VT with pulse: syncopal, hypotensive, or rapidly decompensating</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-destructive" />
+                <span>Untrained operator, no monitoring, or no airway/resuscitation backup</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-destructive" />
+                <span>Uncorrected coagulopathy, local infection, or contralateral pneumothorax</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-destructive" />
+                <span>Patient unable to lie supine or cooperate for neck block</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div className="rounded-lg border border-border bg-surface-elevated/40 p-3 text-sm text-muted-foreground">
+          <ArrowRight className="mb-1 inline h-4 w-4 text-primary" />
+          <strong className="text-foreground"> Practical rule:</strong> Do not delay life-saving DC
+          shocks for an unstable patient. In a tolerated electrical storm, however, every additional
+          shock fuels catecholamine surge and myocardial injury — that is the window where SGB often
+          breaks the cycle.
+        </div>
+      </section>
+
       {/* Pre-procedure checklist */}
       <section className="space-y-4">
         <div className="flex items-center gap-2.5 text-xs text-primary">
