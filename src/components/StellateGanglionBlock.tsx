@@ -322,17 +322,32 @@ export function StellateGanglionBlock() {
               Pneumothorax risk rises below C7.
             </div>
           </div>
-          <div className="surface-panel overflow-hidden p-0">
-            <img
-              src={stellateUltrasoundAsset.url}
-              alt="Ultrasound of right stellate ganglion: SCM, IJ, carotid artery, longus colli, and stellate ganglion labelled"
-              className="h-auto w-full object-cover"
-              loading="lazy"
-            />
-            <div className="p-3 text-[11px] text-muted-foreground">
-              RT STELLATE ultrasound view. SCM = sternocleidomastoid; IJ = internal jugular vein; CA
-              = carotid artery; Longus Colli m. = prevertebral muscle; asterisks mark the stellate
-              ganglion.
+          <div className="space-y-4">
+            <div className="surface-panel overflow-hidden p-0">
+              <img
+                src={stellateSonoanatomyAsset.url}
+                alt="Sonoanatomy and block target: SCM, IJV, carotid artery, prevertebral fascia, longus colli muscle, and stellate ganglion at C6 transverse process"
+                className="h-auto w-full object-cover"
+                loading="lazy"
+              />
+              <div className="p-3 text-[11px] text-muted-foreground">
+                Sonoanatomy and block target at C6. Left: SCM, IJV, carotid artery (CA), prevertebral
+                fascia, longus colli, and stellate ganglion. Right: needle target deep to the
+                prevertebral fascia, lateral to the carotid sheath.
+              </div>
+            </div>
+            <div className="surface-panel overflow-hidden p-0">
+              <img
+                src={stellateUltrasoundAsset.url}
+                alt="Ultrasound of right stellate ganglion: SCM, IJ, carotid artery, longus colli, and stellate ganglion labelled"
+                className="h-auto w-full object-cover"
+                loading="lazy"
+              />
+              <div className="p-3 text-[11px] text-muted-foreground">
+                RT STELLATE ultrasound view. SCM = sternocleidomastoid; IJ = internal jugular vein; CA
+                = carotid artery; Longus Colli m. = prevertebral muscle; asterisks mark the stellate
+                ganglion.
+              </div>
             </div>
           </div>
         </div>
