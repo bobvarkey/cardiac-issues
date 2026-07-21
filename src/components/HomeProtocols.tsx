@@ -13,6 +13,7 @@ import {
   X,
   Stethoscope,
   Timer,
+  Brain,
 } from "lucide-react";
 
 import { AntiarrhythmicsChart } from "@/components/AntiarrhythmicsChart";
@@ -124,12 +125,22 @@ export function HomeProtocols() {
         badge: "Reference · Mnemonics",
       },
       {
+        key: "stellate",
+        title: "Stellate Ganglion Block",
+        to: "/stellate",
+        description:
+          "Ultrasound-guided rescue block for refractory VT/VF storm — anatomy, dosing, complications, and evidence.",
+        keywords:
+          "stellate ganglion block electrical storm vt storm vf storm ultrasound sympathetic block",
+        icon: Brain,
+        badge: "Rescue · VT/VF storm",
+      },
+      {
         key: "anticoagulation",
         title: "Anticoagulation",
         to: "/anticoagulation",
         description: "DOAC and warfarin guidance with renal dosing and interactions.",
-        keywords:
-          "anticoagulation doac warfarin rivaroxaban apixaban dabigatran edoxaban inr",
+        keywords: "anticoagulation doac warfarin rivaroxaban apixaban dabigatran edoxaban inr",
         icon: Pill,
       },
       {
@@ -164,9 +175,7 @@ export function HomeProtocols() {
 
   const q = query.trim().toLowerCase();
   const filtered = q
-    ? entries.filter((e) =>
-        `${e.title} ${e.description} ${e.keywords}`.toLowerCase().includes(q),
-      )
+    ? entries.filter((e) => `${e.title} ${e.description} ${e.keywords}`.toLowerCase().includes(q))
     : entries;
 
   const featured = filtered.filter((e) => e.featured);
@@ -179,9 +188,7 @@ export function HomeProtocols() {
           <span className="pulse-dot" />
           <span className="font-mono uppercase tracking-wider">Adult · In-hospital</span>
         </div>
-        <h1 className="text-3xl font-semibold tracking-tight">
-          Fast-access cardiac protocols
-        </h1>
+        <h1 className="text-3xl font-semibold tracking-tight">Fast-access cardiac protocols</h1>
         <p className="max-w-2xl text-muted-foreground">
           Step through common adult cardiac emergencies with branching decisions, drug doses, and
           rhythm-check cycles. Choose a protocol to begin.

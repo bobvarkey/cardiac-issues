@@ -59,6 +59,7 @@ const SECTIONS: Section[] = [
     items: [
       { label: "Arrhythmia", to: "/treatment" },
       { label: "Anti-arrhythmic Drugs", to: "/antiarrhythmics" },
+      { label: "Stellate Block", to: "/stellate" },
     ],
   },
   {
@@ -217,10 +218,13 @@ export function Sidebar() {
               aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
               title={collapsed ? "Expand" : "Collapse"}
             >
-              {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+              {collapsed ? (
+                <ChevronRight className="h-4 w-4" />
+              ) : (
+                <ChevronLeft className="h-4 w-4" />
+              )}
             </button>
           </div>
-
 
           {/* Search */}
           {!collapsed && (
@@ -254,7 +258,9 @@ export function Sidebar() {
             {filtered.map((section) => {
               const Icon = section.icon;
               const open = isSectionOpen(section.id);
-              const isDirect = section.items.length === 1 && (section.id === "home" || section.items[0].to === "/");
+              const isDirect =
+                section.items.length === 1 &&
+                (section.id === "home" || section.items[0].to === "/");
               if (isDirect) {
                 const target = section.items[0].to;
                 const active = pathname === target;
@@ -357,7 +363,6 @@ export function Sidebar() {
                 </div>
               );
             })}
-
           </nav>
 
           {!collapsed && (

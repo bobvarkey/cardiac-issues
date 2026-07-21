@@ -16,6 +16,7 @@ import { Route as LayoutWarfarinRouteImport } from './routes/_layout.warfarin'
 import { Route as LayoutTreatmentRouteImport } from './routes/_layout.treatment'
 import { Route as LayoutSyncopeTriageRouteImport } from './routes/_layout.syncope-triage'
 import { Route as LayoutSyncopeRouteImport } from './routes/_layout.syncope'
+import { Route as LayoutStellateRouteImport } from './routes/_layout.stellate'
 import { Route as LayoutScoresRouteImport } from './routes/_layout.scores'
 import { Route as LayoutRhythmsRouteImport } from './routes/_layout.rhythms'
 import { Route as LayoutMedcalcRouteImport } from './routes/_layout.medcalc'
@@ -58,6 +59,11 @@ const LayoutSyncopeTriageRoute = LayoutSyncopeTriageRouteImport.update({
 const LayoutSyncopeRoute = LayoutSyncopeRouteImport.update({
   id: '/syncope',
   path: '/syncope',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutStellateRoute = LayoutStellateRouteImport.update({
+  id: '/stellate',
+  path: '/stellate',
   getParentRoute: () => LayoutRoute,
 } as any)
 const LayoutScoresRoute = LayoutScoresRouteImport.update({
@@ -117,6 +123,7 @@ export interface FileRoutesByFullPath {
   '/medcalc': typeof LayoutMedcalcRoute
   '/rhythms': typeof LayoutRhythmsRoute
   '/scores': typeof LayoutScoresRoute
+  '/stellate': typeof LayoutStellateRoute
   '/syncope': typeof LayoutSyncopeRoute
   '/syncope-triage': typeof LayoutSyncopeTriageRoute
   '/treatment': typeof LayoutTreatmentRoute
@@ -133,6 +140,7 @@ export interface FileRoutesByTo {
   '/medcalc': typeof LayoutMedcalcRoute
   '/rhythms': typeof LayoutRhythmsRoute
   '/scores': typeof LayoutScoresRoute
+  '/stellate': typeof LayoutStellateRoute
   '/syncope': typeof LayoutSyncopeRoute
   '/syncope-triage': typeof LayoutSyncopeTriageRoute
   '/treatment': typeof LayoutTreatmentRoute
@@ -152,6 +160,7 @@ export interface FileRoutesById {
   '/_layout/medcalc': typeof LayoutMedcalcRoute
   '/_layout/rhythms': typeof LayoutRhythmsRoute
   '/_layout/scores': typeof LayoutScoresRoute
+  '/_layout/stellate': typeof LayoutStellateRoute
   '/_layout/syncope': typeof LayoutSyncopeRoute
   '/_layout/syncope-triage': typeof LayoutSyncopeTriageRoute
   '/_layout/treatment': typeof LayoutTreatmentRoute
@@ -172,6 +181,7 @@ export interface FileRouteTypes {
     | '/medcalc'
     | '/rhythms'
     | '/scores'
+    | '/stellate'
     | '/syncope'
     | '/syncope-triage'
     | '/treatment'
@@ -188,6 +198,7 @@ export interface FileRouteTypes {
     | '/medcalc'
     | '/rhythms'
     | '/scores'
+    | '/stellate'
     | '/syncope'
     | '/syncope-triage'
     | '/treatment'
@@ -206,6 +217,7 @@ export interface FileRouteTypes {
     | '/_layout/medcalc'
     | '/_layout/rhythms'
     | '/_layout/scores'
+    | '/_layout/stellate'
     | '/_layout/syncope'
     | '/_layout/syncope-triage'
     | '/_layout/treatment'
@@ -267,6 +279,13 @@ declare module '@tanstack/react-router' {
       path: '/syncope'
       fullPath: '/syncope'
       preLoaderRoute: typeof LayoutSyncopeRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/stellate': {
+      id: '/_layout/stellate'
+      path: '/stellate'
+      fullPath: '/stellate'
+      preLoaderRoute: typeof LayoutStellateRouteImport
       parentRoute: typeof LayoutRoute
     }
     '/_layout/scores': {
@@ -345,6 +364,7 @@ interface LayoutRouteChildren {
   LayoutMedcalcRoute: typeof LayoutMedcalcRoute
   LayoutRhythmsRoute: typeof LayoutRhythmsRoute
   LayoutScoresRoute: typeof LayoutScoresRoute
+  LayoutStellateRoute: typeof LayoutStellateRoute
   LayoutSyncopeRoute: typeof LayoutSyncopeRoute
   LayoutSyncopeTriageRoute: typeof LayoutSyncopeTriageRoute
   LayoutTreatmentRoute: typeof LayoutTreatmentRoute
@@ -363,6 +383,7 @@ const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutMedcalcRoute: LayoutMedcalcRoute,
   LayoutRhythmsRoute: LayoutRhythmsRoute,
   LayoutScoresRoute: LayoutScoresRoute,
+  LayoutStellateRoute: LayoutStellateRoute,
   LayoutSyncopeRoute: LayoutSyncopeRoute,
   LayoutSyncopeTriageRoute: LayoutSyncopeTriageRoute,
   LayoutTreatmentRoute: LayoutTreatmentRoute,
