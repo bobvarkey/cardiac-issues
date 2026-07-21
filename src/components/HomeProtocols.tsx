@@ -148,6 +148,17 @@ export function HomeProtocols() {
         keywords: "scores risk chads has-bled timi grace",
         icon: Activity,
       },
+      {
+        key: "ccad",
+        title: "Chronic Coronary Artery Disease",
+        to: "/ccad",
+        description:
+          "Secondary prevention for CCAD with LoDoCo2 evidence for low-dose colchicine 0.5 mg daily.",
+        keywords:
+          "ccad chronic coronary artery disease colchicine lodoco2 secondary prevention mace",
+        icon: Heart,
+        badge: "Evidence · LoDoCo2",
+      },
     ];
   }, []);
 
