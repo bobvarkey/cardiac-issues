@@ -16,6 +16,7 @@ import {
   Zap,
 } from "lucide-react";
 import stellateUltrasoundAsset from "@/assets/stellate-ganglion-ultrasound.jpeg.asset.json";
+import stellateSonoanatomyAsset from "@/assets/stellate-ganglion-sonoanatomy.jpeg.asset.json";
 
 type ChecklistItem = { id: string; label: string; required: boolean };
 
