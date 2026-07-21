@@ -3,9 +3,12 @@ import {
   Activity,
   AlertTriangle,
   ArrowRight,
+  Ban,
   CheckCircle2,
+  Droplets,
   ExternalLink,
   Eye,
+  FileText,
   Flame,
   HeartPulse,
   Info,
@@ -35,6 +38,93 @@ const preChecklist: ChecklistItem[] = [
   },
   { id: "monitor", label: "Continuous monitoring: ECG, NIBP, SpO₂", required: true },
   { id: "access", label: "Peripheral IV access; airway support available", required: true },
+];
+
+const contraindicationsChecklist: ChecklistItem[] = [
+  {
+    id: "no_infection",
+    label: "No local infection, cellulitis, or abscess over the planned insertion site",
+    required: true,
+  },
+  {
+    id: "no_pneumothorax",
+    label: "No contralateral pneumothorax, significant lung disease, or pneumonectomy",
+    required: true,
+  },
+  {
+    id: "no_coagulopathy",
+    label: "No uncorrected coagulopathy or severe thrombocytopenia",
+    required: true,
+  },
+  {
+    id: "no_allergy",
+    label: "No known allergy to the planned local anaesthetic (e.g., amide allergy)",
+    required: true,
+  },
+  {
+    id: "able_position",
+    label: "Patient can tolerate supine positioning with slight neck rotation / extension",
+    required: true,
+  },
+  {
+    id: "no_distorted_anatomy",
+    label: "Neck anatomy not severely distorted by surgery, radiation, or mass (relative)",
+    required: false,
+  },
+];
+
+const bleedingChecklist: ChecklistItem[] = [
+  {
+    id: "inr",
+    label: "INR reviewed and acceptable per local neuraxial/plexus policy (commonly ≤ 1.4)",
+    required: false,
+  },
+  {
+    id: "platelets",
+    label: "Platelet count ≥ 50,000/µL (≥ 100,000/µL preferred) if thrombocytopenic",
+    required: false,
+  },
+  {
+    id: "anticoag_review",
+    label: "Anticoagulation/antiplatelet agents reviewed; timing/reversal plan documented",
+    required: true,
+  },
+  {
+    id: "compress_obs",
+    label: "Post-procedure compression site available and observation plan set",
+    required: true,
+  },
+];
+
+const consentChecklist: ChecklistItem[] = [
+  {
+    id: "indication",
+    label: "Indication explained: rescue SGB for refractory VT/VF electrical storm",
+    required: true,
+  },
+  {
+    id: "benefits",
+    label:
+      "Potential benefits discussed: reduce sympathetic drive, terminate VT storm, reduce shocks",
+    required: true,
+  },
+  {
+    id: "alternatives",
+    label:
+      "Alternatives discussed: additional antiarrhythmics, sedation/analgesia, repeat DC shocks, catheter ablation, thoracic epidural",
+    required: true,
+  },
+  {
+    id: "risks",
+    label:
+      "Risks reviewed: Horner syndrome, recurrent laryngeal nerve block/hoarseness, vascular injury/hematoma, pneumothorax, brachial plexus block, LAST, seizure, cardiac arrest",
+    required: true,
+  },
+  {
+    id: "capacity",
+    label: "Patient has decision-making capacity (or surrogate present) and agrees to proceed",
+    required: true,
+  },
 ];
 
 const medications = [
@@ -105,11 +195,77 @@ const evidence = [
   },
 ];
 
+function ChecklistGroup({
+  items,
+  checked,
+  toggle,
+  title,
+  icon: Icon,
+  colorClass,
+}: {
+  items: ChecklistItem[];
+  checked: Record<string, boolean>;
+  toggle: (id: string) => void;
+  title: string;
+  icon: React.ComponentType<{ className?: string }>;
+  colorClass?: string;
+}) {
+  const isReady = items.filter((i) => i.required).every((i) => checked[i.id]);
+  return (
+    <div className="surface-panel space-y-3">
+      <div className="flex items-center gap-2">
+        <Icon className={`h-4 w-4 ${colorClass ?? "text-primary"}`} />
+        <span className="font-semibold text-sm">{title}</span>
+      </div>
+      <div className="space-y-2">
+        {items.map((item) => (
+          <label
+            key={item.id}
+            className="flex cursor-pointer items-start gap-3 rounded-lg border border-border bg-surface-elevated/40 p-3 transition hover:bg-surface-elevated"
+          >
+            <input
+              type="checkbox"
+              checked={!!checked[item.id]}
+              onChange={() => toggle(item.id)}
+              className="mt-0.5 h-4 w-4 accent-primary"
+            />
+            <div className="flex-1">
+              <div className="text-sm font-medium">{item.label}</div>
+              {item.required && <div className="text-[10px] text-muted-foreground">Required</div>}
+            </div>
+            {item.required && !checked[item.id] && (
+              <ShieldAlert className="h-4 w-4 text-destructive" />
+            )}
+            {item.required && checked[item.id] && <CheckCircle2 className="h-4 w-4 text-ok" />}
+          </label>
+        ))}
+      </div>
+      {isReady ? (
+        <div className="flex items-center gap-2 rounded-lg border border-ok/25 bg-ok/5 p-3 text-sm text-ok">
+          <CheckCircle2 className="h-4 w-4" />
+          All required items complete.
+        </div>
+      ) : (
+        <div className="rounded-lg border border-destructive/25 bg-destructive/5 p-3 text-sm text-destructive">
+          <AlertTriangle className="mb-1 h-4 w-4" />
+          Complete all required items before needling.
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function StellateGanglionBlock() {
   const [checked, setChecked] = useState<Record<string, boolean>>({});
 
   const toggle = (id: string) => setChecked((c) => ({ ...c, [id]: !c[id] }));
   const ready = preChecklist.filter((i) => i.required).every((i) => checked[i.id]);
+  const contraindicationsSafe = contraindicationsChecklist
+    .filter((i) => i.required)
+    .every((i) => checked[i.id]);
+  const bleedingOk = bleedingChecklist.filter((i) => i.required).every((i) => checked[i.id]);
+  const consentDone = consentChecklist.filter((i) => i.required).every((i) => checked[i.id]);
+  const preProcedureSafe = contraindicationsSafe && bleedingOk && consentDone;
 
   return (
     <div className="space-y-8">
@@ -271,6 +427,52 @@ export function StellateGanglionBlock() {
             </div>
           )}
         </div>
+      </section>
+
+      {/* Contraindications, anticoagulation/bleeding, consent */}
+      <section className="space-y-4">
+        <div className="flex items-center gap-2.5 text-xs text-primary">
+          <span className="pulse-dot" />
+          <span className="font-mono uppercase tracking-wider">Contraindications & consent</span>
+        </div>
+        <h2 className="text-2xl font-semibold tracking-tight">Pre-procedure checklist</h2>
+        <div className="grid gap-4 md:grid-cols-3">
+          <ChecklistGroup
+            title="Contraindications"
+            icon={Ban}
+            colorClass="text-destructive"
+            items={contraindicationsChecklist}
+            checked={checked}
+            toggle={toggle}
+          />
+          <ChecklistGroup
+            title="Anticoagulation & bleeding"
+            icon={Droplets}
+            colorClass="text-warn"
+            items={bleedingChecklist}
+            checked={checked}
+            toggle={toggle}
+          />
+          <ChecklistGroup
+            title="Consent points"
+            icon={FileText}
+            items={consentChecklist}
+            checked={checked}
+            toggle={toggle}
+          />
+        </div>
+        {preProcedureSafe ? (
+          <div className="flex items-center gap-2 rounded-lg border border-ok/25 bg-ok/5 p-3 text-sm text-ok">
+            <CheckCircle2 className="h-4 w-4" />
+            All required contraindication, bleeding, and consent checks complete. Review equipment
+            and monitoring before needling.
+          </div>
+        ) : (
+          <div className="rounded-lg border border-destructive/25 bg-destructive/5 p-3 text-sm text-destructive">
+            <AlertTriangle className="mb-1 h-4 w-4" />
+            Complete all required contraindication, bleeding, and consent items before proceeding.
+          </div>
+        )}
       </section>
 
       {/* Anatomy & ultrasound */}

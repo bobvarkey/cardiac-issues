@@ -12,10 +12,11 @@ function SyncopePage() {
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Syncope Diagnostic Algorithm</h1>
         <p className="text-muted-foreground mt-1">
-          A systematic approach to evaluating syncope based on clinical presentation, ECG findings, and hemodynamic assessment.
+          A systematic approach to evaluating syncope based on clinical presentation, ECG findings,
+          and hemodynamic assessment.
         </p>
       </div>
-      
+
       {/* Link to Triage App */}
       <div className="p-4 rounded-lg bg-primary/5 border border-primary/20">
         <div className="flex items-center justify-between">
@@ -34,7 +35,7 @@ function SyncopePage() {
           </Link>
         </div>
       </div>
-      
+
       <SyncopeAlgorithm />
     </div>
   );

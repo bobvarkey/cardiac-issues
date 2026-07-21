@@ -199,7 +199,9 @@ export function evaluateECG(input: ECGInput): ECGResult {
 
   // Generate interpretation
   if (triggered_rules.includes("life_threatening_arrhythmia")) {
-    interpretation.push("⚠️ Life-threatening arrhythmia detected - immediate cardiac evaluation required");
+    interpretation.push(
+      "⚠️ Life-threatening arrhythmia detected - immediate cardiac evaluation required",
+    );
   }
   if (triggered_rules.includes("high_grade_av_block")) {
     interpretation.push("⚠️ High-grade AV block - pacing may be required");
@@ -208,7 +210,9 @@ export function evaluateECG(input: ECGInput): ECGResult {
     interpretation.push("⚠️ Severe bradycardia or pauses - evaluate for pacing indication");
   }
   if (triggered_rules.includes("lqts_severe")) {
-    interpretation.push("⚠️ Severely prolonged QTc (≥500ms) - high risk for torsades, consider LQTS");
+    interpretation.push(
+      "⚠️ Severely prolonged QTc (≥500ms) - high risk for torsades, consider LQTS",
+    );
   }
   if (triggered_rules.includes("lqts_prolonged")) {
     interpretation.push("QTc prolonged (480-499ms) - evaluate for LQTS, review medications");
@@ -220,7 +224,9 @@ export function evaluateECG(input: ECGInput): ECGResult {
     interpretation.push("Brugada saddleback pattern - consider drug provocation test");
   }
   if (triggered_rules.includes("arvc_high")) {
-    interpretation.push("⚠️ ARVC suspected (T-wave inversions + epsilon waves) - cardiac MRI recommended");
+    interpretation.push(
+      "⚠️ ARVC suspected (T-wave inversions + epsilon waves) - cardiac MRI recommended",
+    );
   }
   if (triggered_rules.includes("wpw")) {
     interpretation.push("WPW pattern detected - risk of rapid conduction if AF develops");
@@ -229,12 +235,16 @@ export function evaluateECG(input: ECGInput): ECGResult {
     interpretation.push("LVH with Q waves - consider HCM, cardiac MRI recommended");
   }
   if (triggered_rules.includes("early_repolarization")) {
-    interpretation.push("Early repolarization pattern - benign in most cases, but associated with VF risk in some studies");
+    interpretation.push(
+      "Early repolarization pattern - benign in most cases, but associated with VF risk in some studies",
+    );
   }
 
   // Add general interpretation if high risk
   if (is_high_risk && interpretation.length === 0) {
-    interpretation.push("⚠️ High-risk ECG findings present - urgent cardiac evaluation recommended");
+    interpretation.push(
+      "⚠️ High-risk ECG findings present - urgent cardiac evaluation recommended",
+    );
   }
 
   // Add normal interpretation if no findings

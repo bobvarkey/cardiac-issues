@@ -48,7 +48,8 @@ const drugs: Drug[] = [
         reference: "12 mg IV (max single dose)",
       },
     ],
-    comments: "Must be rapid IV push via large vein; avoid in WPW with AF; monitor ECG continuously.",
+    comments:
+      "Must be rapid IV push via large vein; avoid in WPW with AF; monitor ECG continuously.",
   },
   {
     name: "Verapamil",
@@ -277,7 +278,10 @@ export function TreatmentMiniApp() {
       return { title: "Follow ACLS VT algorithm", note: "Assess pulse and stability first." };
     }
     if (arrhythmia === "VF") {
-      return { title: "Defibrillation + CPR if pulseless VF", note: "Treat as a shockable rhythm." };
+      return {
+        title: "Defibrillation + CPR if pulseless VF",
+        note: "Treat as a shockable rhythm.",
+      };
     }
     if (arrhythmia === "SVT") {
       return {
@@ -309,7 +313,10 @@ export function TreatmentMiniApp() {
         note: "Consider digoxin toxicity, inferior MI, post-cardiac surgery; avoid aggressive rate control.",
       };
     }
-    return { title: "Assess and treat per ACLS algorithm", note: "Identify rhythm and stability first." };
+    return {
+      title: "Assess and treat per ACLS algorithm",
+      note: "Identify rhythm and stability first.",
+    };
   }, [arrhythmia, afDuration, ef, unstableNow]);
 
   const instabilityFields: Array<[keyof typeof unstable, string]> = [
@@ -378,7 +385,7 @@ export function TreatmentMiniApp() {
 
           <label className="block">
             <span className="text-sm font-medium">
-              {(arrhythmia === "AF" || arrhythmia === "AFlutter") ? "Duration (hr)" : "Onset (hr)"}
+              {arrhythmia === "AF" || arrhythmia === "AFlutter" ? "Duration (hr)" : "Onset (hr)"}
             </span>
             <input
               type="number"
@@ -388,7 +395,9 @@ export function TreatmentMiniApp() {
             />
             {(arrhythmia === "AF" || arrhythmia === "AFlutter") && (
               <p className="text-xs text-muted-foreground mt-2">
-                {afDuration >= 48 ? "≥48h: anticoagulation required before cardioversion" : "<48h: direct cardioversion may be considered"}
+                {afDuration >= 48
+                  ? "≥48h: anticoagulation required before cardioversion"
+                  : "<48h: direct cardioversion may be considered"}
               </p>
             )}
           </label>
@@ -402,7 +411,11 @@ export function TreatmentMiniApp() {
                 onChange={(e) => setEf(Number(e.target.value))}
                 className="mt-2 block w-full rounded-lg border border-input bg-background px-3 py-2"
               />
-              {ef <= 35 && <p className="text-xs text-muted-foreground mt-2">Reduced EF: consider amiodarone for rhythm control</p>}
+              {ef <= 35 && (
+                <p className="text-xs text-muted-foreground mt-2">
+                  Reduced EF: consider amiodarone for rhythm control
+                </p>
+              )}
             </label>
           )}
 
@@ -414,9 +427,7 @@ export function TreatmentMiniApp() {
                   <input
                     type="checkbox"
                     checked={unstable[key]}
-                    onChange={(e) =>
-                      setUnstable((prev) => ({ ...prev, [key]: e.target.checked }))
-                    }
+                    onChange={(e) => setUnstable((prev) => ({ ...prev, [key]: e.target.checked }))}
                     className="rounded border-input"
                   />
                   <span>{text}</span>
@@ -466,10 +477,7 @@ export function TreatmentMiniApp() {
               {activeDrug.doseRules.map((rule) => {
                 const { value, detail } = rule.compute(safeWeight);
                 return (
-                  <div
-                    key={rule.key}
-                    className="rounded-lg border border-border bg-surface p-4"
-                  >
+                  <div key={rule.key} className="rounded-lg border border-border bg-surface p-4">
                     <div className="flex items-baseline justify-between gap-3">
                       <div className="text-xs uppercase tracking-wider text-muted-foreground">
                         {rule.label}
@@ -481,9 +489,7 @@ export function TreatmentMiniApp() {
                     <div className="mt-1.5 font-mono text-base font-semibold text-primary">
                       {value}
                     </div>
-                    <div className="mt-1 text-xs text-muted-foreground">
-                      ref: {rule.reference}
-                    </div>
+                    <div className="mt-1 text-xs text-muted-foreground">ref: {rule.reference}</div>
                   </div>
                 );
               })}

@@ -96,12 +96,23 @@ export function HomeTour({ enabled }: { enabled: boolean }) {
 
   const tipStyle: React.CSSProperties = rect
     ? current.placement === "bottom"
-      ? { top: rect.top + rect.height + 16, left: Math.max(12, Math.min(rect.left, window.innerWidth - 320)) }
-      : { top: Math.max(12, rect.top - 180), left: Math.max(12, Math.min(rect.left, window.innerWidth - 320)) }
+      ? {
+          top: rect.top + rect.height + 16,
+          left: Math.max(12, Math.min(rect.left, window.innerWidth - 320)),
+        }
+      : {
+          top: Math.max(12, rect.top - 180),
+          left: Math.max(12, Math.min(rect.left, window.innerWidth - 320)),
+        }
     : { top: 120, left: 24 };
 
   return (
-    <div className="fixed inset-0 z-[100]" role="dialog" aria-modal="true" aria-label="Home walkthrough">
+    <div
+      className="fixed inset-0 z-[100]"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Home walkthrough"
+    >
       {/* Dim + blur underlay with cut-out via box-shadow */}
       <div
         className="pointer-events-auto absolute inset-0 backdrop-blur-[3px]"

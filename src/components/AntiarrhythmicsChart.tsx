@@ -1,6 +1,18 @@
 import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Zap, ArrowRight, AlertTriangle, Activity, Stethoscope, Calculator, Ban, Pill, Link2, ShieldAlert, X } from "lucide-react";
+import {
+  Zap,
+  ArrowRight,
+  AlertTriangle,
+  Activity,
+  Stethoscope,
+  Calculator,
+  Ban,
+  Pill,
+  Link2,
+  ShieldAlert,
+  X,
+} from "lucide-react";
 
 import {
   Sheet,
@@ -24,7 +36,7 @@ type ClassEntry = {
 const overallMnemonic = {
   text: "Funny, Some Block Potassium Channels Mainly",
   mapping: [
-    { word: "Funny", meaning: "HCN (\"funny\" If) channel blockers", cls: "Class 0" },
+    { word: "Funny", meaning: 'HCN ("funny" If) channel blockers', cls: "Class 0" },
     { word: "Some", meaning: "Sodium channel blockers", cls: "Class I" },
     { word: "Block", meaning: "Beta blockers", cls: "Class II" },
     { word: "Potassium", meaning: "Potassium channel blockers", cls: "Class III" },
@@ -36,7 +48,7 @@ const overallMnemonic = {
 const classes: ClassEntry[] = [
   {
     key: "Class 0",
-    type: "HCN (\"funny\" If) channel blockers",
+    type: 'HCN ("funny" If) channel blockers',
     mnemonic: "Funny",
     drugs: ["Ivabradine"],
   },
@@ -73,7 +85,6 @@ const classes: ClassEntry[] = [
   },
 ];
 
-
 function DrugChip({ name, onOpen }: { name: string; onOpen: (name: string) => void }) {
   const inCalc = CALCULATOR_DRUGS.has(name);
   return (
@@ -100,14 +111,11 @@ function classHasCalculatorDrug(c: ClassEntry): string | null {
 function InteractionChecker({ details }: { details: DrugDetails }) {
   const [selected, setSelected] = useState<string[]>([]);
 
-
   const hits = useMemo(() => findInteractions(details, selected), [details, selected]);
   const hitNames = new Set(hits.map((h) => h.companion.name));
 
   const toggle = (name: string) =>
-    setSelected((prev) =>
-      prev.includes(name) ? prev.filter((n) => n !== name) : [...prev, name],
-    );
+    setSelected((prev) => (prev.includes(name) ? prev.filter((n) => n !== name) : [...prev, name]));
 
   return (
     <section>
@@ -132,8 +140,8 @@ function InteractionChecker({ details }: { details: DrugDetails }) {
                 isConflict
                   ? "chip border border-destructive bg-destructive/15 text-destructive font-medium"
                   : isSelected
-                  ? "chip border border-primary bg-primary/15 text-primary"
-                  : "chip border border-border bg-surface text-muted-foreground hover:border-primary/40 hover:text-foreground"
+                    ? "chip border border-primary bg-primary/15 text-primary"
+                    : "chip border border-border bg-surface text-muted-foreground hover:border-primary/40 hover:text-foreground"
               }
             >
               {isConflict && <AlertTriangle className="h-3 w-3 mr-1" />}
@@ -148,7 +156,8 @@ function InteractionChecker({ details }: { details: DrugDetails }) {
         <div className="mt-4 space-y-3">
           {hits.length === 0 ? (
             <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-700 dark:text-emerald-400">
-              ✓ No major interaction listed for {details.name} with the selected medication{selected.length > 1 ? "s" : ""}. Always verify clinically.
+              ✓ No major interaction listed for {details.name} with the selected medication
+              {selected.length > 1 ? "s" : ""}. Always verify clinically.
             </div>
           ) : (
             hits.map((h) => {
@@ -156,30 +165,33 @@ function InteractionChecker({ details }: { details: DrugDetails }) {
                 h.severity === "contraindicated"
                   ? "border-destructive bg-destructive/15"
                   : h.severity === "major"
-                  ? "border-destructive/50 bg-destructive/10"
-                  : "border-amber-500/40 bg-amber-500/10";
+                    ? "border-destructive/50 bg-destructive/10"
+                    : "border-amber-500/40 bg-amber-500/10";
               const badgeStyle =
                 h.severity === "contraindicated"
                   ? "bg-destructive text-destructive-foreground"
                   : h.severity === "major"
-                  ? "bg-destructive/80 text-destructive-foreground"
-                  : "bg-amber-500/90 text-white";
+                    ? "bg-destructive/80 text-destructive-foreground"
+                    : "bg-amber-500/90 text-white";
               const actionStyle =
                 h.action === "avoid"
                   ? "border-destructive/50 text-destructive"
                   : "border-amber-500/50 text-amber-700 dark:text-amber-400";
               return (
-                <div
-                  key={h.companion.name}
-                  className={`rounded-xl border p-4 ${sevStyle}`}
-                >
+                <div key={h.companion.name} className={`rounded-xl border p-4 ${sevStyle}`}>
                   <div className="flex flex-wrap items-center gap-2 font-medium">
                     <AlertTriangle className="h-4 w-4 text-destructive" />
-                    <span>{details.name} + {h.companion.name}</span>
-                    <span className={`rounded-md px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider ${badgeStyle}`}>
+                    <span>
+                      {details.name} + {h.companion.name}
+                    </span>
+                    <span
+                      className={`rounded-md px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider ${badgeStyle}`}
+                    >
                       {h.severity}
                     </span>
-                    <span className={`rounded-md border px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider ${actionStyle}`}>
+                    <span
+                      className={`rounded-md border px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider ${actionStyle}`}
+                    >
                       {h.action === "avoid" ? "Avoid" : "Monitor"}
                     </span>
                     <span className="ml-auto font-mono text-[10px] uppercase text-muted-foreground">
@@ -188,16 +200,24 @@ function InteractionChecker({ details }: { details: DrugDetails }) {
                   </div>
                   <ul className="mt-2 space-y-1 pl-6">
                     {h.matches.map((m) => (
-                      <li key={m} className="list-disc">{m}</li>
+                      <li key={m} className="list-disc">
+                        {m}
+                      </li>
                     ))}
                   </ul>
                   <div className="mt-3 rounded-lg border border-border bg-surface p-3">
-                    <div className="font-semibold uppercase tracking-wider text-[10px] text-primary">Management</div>
+                    <div className="font-semibold uppercase tracking-wider text-[10px] text-primary">
+                      Management
+                    </div>
                     <div className="mt-1 text-sm">{h.companion.management}</div>
                   </div>
                   <div className="mt-2 rounded-lg border border-border bg-surface/60 p-3">
-                    <div className="font-semibold uppercase tracking-wider text-[10px] text-muted-foreground">Rationale</div>
-                    <div className="mt-1 text-sm text-muted-foreground">{h.companion.rationale}</div>
+                    <div className="font-semibold uppercase tracking-wider text-[10px] text-muted-foreground">
+                      Rationale
+                    </div>
+                    <div className="mt-1 text-sm text-muted-foreground">
+                      {h.companion.rationale}
+                    </div>
                   </div>
                 </div>
               );
@@ -208,7 +228,6 @@ function InteractionChecker({ details }: { details: DrugDetails }) {
     </section>
   );
 }
-
 
 function DrugDetailsBody({ details }: { details: DrugDetails }) {
   return (
@@ -260,7 +279,9 @@ function DrugDetailsBody({ details }: { details: DrugDetails }) {
         <div className="space-y-2">
           {details.dosing.map((d) => (
             <div key={d.route + d.dose} className="rounded-lg border border-border bg-surface p-3">
-              <div className="font-mono text-[10px] uppercase tracking-wider text-primary">{d.route}</div>
+              <div className="font-mono text-[10px] uppercase tracking-wider text-primary">
+                {d.route}
+              </div>
               <div className="mt-0.5">{d.dose}</div>
               {d.notes && <div className="text-xs text-muted-foreground mt-1">{d.notes}</div>}
             </div>
@@ -298,7 +319,6 @@ function DrugDetailsBody({ details }: { details: DrugDetails }) {
 
       <InteractionChecker key={details.name} details={details} />
 
-
       <section>
         <div className="section-label">
           <Activity className="h-3.5 w-3.5" /> Monitoring checklist
@@ -319,7 +339,6 @@ function DrugDetailsBody({ details }: { details: DrugDetails }) {
           ))}
         </ul>
       </section>
-
 
       {CALCULATOR_DRUGS.has(details.name) && (
         <Link
@@ -355,7 +374,9 @@ export function AntiarrhythmicsChart() {
       </div>
 
       <div className="rounded-xl border border-primary/20 bg-primary/5 p-5">
-        <div className="font-mono text-[11px] uppercase tracking-wider text-primary/80">Mnemonic</div>
+        <div className="font-mono text-[11px] uppercase tracking-wider text-primary/80">
+          Mnemonic
+        </div>
         <div className="mt-1 text-xl font-semibold">"{overallMnemonic.text}"</div>
         <div className="mt-4 grid gap-2 sm:grid-cols-2">
           {overallMnemonic.mapping.map((m) => (
@@ -375,18 +396,14 @@ export function AntiarrhythmicsChart() {
       </div>
 
       <div className="rounded-xl border border-border bg-surface-elevated p-5 space-y-4">
-        <div className="section-label">
-          Vaughan-Williams Classification
-        </div>
+        <div className="section-label">Vaughan-Williams Classification</div>
         <img
           src="/images/antiarrhythmics-classification.jpg"
           alt="Vaughan-Williams Antiarrhythmic Drug Classification"
           className="w-full h-auto rounded-lg"
         />
         <div>
-          <div className="section-label mt-2">
-            Targets of different anti-arrhythmic classes
-          </div>
+          <div className="section-label mt-2">Targets of different anti-arrhythmic classes</div>
           <img
             src="/images/antiarrhythmics-targets.png"
             alt="Targets of different anti-arrhythmic classes — cellular schematic showing Class 0 (HCN/If), Class 1 (Na+), Class 2 (β-adrenergic), Class 3 (K+), and Class 4 (L-type Ca2+) channels"
@@ -394,7 +411,8 @@ export function AntiarrhythmicsChart() {
             loading="lazy"
           />
           <p className="mt-2 text-xs text-muted-foreground italic">
-            Schematic mapping each Vaughan-Williams class to its ionic target. Class 0 (ivabradine, If/HCN) is a modern addition to the classic scheme.
+            Schematic mapping each Vaughan-Williams class to its ionic target. Class 0 (ivabradine,
+            If/HCN) is a modern addition to the classic scheme.
           </p>
         </div>
       </div>
@@ -431,10 +449,7 @@ export function AntiarrhythmicsChart() {
                     · <span className="italic">(Quinidine likes fever)</span>
                   </div>
                   {c.subclasses.map((s) => (
-                    <div
-                      key={s.key}
-                      className="rounded-lg border border-border bg-surface p-3"
-                    >
+                    <div key={s.key} className="rounded-lg border border-border bg-surface p-3">
                       <div className="flex items-baseline justify-between">
                         <div className="font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
                           Class {s.key}
@@ -479,7 +494,9 @@ export function AntiarrhythmicsChart() {
             <>
               <SheetHeader>
                 <SheetTitle>{details.name}</SheetTitle>
-                <SheetDescription>{details.classKey} · {details.className}</SheetDescription>
+                <SheetDescription>
+                  {details.classKey} · {details.className}
+                </SheetDescription>
               </SheetHeader>
               <DrugDetailsBody details={details} />
             </>

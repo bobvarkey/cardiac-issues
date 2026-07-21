@@ -42,7 +42,11 @@ const steps: Step[] = [
     icon: Pill,
     drugs: [
       { name: "Aspirin", dose: "75–100 mg PO daily", note: "First-line lifelong SAPT" },
-      { name: "Clopidogrel", dose: "75 mg PO daily", note: "If aspirin intolerant or high GI risk" },
+      {
+        name: "Clopidogrel",
+        dose: "75 mg PO daily",
+        note: "If aspirin intolerant or high GI risk",
+      },
       {
         name: "DAPT (aspirin + P2Y12)",
         dose: "6–12 mo post-PCI, then step down to SAPT",
@@ -87,9 +91,17 @@ const steps: Step[] = [
         dose: "5–10 mg PO daily",
         note: "Add or substitute if β-blocker contraindicated / vasospastic angina",
       },
-      { name: "Isosorbide mononitrate", dose: "30–120 mg PO daily", note: "12-hour nitrate-free interval" },
+      {
+        name: "Isosorbide mononitrate",
+        dose: "30–120 mg PO daily",
+        note: "12-hour nitrate-free interval",
+      },
       { name: "GTN spray", dose: "400 mcg SL PRN, repeat q5min ×3" },
-      { name: "Ivabradine", dose: "5–7.5 mg PO BID", note: "Sinus rhythm, HR ≥70 despite β-blocker" },
+      {
+        name: "Ivabradine",
+        dose: "5–7.5 mg PO BID",
+        note: "Sinus rhythm, HR ≥70 despite β-blocker",
+      },
       { name: "Ranolazine", dose: "500–1000 mg PO BID", note: "Refractory angina; QT monitoring" },
     ],
     monitor: [
@@ -105,7 +117,11 @@ const steps: Step[] = [
     drugs: [
       { name: "Ramipril", dose: "2.5–10 mg PO daily" },
       { name: "Perindopril", dose: "4–8 mg PO daily" },
-      { name: "Losartan / Valsartan", dose: "50–150 mg / 80–320 mg PO daily", note: "If ACEi intolerant" },
+      {
+        name: "Losartan / Valsartan",
+        dose: "50–150 mg / 80–320 mg PO daily",
+        note: "If ACEi intolerant",
+      },
     ],
     monitor: [
       "U&E and eGFR at 1–2 weeks after start / uptitration, then 6-monthly",
@@ -171,8 +187,8 @@ export function CCADMiniApp() {
         </div>
         <h1 className="text-3xl font-semibold tracking-tight">CCAD — evidence & management</h1>
         <p className="max-w-2xl text-muted-foreground">
-          Secondary prevention pillars for chronic coronary artery disease, including anti-inflammatory
-          therapy with low-dose colchicine (LoDoCo2).
+          Secondary prevention pillars for chronic coronary artery disease, including
+          anti-inflammatory therapy with low-dose colchicine (LoDoCo2).
         </p>
       </section>
 
@@ -191,9 +207,10 @@ export function CCADMiniApp() {
                 Colchicine 0.5 mg daily in chronic coronary disease
               </h2>
               <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-                Multicenter, double-blind, randomized, placebo-controlled trial in 5,522 patients with
-                chronic coronary disease. Low-dose colchicine reduced the composite of cardiovascular
-                death, spontaneous MI, ischemic stroke, or ischemia-driven coronary revascularization.
+                Multicenter, double-blind, randomized, placebo-controlled trial in 5,522 patients
+                with chronic coronary disease. Low-dose colchicine reduced the composite of
+                cardiovascular death, spontaneous MI, ischemic stroke, or ischemia-driven coronary
+                revascularization.
               </p>
             </div>
           </div>
@@ -217,8 +234,8 @@ export function CCADMiniApp() {
         </div>
 
         <div className="rounded-lg border border-border bg-surface-elevated/40 p-3 text-sm">
-          <span className="font-mono text-xs uppercase tracking-wider text-primary">Effect</span>{" "}
-          HR 0.69 (95% CI 0.57–0.83), P &lt; 0.001 — ~31% relative risk reduction in major
+          <span className="font-mono text-xs uppercase tracking-wider text-primary">Effect</span> HR
+          0.69 (95% CI 0.57–0.83), P &lt; 0.001 — ~31% relative risk reduction in major
           cardiovascular events.
         </div>
 
@@ -249,8 +266,8 @@ export function CCADMiniApp() {
         <div className="rounded-lg border border-primary/20 bg-primary/5 p-3 text-sm">
           <span className="font-semibold">Bottom line:</span> In patients with chronic coronary
           disease already on guideline-directed therapy, adding colchicine 0.5 mg daily lowers the
-          risk of cardiovascular events. Weigh against a small signal of increased non-cardiovascular
-          mortality and drug-interaction risk.
+          risk of cardiovascular events. Weigh against a small signal of increased
+          non-cardiovascular mortality and drug-interaction risk.
         </div>
 
         <a
@@ -306,7 +323,10 @@ export function CCADMiniApp() {
                     </div>
                     <ul className="space-y-2 text-sm">
                       {s.drugs.map((d) => (
-                        <li key={d.name} className="border-b border-border/50 pb-2 last:border-0 last:pb-0">
+                        <li
+                          key={d.name}
+                          className="border-b border-border/50 pb-2 last:border-0 last:pb-0"
+                        >
                           <div className="font-medium">{d.name}</div>
                           <div className="font-mono text-xs text-primary">{d.dose}</div>
                           {d.note && (

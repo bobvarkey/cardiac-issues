@@ -1,5 +1,14 @@
 import React, { useState, useMemo } from "react";
-import { Pill, AlertTriangle, CheckCircle, Info, ChevronRight, Activity, Droplet, Zap } from "lucide-react";
+import {
+  Pill,
+  AlertTriangle,
+  CheckCircle,
+  Info,
+  ChevronRight,
+  Activity,
+  Droplet,
+  Zap,
+} from "lucide-react";
 
 // ATRIA bleeding risk percentages (approximate annual major bleeding risk)
 const atriaRisks: Record<string, string> = {
@@ -66,7 +75,8 @@ function calculateINRAdjustment(inputs: WarfarinInputs): {
   if (inputs.bleedingSymptoms) {
     return {
       band: "Active Bleeding",
-      action: "Follow bleeding management protocol — hold warfarin, consider vitamin K, PCC/FFP if major bleed",
+      action:
+        "Follow bleeding management protocol — hold warfarin, consider vitamin K, PCC/FFP if major bleed",
       newWeeklyDose: inputs.weeklyDose,
       doseChange: 0,
       omitDoses: 999,
@@ -151,8 +161,9 @@ function calculateINRAdjustment(inputs: WarfarinInputs): {
   if (inr > 5.0 && inr <= 9.0) {
     return {
       band: "Very High",
-      action: "Hold warfarin; consider low-dose vitamin K (1–2.5mg orally); resume at 15–25% lower dose",
-      newWeeklyDose: (weeklyDose * 0.80).toFixed(0),
+      action:
+        "Hold warfarin; consider low-dose vitamin K (1–2.5mg orally); resume at 15–25% lower dose",
+      newWeeklyDose: (weeklyDose * 0.8).toFixed(0),
       doseChange: -20,
       omitDoses: 999,
       nextINRDays: 2,
@@ -165,7 +176,8 @@ function calculateINRAdjustment(inputs: WarfarinInputs): {
   // INR > 9.0
   return {
     band: "Extremely High (>9.0)",
-    action: "Emergency: Hold warfarin, give vitamin K 2.5–5mg orally/IV; consider PCC/FFP if bleeding; urgent referral",
+    action:
+      "Emergency: Hold warfarin, give vitamin K 2.5–5mg orally/IV; consider PCC/FFP if bleeding; urgent referral",
     newWeeklyDose: inputs.weeklyDose,
     doseChange: 0,
     omitDoses: 999,
@@ -176,7 +188,11 @@ function calculateINRAdjustment(inputs: WarfarinInputs): {
   };
 }
 
-function calculateLabileINR(readings: INRReading[], targetLow: number, targetHigh: number): {
+function calculateLabileINR(
+  readings: INRReading[],
+  targetLow: number,
+  targetHigh: number,
+): {
   isLabile: boolean;
   proportionInRange: number;
   totalReadings: number;
@@ -237,7 +253,8 @@ function calculateATRIA(inputs: ATRIAInputs): {
     message = "Intermediate 1-year major bleeding risk (~2.5%/year)";
   } else {
     riskCategory = "High";
-    message = "High 1-year major bleeding risk (~5–10%/year); address modifiable factors and monitor closely";
+    message =
+      "High 1-year major bleeding risk (~5–10%/year); address modifiable factors and monitor closely";
   }
 
   return { score, riskCategory, message };
@@ -272,8 +289,13 @@ export function WarfarinMiniApp() {
 
   const inrResult = useMemo(() => calculateINRAdjustment(inrInputs), [inrInputs]);
   const labileResult = useMemo(
-    () => calculateLabileINR(inrInputs.recentINRs, parseFloat(inrInputs.targetLow), parseFloat(inrInputs.targetHigh)),
-    [inrInputs.recentINRs, inrInputs.targetLow, inrInputs.targetHigh]
+    () =>
+      calculateLabileINR(
+        inrInputs.recentINRs,
+        parseFloat(inrInputs.targetLow),
+        parseFloat(inrInputs.targetHigh),
+      ),
+    [inrInputs.recentINRs, inrInputs.targetLow, inrInputs.targetHigh],
   );
   const atriaResult = useMemo(() => calculateATRIA(atriaInputs), [atriaInputs]);
 
@@ -422,7 +444,9 @@ export function WarfarinMiniApp() {
                   <input
                     type="checkbox"
                     checked={inrInputs.bleedingSymptoms}
-                    onChange={(e) => setINRInputs({ ...inrInputs, bleedingSymptoms: e.target.checked })}
+                    onChange={(e) =>
+                      setINRInputs({ ...inrInputs, bleedingSymptoms: e.target.checked })
+                    }
                     className="h-5 w-5 rounded border-slate-600 bg-slate-950 text-red-400 focus:ring-red-400"
                   />
                   <span className="text-sm">Active bleeding symptoms</span>
@@ -432,7 +456,9 @@ export function WarfarinMiniApp() {
                   <input
                     type="checkbox"
                     checked={inrInputs.thromboticEvent}
-                    onChange={(e) => setINRInputs({ ...inrInputs, thromboticEvent: e.target.checked })}
+                    onChange={(e) =>
+                      setINRInputs({ ...inrInputs, thromboticEvent: e.target.checked })
+                    }
                     className="h-5 w-5 rounded border-slate-600 bg-slate-950 text-red-400 focus:ring-red-400"
                   />
                   <span className="text-sm">Acute thrombotic event</span>
@@ -442,7 +468,9 @@ export function WarfarinMiniApp() {
                   <input
                     type="checkbox"
                     checked={inrInputs.interactingDrug}
-                    onChange={(e) => setINRInputs({ ...inrInputs, interactingDrug: e.target.checked })}
+                    onChange={(e) =>
+                      setINRInputs({ ...inrInputs, interactingDrug: e.target.checked })
+                    }
                     className="h-5 w-5 rounded border-slate-600 bg-slate-950 text-amber-400 focus:ring-amber-400"
                   />
                   <span className="text-sm">Interacting drug started/stopped</span>
@@ -454,12 +482,17 @@ export function WarfarinMiniApp() {
             <aside className="rounded-2xl border border-slate-800 bg-slate-900 p-5 space-y-4">
               <h2 className="text-lg font-semibold">Result</h2>
 
-              <div className={`p-4 rounded-xl ${
-                inrResult.emergency ? "bg-red-950/50 border border-red-500/50" :
-                inrResult.hold ? "bg-amber-950/50 border border-amber-500/50" :
-                inrResult.doseChange === 0 ? "bg-green-950/50 border border-green-500/50" :
-                "bg-slate-950/50 border border-slate-700"
-              }`}>
+              <div
+                className={`p-4 rounded-xl ${
+                  inrResult.emergency
+                    ? "bg-red-950/50 border border-red-500/50"
+                    : inrResult.hold
+                      ? "bg-amber-950/50 border border-amber-500/50"
+                      : inrResult.doseChange === 0
+                        ? "bg-green-950/50 border border-green-500/50"
+                        : "bg-slate-950/50 border border-slate-700"
+                }`}
+              >
                 <div className="text-sm text-slate-400 mb-1">INR Band</div>
                 <div className="text-xl font-bold">{inrResult.band}</div>
               </div>
@@ -484,7 +517,8 @@ export function WarfarinMiniApp() {
                         {inrResult.newWeeklyDose} mg
                         {inrResult.doseChange !== 0 && (
                           <span className="text-sm text-slate-400 ml-2">
-                            ({inrResult.doseChange > 0 ? "+" : ""}{inrResult.doseChange.toFixed(1)}%)
+                            ({inrResult.doseChange > 0 ? "+" : ""}
+                            {inrResult.doseChange.toFixed(1)}%)
                           </span>
                         )}
                       </div>
@@ -494,7 +528,8 @@ export function WarfarinMiniApp() {
                   {inrResult.omitDoses > 0 && !inrResult.hold && (
                     <div className="text-sm text-amber-200">
                       <AlertTriangle className="inline h-4 w-4 mr-1" />
-                      Omit {inrResult.omitDoses} dose{inrResult.omitDoses > 1 ? "s" : ""} before resuming
+                      Omit {inrResult.omitDoses} dose{inrResult.omitDoses > 1 ? "s" : ""} before
+                      resuming
                     </div>
                   )}
 
@@ -513,7 +548,9 @@ export function WarfarinMiniApp() {
 
                   <div className="p-3 rounded-lg bg-slate-950/50 border border-slate-700">
                     <div className="text-xs text-slate-400">Next INR Check</div>
-                    <div className="text-lg font-medium">In {inrResult.nextINRDays} day{inrResult.nextINRDays !== 1 ? "s" : ""}</div>
+                    <div className="text-lg font-medium">
+                      In {inrResult.nextINRDays} day{inrResult.nextINRDays !== 1 ? "s" : ""}
+                    </div>
                   </div>
                 </>
               )}
@@ -550,7 +587,9 @@ export function WarfarinMiniApp() {
               {inrInputs.recentINRs.length > 0 && (
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-slate-400">Recent Readings ({inrInputs.recentINRs.length})</span>
+                    <span className="text-sm text-slate-400">
+                      Recent Readings ({inrInputs.recentINRs.length})
+                    </span>
                     <button
                       onClick={clearINRReadings}
                       className="text-xs text-red-400 hover:text-red-300"
@@ -563,7 +602,8 @@ export function WarfarinMiniApp() {
                       <div
                         key={i}
                         className={`px-3 py-1 rounded-full text-sm ${
-                          r.value >= parseFloat(inrInputs.targetLow) && r.value <= parseFloat(inrInputs.targetHigh)
+                          r.value >= parseFloat(inrInputs.targetLow) &&
+                          r.value <= parseFloat(inrInputs.targetHigh)
                             ? "bg-green-950/50 border border-green-500/50 text-green-200"
                             : "bg-red-950/50 border border-red-500/50 text-red-200"
                         }`}
@@ -577,17 +617,21 @@ export function WarfarinMiniApp() {
 
               <div className="p-3 rounded-lg bg-slate-950/50 border border-slate-700 text-xs text-slate-400">
                 <Info className="inline h-3 w-3 mr-1" />
-                Labile INR is defined as TTR &lt;60% (proportion of readings in target range &lt;0.6).
-                Affects HAS-BLED score and may indicate need for DOAC evaluation.
+                Labile INR is defined as TTR &lt;60% (proportion of readings in target range
+                &lt;0.6). Affects HAS-BLED score and may indicate need for DOAC evaluation.
               </div>
             </section>
 
             <aside className="rounded-2xl border border-slate-800 bg-slate-900 p-5 space-y-4">
               <h2 className="text-lg font-semibold">TTR Assessment</h2>
 
-              <div className={`p-4 rounded-xl ${
-                labileResult.isLabile ? "bg-amber-950/50 border border-amber-500/50" : "bg-green-950/50 border border-green-500/50"
-              }`}>
+              <div
+                className={`p-4 rounded-xl ${
+                  labileResult.isLabile
+                    ? "bg-amber-950/50 border border-amber-500/50"
+                    : "bg-green-950/50 border border-green-500/50"
+                }`}
+              >
                 <div className="text-sm text-slate-400 mb-1">Readings in Range</div>
                 <div className="text-3xl font-bold">
                   {labileResult.totalReadings > 0 ? `${labileResult.proportionInRange}%` : "--"}
@@ -658,7 +702,9 @@ export function WarfarinMiniApp() {
                     <input
                       type="checkbox"
                       checked={atriaInputs.severeRenalDisease}
-                      onChange={(e) => setATRIAInputs({ ...atriaInputs, severeRenalDisease: e.target.checked })}
+                      onChange={(e) =>
+                        setATRIAInputs({ ...atriaInputs, severeRenalDisease: e.target.checked })
+                      }
                       className="h-5 w-5 rounded border-slate-600 bg-slate-950 text-red-400 focus:ring-red-400"
                     />
                   </div>
@@ -673,7 +719,9 @@ export function WarfarinMiniApp() {
                     <input
                       type="checkbox"
                       checked={atriaInputs.ageGe75}
-                      onChange={(e) => setATRIAInputs({ ...atriaInputs, ageGe75: e.target.checked })}
+                      onChange={(e) =>
+                        setATRIAInputs({ ...atriaInputs, ageGe75: e.target.checked })
+                      }
                       className="h-5 w-5 rounded border-slate-600 bg-slate-950 text-amber-400 focus:ring-amber-400"
                     />
                   </div>
@@ -689,7 +737,9 @@ export function WarfarinMiniApp() {
                     <input
                       type="checkbox"
                       checked={atriaInputs.priorBleeding}
-                      onChange={(e) => setATRIAInputs({ ...atriaInputs, priorBleeding: e.target.checked })}
+                      onChange={(e) =>
+                        setATRIAInputs({ ...atriaInputs, priorBleeding: e.target.checked })
+                      }
                       className="h-5 w-5 rounded border-slate-600 bg-slate-950 text-amber-400 focus:ring-amber-400"
                     />
                   </div>
@@ -705,7 +755,9 @@ export function WarfarinMiniApp() {
                     <input
                       type="checkbox"
                       checked={atriaInputs.hypertension}
-                      onChange={(e) => setATRIAInputs({ ...atriaInputs, hypertension: e.target.checked })}
+                      onChange={(e) =>
+                        setATRIAInputs({ ...atriaInputs, hypertension: e.target.checked })
+                      }
                       className="h-5 w-5 rounded border-slate-600 bg-slate-950 text-amber-400 focus:ring-amber-400"
                     />
                   </div>
@@ -716,19 +768,27 @@ export function WarfarinMiniApp() {
             <aside className="rounded-2xl border border-slate-800 bg-slate-900 p-5 space-y-4">
               <h2 className="text-lg font-semibold">Result</h2>
 
-              <div className={`p-4 rounded-xl ${
-                atriaResult.riskCategory === "High" ? "bg-red-950/50 border border-red-500/50" :
-                atriaResult.riskCategory === "Intermediate" ? "bg-amber-950/50 border border-amber-500/50" :
-                "bg-green-950/50 border border-green-500/50"
-              }`}>
+              <div
+                className={`p-4 rounded-xl ${
+                  atriaResult.riskCategory === "High"
+                    ? "bg-red-950/50 border border-red-500/50"
+                    : atriaResult.riskCategory === "Intermediate"
+                      ? "bg-amber-950/50 border border-amber-500/50"
+                      : "bg-green-950/50 border border-green-500/50"
+                }`}
+              >
                 <div className="text-sm text-slate-400 mb-1">ATRIA Score</div>
                 <div className="text-5xl font-black">{atriaResult.score}</div>
                 <div className="text-sm mt-1">
-                  <span className={
-                    atriaResult.riskCategory === "High" ? "text-red-300" :
-                    atriaResult.riskCategory === "Intermediate" ? "text-amber-300" :
-                    "text-green-300"
-                  }>
+                  <span
+                    className={
+                      atriaResult.riskCategory === "High"
+                        ? "text-red-300"
+                        : atriaResult.riskCategory === "Intermediate"
+                          ? "text-amber-300"
+                          : "text-green-300"
+                    }
+                  >
                     {atriaResult.riskCategory} Risk
                   </span>
                 </div>
@@ -739,8 +799,10 @@ export function WarfarinMiniApp() {
               <div className="p-3 rounded-lg bg-slate-950/50 border border-slate-700">
                 <div className="text-xs text-slate-400 mb-2">Annual Major Bleed Risk</div>
                 <div className="text-sm">
-                  Low (0–3): ~0.4–1.5%<br/>
-                  Intermediate (4): ~2.5%<br/>
+                  Low (0–3): ~0.4–1.5%
+                  <br />
+                  Intermediate (4): ~2.5%
+                  <br />
                   High (≥5): ~5–10%
                 </div>
               </div>
@@ -753,7 +815,8 @@ export function WarfarinMiniApp() {
           <section className="space-y-6">
             <h2 className="text-xl font-semibold">Managing Wildly Varying INR</h2>
             <p className="text-slate-400">
-              Stepwise algorithm for INR instability: exclude artefact → identify cause → classify pattern → guide action.
+              Stepwise algorithm for INR instability: exclude artefact → identify cause → classify
+              pattern → guide action.
             </p>
 
             {/* Step 1: Safety Check */}
@@ -796,7 +859,9 @@ export function WarfarinMiniApp() {
                   <ul className="mt-2 text-sm text-slate-300 space-y-1">
                     <li>• Same lab, same coagulometer, same thromboplastin lot</li>
                     <li>• No recent POCT ↔ central lab switch</li>
-                    <li>• Sample collection: underfilled tube, tourniquet time, heparin contamination</li>
+                    <li>
+                      • Sample collection: underfilled tube, tourniquet time, heparin contamination
+                    </li>
                   </ul>
                 </div>
                 <div className="grid gap-2 md:grid-cols-2 text-sm">
@@ -825,8 +890,12 @@ export function WarfarinMiniApp() {
                     <li>• Adherence issues (missed/double doses)</li>
                     <li>• Recent dose changes</li>
                     <li>• Interacting drugs started/stopped:</li>
-                    <li className="pl-4 text-xs">↑ INR: amiodarone, azoles, macrolides, TMP-SMX, SSRIs</li>
-                    <li className="pl-4 text-xs">↓ INR: rifampicin, carbamazepine, phenytoin, St John's wort</li>
+                    <li className="pl-4 text-xs">
+                      ↑ INR: amiodarone, azoles, macrolides, TMP-SMX, SSRIs
+                    </li>
+                    <li className="pl-4 text-xs">
+                      ↓ INR: rifampicin, carbamazepine, phenytoin, St John's wort
+                    </li>
                     <li>• OTC/herbals (ginkgo, ginseng, vitamin K)</li>
                   </ul>
                 </div>
@@ -845,13 +914,18 @@ export function WarfarinMiniApp() {
               </div>
               <div className="p-3 rounded-lg bg-amber-900/30 border border-amber-500/30 text-sm">
                 <strong className="text-amber-200">If clear trigger found:</strong>
-                <span className="text-slate-300"> Manage cause + adjust dose. If no driver → pattern classification.</span>
+                <span className="text-slate-300">
+                  {" "}
+                  Manage cause + adjust dose. If no driver → pattern classification.
+                </span>
               </div>
             </div>
 
             {/* Step 4: Pattern Classification */}
             <div className="rounded-xl border border-purple-500/50 bg-purple-950/20 p-4 space-y-4">
-              <h3 className="font-semibold text-purple-300">Step 4: Pattern-Based Classification</h3>
+              <h3 className="font-semibold text-purple-300">
+                Step 4: Pattern-Based Classification
+              </h3>
 
               {/* Pattern A */}
               <div className="p-4 rounded-lg bg-red-950/30 border border-red-500/30 space-y-2">
@@ -860,14 +934,30 @@ export function WarfarinMiniApp() {
                   <span className="ml-2 text-sm text-slate-400">(INR repeatedly &gt;3.5)</span>
                 </div>
                 <div className="text-sm text-slate-300">
-                  <strong>Consider:</strong> CYP2C9/VKORC1 polymorphisms, low weight, elderly, liver disease, low albumin, drug inhibitors, low vitamin K diet, acute illness.
+                  <strong>Consider:</strong> CYP2C9/VKORC1 polymorphisms, low weight, elderly, liver
+                  disease, low albumin, drug inhibitors, low vitamin K diet, acute illness.
                 </div>
                 <ul className="text-sm space-y-1">
-                  <li><ChevronRight className="inline h-3 w-3 text-red-400" /> Confirm no lab error; recheck in 24–48h</li>
-                  <li><ChevronRight className="inline h-3 w-3 text-red-400" /> Evaluate transient causes (antibiotic, diarrhea, reduced intake)</li>
-                  <li><ChevronRight className="inline h-3 w-3 text-red-400" /> Transient: reduce dose 10–20% or hold 1–2 doses; recheck 3–5 days</li>
-                  <li><ChevronRight className="inline h-3 w-3 text-red-400" /> Persistent: reduce long-term dose 10–30%</li>
-                  <li><ChevronRight className="inline h-3 w-3 text-red-400" /> Very low dose + instability → consider DOAC switch</li>
+                  <li>
+                    <ChevronRight className="inline h-3 w-3 text-red-400" /> Confirm no lab error;
+                    recheck in 24–48h
+                  </li>
+                  <li>
+                    <ChevronRight className="inline h-3 w-3 text-red-400" /> Evaluate transient
+                    causes (antibiotic, diarrhea, reduced intake)
+                  </li>
+                  <li>
+                    <ChevronRight className="inline h-3 w-3 text-red-400" /> Transient: reduce dose
+                    10–20% or hold 1–2 doses; recheck 3–5 days
+                  </li>
+                  <li>
+                    <ChevronRight className="inline h-3 w-3 text-red-400" /> Persistent: reduce
+                    long-term dose 10–30%
+                  </li>
+                  <li>
+                    <ChevronRight className="inline h-3 w-3 text-red-400" /> Very low dose +
+                    instability → consider DOAC switch
+                  </li>
                 </ul>
               </div>
 
@@ -878,14 +968,30 @@ export function WarfarinMiniApp() {
                   <span className="ml-2 text-sm text-slate-400">(INR repeatedly &lt;1.8)</span>
                 </div>
                 <div className="text-sm text-slate-300">
-                  <strong>Consider:</strong> Poor adherence, enzyme inducers, high vitamin K intake, malabsorption.
+                  <strong>Consider:</strong> Poor adherence, enzyme inducers, high vitamin K intake,
+                  malabsorption.
                 </div>
                 <ul className="text-sm space-y-1">
-                  <li><ChevronRight className="inline h-3 w-3 text-blue-400" /> Screen adherence non-judgmentally; pill counts</li>
-                  <li><ChevronRight className="inline h-3 w-3 text-blue-400" /> Review inducers, supplements, diet shifts</li>
-                  <li><ChevronRight className="inline h-3 w-3 text-blue-400" /> Correctable: increase dose 10–20%, dosing calendar</li>
-                  <li><ChevronRight className="inline h-3 w-3 text-blue-400" /> High dose (&gt;15mg/day) or resistant → evaluate malabsorption</li>
-                  <li><ChevronRight className="inline h-3 w-3 text-blue-400" /> Consider DOAC if suitable</li>
+                  <li>
+                    <ChevronRight className="inline h-3 w-3 text-blue-400" /> Screen adherence
+                    non-judgmentally; pill counts
+                  </li>
+                  <li>
+                    <ChevronRight className="inline h-3 w-3 text-blue-400" /> Review inducers,
+                    supplements, diet shifts
+                  </li>
+                  <li>
+                    <ChevronRight className="inline h-3 w-3 text-blue-400" /> Correctable: increase
+                    dose 10–20%, dosing calendar
+                  </li>
+                  <li>
+                    <ChevronRight className="inline h-3 w-3 text-blue-400" /> High dose
+                    (&gt;15mg/day) or resistant → evaluate malabsorption
+                  </li>
+                  <li>
+                    <ChevronRight className="inline h-3 w-3 text-blue-400" /> Consider DOAC if
+                    suitable
+                  </li>
                 </ul>
               </div>
 
@@ -893,17 +999,35 @@ export function WarfarinMiniApp() {
               <div className="p-4 rounded-lg bg-amber-950/30 border border-amber-500/30 space-y-2">
                 <div className="font-semibold text-amber-300">
                   <span>Pattern C: Oscillation ("Saw-tooth")</span>
-                  <span className="ml-2 text-sm text-slate-400">(INR alternates above/below target)</span>
+                  <span className="ml-2 text-sm text-slate-400">
+                    (INR alternates above/below target)
+                  </span>
                 </div>
                 <div className="text-sm text-slate-300">
-                  <strong>Core problem:</strong> Over-aggressive titration, lack of stable weekly pattern.
+                  <strong>Core problem:</strong> Over-aggressive titration, lack of stable weekly
+                  pattern.
                 </div>
                 <ul className="text-sm space-y-1">
-                  <li><ChevronRight className="inline h-3 w-3 text-amber-400" /> Fix weekly dose, don't chase single INRs</li>
-                  <li><ChevronRight className="inline h-3 w-3 text-amber-400" /> Small 5–10% changes, not 25–50%</li>
-                  <li><ChevronRight className="inline h-3 w-3 text-amber-400" /> Structured schedule (e.g., 3–4–3–4 mg instead of 3–5–3–5)</li>
-                  <li><ChevronRight className="inline h-3 w-3 text-amber-400" /> Fixed timing, fixed lab, fixed interval</li>
-                  <li><ChevronRight className="inline h-3 w-3 text-amber-400" /> TTR &lt;65% over 3–6mo → consider DOAC</li>
+                  <li>
+                    <ChevronRight className="inline h-3 w-3 text-amber-400" /> Fix weekly dose,
+                    don't chase single INRs
+                  </li>
+                  <li>
+                    <ChevronRight className="inline h-3 w-3 text-amber-400" /> Small 5–10% changes,
+                    not 25–50%
+                  </li>
+                  <li>
+                    <ChevronRight className="inline h-3 w-3 text-amber-400" /> Structured schedule
+                    (e.g., 3–4–3–4 mg instead of 3–5–3–5)
+                  </li>
+                  <li>
+                    <ChevronRight className="inline h-3 w-3 text-amber-400" /> Fixed timing, fixed
+                    lab, fixed interval
+                  </li>
+                  <li>
+                    <ChevronRight className="inline h-3 w-3 text-amber-400" /> TTR &lt;65% over
+                    3–6mo → consider DOAC
+                  </li>
                 </ul>
               </div>
             </div>
@@ -933,7 +1057,8 @@ export function WarfarinMiniApp() {
                 </div>
               </div>
               <div className="text-sm text-slate-300">
-                <strong>Workup:</strong> LFTs, albumin, CBC, creatinine, TSH, baseline PT/aPTT off warfarin if feasible, fibrinogen, D-dimer if DIC suspected.
+                <strong>Workup:</strong> LFTs, albumin, CBC, creatinine, TSH, baseline PT/aPTT off
+                warfarin if feasible, fibrinogen, D-dimer if DIC suspected.
               </div>
             </div>
 
@@ -947,20 +1072,31 @@ export function WarfarinMiniApp() {
                 <strong>Criteria for DOAC switch:</strong>
               </div>
               <ul className="text-sm space-y-1">
-                <li><ChevronRight className="inline h-3 w-3 text-green-400" /> TTR &lt;60–65% over 3–6 months despite:</li>
+                <li>
+                  <ChevronRight className="inline h-3 w-3 text-green-400" /> TTR &lt;60–65% over 3–6
+                  months despite:
+                </li>
                 <li className="pl-4">≥3 structured dose adjustments</li>
                 <li className="pl-4">Education and adherence support</li>
                 <li className="pl-4">Stable lab and diet conditions</li>
-                <li><ChevronRight className="inline h-3 w-3 text-green-400" /> Indication suitable (non-valvular AF, VTE without mechanical valve)</li>
+                <li>
+                  <ChevronRight className="inline h-3 w-3 text-green-400" /> Indication suitable
+                  (non-valvular AF, VTE without mechanical valve)
+                </li>
               </ul>
               <div className="grid gap-2 md:grid-cols-2 mt-3">
                 <div className="p-3 rounded-lg bg-green-900/30 border border-green-500/30">
                   <div className="font-medium text-green-200">DOAC Suitable</div>
-                  <div className="text-sm text-slate-300 mt-1">Recommend switch with renal dose adjustment and overlap protocol.</div>
+                  <div className="text-sm text-slate-300 mt-1">
+                    Recommend switch with renal dose adjustment and overlap protocol.
+                  </div>
                 </div>
                 <div className="p-3 rounded-lg bg-red-900/30 border border-red-500/30">
                   <div className="font-medium text-red-200">DOAC Unsuitable</div>
-                  <div className="text-sm text-slate-300 mt-1">Mechanical valve, rheumatic MS, severe renal failure → refer to anticoagulation clinic.</div>
+                  <div className="text-sm text-slate-300 mt-1">
+                    Mechanical valve, rheumatic MS, severe renal failure → refer to anticoagulation
+                    clinic.
+                  </div>
                 </div>
               </div>
             </div>
@@ -970,9 +1106,10 @@ export function WarfarinMiniApp() {
         {/* Reference */}
         <footer className="rounded-lg border border-slate-800 bg-slate-900/50 p-3 text-xs text-slate-500">
           <p>
-            <strong>References:</strong> Warfarin dose adjustment (ACCP guidelines, community protocols) • 
-            Labile INR (TTR &lt;60%) • ATRIA (Pisters et al., 2011) • Wild INR algorithm (INR instability management) • 
-            For educational reference only. Not a substitute for clinical judgment.
+            <strong>References:</strong> Warfarin dose adjustment (ACCP guidelines, community
+            protocols) • Labile INR (TTR &lt;60%) • ATRIA (Pisters et al., 2011) • Wild INR
+            algorithm (INR instability management) • For educational reference only. Not a
+            substitute for clinical judgment.
           </p>
         </footer>
       </div>

@@ -108,7 +108,7 @@ export const algorithms: Algorithm[] = [
             },
             {
               action: "Advanced airway + capnography",
-              details: { "Ventilation rate": "10 / min", "Compressions": "continuous" },
+              details: { "Ventilation rate": "10 / min", Compressions: "continuous" },
             },
             { action: "Search for reversible causes (Hs & Ts)" },
           ],
@@ -125,7 +125,7 @@ export const algorithms: Algorithm[] = [
             { action: "Vasopressor", drug: "Epinephrine", dose: "1 mg IV/IO every 3–5 min" },
             {
               action: "Advanced airway + capnography",
-              details: { "Ventilation rate": "10 / min", "Compressions": "continuous" },
+              details: { "Ventilation rate": "10 / min", Compressions: "continuous" },
             },
             { action: "Search for reversible causes (Hs & Ts)" },
           ],
@@ -165,9 +165,15 @@ export const algorithms: Algorithm[] = [
         id: "tachy_stability_check",
         label: "2. Is the patient unstable?",
         kind: "branch",
-        notes: ["Instability: hypotension, altered mental status, shock, ischemic chest pain, acute HF"],
+        notes: [
+          "Instability: hypotension, altered mental status, shock, ischemic chest pain, acute HF",
+        ],
         branches: [
-          { label: "Unstable → Synchronized cardioversion", goto: "tachy_immediate_cardioversion", tone: "danger" },
+          {
+            label: "Unstable → Synchronized cardioversion",
+            goto: "tachy_immediate_cardioversion",
+            tone: "danger",
+          },
           { label: "Stable → Rhythm-guided management", goto: "tachy_rhythm_guided", tone: "ok" },
         ],
       },
@@ -206,7 +212,7 @@ export const algorithms: Algorithm[] = [
       {
         id: "tachy_svt",
         label: "Narrow-Complex SVT",
-        criteria: { "QRS": "< 120 ms", "Rhythm": "regular" },
+        criteria: { QRS: "< 120 ms", Rhythm: "regular" },
         actions: [
           "Vagal maneuvers",
           "Adenosine 6 mg rapid IV push",
@@ -284,8 +290,8 @@ export const algorithms: Algorithm[] = [
         parameters: {
           "Atropine bolus": "1 mg IV",
           "Atropine repeat": "every 3–5 min (max 3 mg)",
-          "Dopamine": "5–20 mcg/kg/min",
-          "Epinephrine": "2–10 mcg/min",
+          Dopamine: "5–20 mcg/kg/min",
+          Epinephrine: "2–10 mcg/min",
         },
       },
       {
@@ -333,7 +339,7 @@ export const algorithms: Algorithm[] = [
         ],
         parameters: {
           "Initial energy (biphasic)": "120–200 J",
-          "Repeat": "increase stepwise if no conversion",
+          Repeat: "increase stepwise if no conversion",
         },
       },
       {
@@ -448,15 +454,15 @@ export {
   commonArrhythmiaTreatments,
   type TreatmentModule,
   type TreatmentStep,
-  type ArrhythmiaTreatment
-} from './treatment-algorithms';
+  type ArrhythmiaTreatment,
+} from "./treatment-algorithms";
 
 // Treatment reference mapping for UI components
 export const treatmentReferences: Record<string, string> = {
-  "af_treatment": "Atrial Fibrillation/Flutter Treatment Algorithm",
-  "ventricular_ectopy_treatment": "PVC/Ventricular Ectopy Treatment Algorithm",
-  "code_blue_adult_cardiac_arrest_shockable_path": "Code Blue - Shockable Rhythm Path",
-  "code_blue_adult_cardiac_arrest_nonshockable_path": "Code Blue - Non-Shockable Rhythm Path"
+  af_treatment: "Atrial Fibrillation/Flutter Treatment Algorithm",
+  ventricular_ectopy_treatment: "PVC/Ventricular Ectopy Treatment Algorithm",
+  code_blue_adult_cardiac_arrest_shockable_path: "Code Blue - Shockable Rhythm Path",
+  code_blue_adult_cardiac_arrest_nonshockable_path: "Code Blue - Non-Shockable Rhythm Path",
 };
 
 export type Arrhythmia = {
@@ -477,7 +483,7 @@ export const arrhythmias: Arrhythmia[] = [
       Regularity: "Regular",
       "P wave": "Present before each QRS",
       "PR interval": "0.12–0.20 s",
-      "QRS": "< 0.12 s",
+      QRS: "< 0.12 s",
     },
   },
   {
@@ -488,7 +494,7 @@ export const arrhythmias: Arrhythmia[] = [
       Rate: "< 60 bpm",
       Regularity: "Regular",
       "P wave": "Normal before each QRS",
-      "QRS": "< 0.12 s",
+      QRS: "< 0.12 s",
     },
     notes: ["May be normal in athletes / sleep", "Evaluate symptoms and cause"],
   },
@@ -496,7 +502,7 @@ export const arrhythmias: Arrhythmia[] = [
     id: "sinus_tachycardia",
     name: "Sinus Tachycardia",
     category: "Tachycardia",
-    features: { Rate: "> 100 bpm", Regularity: "Regular", "P wave": "Normal", "QRS": "< 0.12 s" },
+    features: { Rate: "> 100 bpm", Regularity: "Regular", "P wave": "Normal", QRS: "< 0.12 s" },
     notes: ["Usually secondary to physiologic or pathologic stress"],
   },
   {
@@ -507,7 +513,7 @@ export const arrhythmias: Arrhythmia[] = [
       Rate: "150–250 bpm",
       Regularity: "Regular",
       "P wave": "Often hidden in QRS / T",
-      "QRS": "< 0.12 s",
+      QRS: "< 0.12 s",
     },
   },
   {
@@ -518,7 +524,7 @@ export const arrhythmias: Arrhythmia[] = [
       "Atrial rate": "250–350 bpm",
       "Ventricular response": "Variable",
       "P wave": "Sawtooth flutter waves",
-      "QRS": "< 0.12 s",
+      QRS: "< 0.12 s",
     },
   },
   {
@@ -529,7 +535,7 @@ export const arrhythmias: Arrhythmia[] = [
       Rhythm: "Irregularly irregular",
       "P wave": "Absent",
       Baseline: "Fibrillatory waves",
-      "QRS": "< 0.12 s",
+      QRS: "< 0.12 s",
     },
   },
   {
@@ -571,14 +577,14 @@ export const arrhythmias: Arrhythmia[] = [
     id: "junctional_rhythm",
     name: "Junctional / Nodal Rhythm",
     category: "Bradycardia",
-    features: { Rate: "40–60 bpm", "P wave": "Inverted or absent", "QRS": "< 0.12 s" },
+    features: { Rate: "40–60 bpm", "P wave": "Inverted or absent", QRS: "< 0.12 s" },
   },
   {
     id: "pvc",
     name: "Premature Ventricular Complex",
     category: "Ectopy",
     features: {
-      "QRS": "Wide, bizarre",
+      QRS: "Wide, bizarre",
       Timing: "Early beat, no P",
       "Compensatory pause": "Often present",
     },
@@ -587,14 +593,14 @@ export const arrhythmias: Arrhythmia[] = [
     id: "monomorphic_vt",
     name: "Monomorphic VT",
     category: "Ventricular",
-    features: { Rate: "> 100 bpm", "QRS": "Wide, uniform morphology", Rhythm: "Regular" },
+    features: { Rate: "> 100 bpm", QRS: "Wide, uniform morphology", Rhythm: "Regular" },
   },
   {
     id: "polymorphic_vt_torsades",
     name: "Polymorphic VT / Torsades",
     category: "Ventricular",
     features: {
-      "QRS": "Wide, changing morphology",
+      QRS: "Wide, changing morphology",
       Appearance: "Twisting of points",
       Association: "Often prolonged QT",
     },
@@ -603,7 +609,7 @@ export const arrhythmias: Arrhythmia[] = [
     id: "ventricular_fibrillation",
     name: "Ventricular Fibrillation",
     category: "Arrest",
-    features: { Electrical: "Chaotic, disorganized", "QRS": "None", Output: "No pulse" },
+    features: { Electrical: "Chaotic, disorganized", QRS: "None", Output: "No pulse" },
   },
   {
     id: "pea",
@@ -624,8 +630,8 @@ export const arrhythmias: Arrhythmia[] = [
     features: {
       "Epsilon wave": "Small deflection after QRS in V1-V3",
       "T-wave": "Inverted in V1-V3",
-      "QRS": "Prolonged in right precordial leads",
-      "Risk": "Ventricular arrhythmias, SCD",
+      QRS: "Prolonged in right precordial leads",
+      Risk: "Ventricular arrhythmias, SCD",
     },
     notes: [
       "Fibrofatty replacement of RV myocardium",
@@ -641,7 +647,7 @@ export const arrhythmias: Arrhythmia[] = [
       "Type 1": "Coved ST elevation ≥2mm in V1-V3",
       "ST morphology": "Downward sloping to T-wave",
       "T-wave": "Inverted in V1-V3",
-      "Risk": "Ventricular fibrillation, SCD",
+      Risk: "Ventricular fibrillation, SCD",
     },
     notes: [
       "Autosomal dominant sodium channelopathy",
