@@ -264,6 +264,83 @@ export function CCADMiniApp() {
           <ExternalLink className="h-3 w-3" />
         </a>
       </section>
+
+      {/* Step-by-step treatment algorithm */}
+      <section className="space-y-4">
+        <div className="flex items-center gap-2.5 text-xs text-primary">
+          <span className="pulse-dot" />
+          <span className="font-mono uppercase tracking-wider">
+            Step-by-step treatment algorithm
+          </span>
+        </div>
+        <h2 className="text-2xl font-semibold tracking-tight">
+          Guideline-directed medical therapy for CCAD
+        </h2>
+        <p className="max-w-3xl text-sm text-muted-foreground">
+          Sequential pillars based on the 2024 ESC guideline on chronic coronary syndromes and the
+          2023 AHA/ACC CCD guideline. Titrate stepwise; do not skip a pillar unless contraindicated.
+        </p>
+
+        <ol className="space-y-4">
+          {steps.map((s) => {
+            const Icon = s.icon;
+            return (
+              <li key={s.n} className="surface-panel space-y-4 p-5">
+                <div className="flex items-start gap-4">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/15 text-primary">
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="font-mono text-[10px] uppercase tracking-wider text-primary">
+                      Step {s.n}
+                    </div>
+                    <h3 className="mt-0.5 text-lg font-semibold">{s.title}</h3>
+                    <p className="mt-1 text-sm text-muted-foreground">{s.goal}</p>
+                  </div>
+                </div>
+
+                <div className="grid gap-3 md:grid-cols-2">
+                  <div className="rounded-lg border border-border bg-surface-elevated/40 p-3">
+                    <div className="mb-2 flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider text-primary">
+                      <Pill className="h-3 w-3" /> Drug & dose
+                    </div>
+                    <ul className="space-y-2 text-sm">
+                      {s.drugs.map((d) => (
+                        <li key={d.name} className="border-b border-border/50 pb-2 last:border-0 last:pb-0">
+                          <div className="font-medium">{d.name}</div>
+                          <div className="font-mono text-xs text-primary">{d.dose}</div>
+                          {d.note && (
+                            <div className="mt-0.5 text-xs text-muted-foreground">{d.note}</div>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="rounded-lg border border-border bg-surface-elevated/40 p-3">
+                    <div className="mb-2 flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider text-primary">
+                      <ClipboardCheck className="h-3 w-3" /> Monitoring
+                    </div>
+                    <ul className="space-y-1.5 text-sm text-muted-foreground">
+                      {s.monitor.map((m) => (
+                        <li key={m} className="flex gap-2">
+                          <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-primary" />
+                          <span>{m}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </li>
+            );
+          })}
+        </ol>
+
+        <p className="text-[11px] text-muted-foreground">
+          Educational reference only — follow local protocols and individualize dosing to
+          comorbidity, bleeding risk, and renal / hepatic function.
+        </p>
+      </section>
     </div>
   );
 }
