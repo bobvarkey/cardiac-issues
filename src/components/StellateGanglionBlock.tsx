@@ -426,6 +426,52 @@ export function StellateGanglionBlock() {
         </div>
       </section>
 
+      {/* Contraindications, anticoagulation/bleeding, consent */}
+      <section className="space-y-4">
+        <div className="flex items-center gap-2.5 text-xs text-primary">
+          <span className="pulse-dot" />
+          <span className="font-mono uppercase tracking-wider">Contraindications & consent</span>
+        </div>
+        <h2 className="text-2xl font-semibold tracking-tight">Pre-procedure checklist</h2>
+        <div className="grid gap-4 md:grid-cols-3">
+          <ChecklistGroup
+            title="Contraindications"
+            icon={Ban}
+            colorClass="text-destructive"
+            items={contraindicationsChecklist}
+            checked={checked}
+            toggle={toggle}
+          />
+          <ChecklistGroup
+            title="Anticoagulation & bleeding"
+            icon={Droplets}
+            colorClass="text-warn"
+            items={bleedingChecklist}
+            checked={checked}
+            toggle={toggle}
+          />
+          <ChecklistGroup
+            title="Consent points"
+            icon={FileText}
+            items={consentChecklist}
+            checked={checked}
+            toggle={toggle}
+          />
+        </div>
+        {preProcedureSafe ? (
+          <div className="flex items-center gap-2 rounded-lg border border-ok/25 bg-ok/5 p-3 text-sm text-ok">
+            <CheckCircle2 className="h-4 w-4" />
+            All required contraindication, bleeding, and consent checks complete. Review equipment and
+            monitoring before needling.
+          </div>
+        ) : (
+          <div className="rounded-lg border border-destructive/25 bg-destructive/5 p-3 text-sm text-destructive">
+            <AlertTriangle className="mb-1 h-4 w-4" />
+            Complete all required contraindication, bleeding, and consent items before proceeding.
+          </div>
+        )}
+      </section>
+
       {/* Anatomy & ultrasound */}
       <section className="space-y-4">
         <div className="flex items-center gap-2.5 text-xs text-primary">
