@@ -185,7 +185,9 @@ export function StellateGanglionBlock() {
               </li>
               <li className="flex gap-2">
                 <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-ok" />
-                <span>Operator trained in ultrasound-guided neck blocks, airway support present</span>
+                <span>
+                  Operator trained in ultrasound-guided neck blocks, airway support present
+                </span>
               </li>
             </ul>
           </div>
@@ -197,7 +199,9 @@ export function StellateGanglionBlock() {
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li className="flex gap-2">
                 <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-destructive" />
-                <span>Unstable VT with pulse: syncopal, hypotensive, or rapidly decompensating</span>
+                <span>
+                  Unstable VT with pulse: syncopal, hypotensive, or rapidly decompensating
+                </span>
               </li>
               <li className="flex gap-2">
                 <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-destructive" />
@@ -205,7 +209,9 @@ export function StellateGanglionBlock() {
               </li>
               <li className="flex gap-2">
                 <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-destructive" />
-                <span>Uncorrected coagulopathy, local infection, or contralateral pneumothorax</span>
+                <span>
+                  Uncorrected coagulopathy, local infection, or contralateral pneumothorax
+                </span>
               </li>
               <li className="flex gap-2">
                 <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-destructive" />
@@ -331,9 +337,9 @@ export function StellateGanglionBlock() {
                 loading="lazy"
               />
               <div className="p-3 text-[11px] text-muted-foreground">
-                Sonoanatomy and block target at C6. Left: SCM, IJV, carotid artery (CA), prevertebral
-                fascia, longus colli, and stellate ganglion. Right: needle target deep to the
-                prevertebral fascia, lateral to the carotid sheath.
+                Sonoanatomy and block target at C6. Left: SCM, IJV, carotid artery (CA),
+                prevertebral fascia, longus colli, and stellate ganglion. Right: needle target deep
+                to the prevertebral fascia, lateral to the carotid sheath.
               </div>
             </div>
             <div className="surface-panel overflow-hidden p-0">
@@ -344,9 +350,9 @@ export function StellateGanglionBlock() {
                 loading="lazy"
               />
               <div className="p-3 text-[11px] text-muted-foreground">
-                RT STELLATE ultrasound view. SCM = sternocleidomastoid; IJ = internal jugular vein; CA
-                = carotid artery; Longus Colli m. = prevertebral muscle; asterisks mark the stellate
-                ganglion.
+                RT STELLATE ultrasound view. SCM = sternocleidomastoid; IJ = internal jugular vein;
+                CA = carotid artery; Longus Colli m. = prevertebral muscle; asterisks mark the
+                stellate ganglion.
               </div>
             </div>
           </div>
@@ -419,10 +425,14 @@ export function StellateGanglionBlock() {
           <span className="pulse-dot" />
           <span className="font-mono uppercase tracking-wider">Monitoring</span>
         </div>
-        <h2 className="text-2xl font-semibold tracking-tight">Before, during, and after the block</h2>
+        <h2 className="text-2xl font-semibold tracking-tight">
+          Before, during, and after the block
+        </h2>
         <div className="grid gap-4 md:grid-cols-3">
           <div className="surface-panel space-y-3">
-            <div className="font-mono text-[10px] uppercase tracking-wider text-primary">Before</div>
+            <div className="font-mono text-[10px] uppercase tracking-wider text-primary">
+              Before
+            </div>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li className="flex gap-2">
                 <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-primary" />
@@ -434,7 +444,9 @@ export function StellateGanglionBlock() {
               </li>
               <li className="flex gap-2">
                 <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-primary" />
-                <span>Ensure working peripheral IV, defibrillator, airway cart, lipid emulsion</span>
+                <span>
+                  Ensure working peripheral IV, defibrillator, airway cart, lipid emulsion
+                </span>
               </li>
               <li className="flex gap-2">
                 <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-primary" />
@@ -443,7 +455,9 @@ export function StellateGanglionBlock() {
             </ul>
           </div>
           <div className="surface-panel space-y-3">
-            <div className="font-mono text-[10px] uppercase tracking-wider text-primary">During</div>
+            <div className="font-mono text-[10px] uppercase tracking-wider text-primary">
+              During
+            </div>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li className="flex gap-2">
                 <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-primary" />
