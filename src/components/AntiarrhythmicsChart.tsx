@@ -412,7 +412,7 @@ export function AntiarrhythmicsChart() {
                   <div className="font-mono text-[10px] uppercase tracking-wider text-primary">
                     {c.key}
                   </div>
-                  <h3 className="text-base font-semibold">{c.type}</h3>
+                  <h2 className="text-base font-semibold">{c.type}</h2>
                 </div>
                 {c.mnemonic && (
                   <span className="rounded-full bg-primary/10 px-2.5 py-1 font-mono text-[11px] text-primary">
