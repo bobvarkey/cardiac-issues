@@ -2,7 +2,6 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import {
   Activity,
   BookOpen,
-  Brain,
   Calculator,
   ChevronDown,
   ChevronLeft,
