@@ -125,6 +125,17 @@ export function HomeProtocols() {
         badge: "Reference · Mnemonics",
       },
       {
+        key: "stellate",
+        title: "Stellate Ganglion Block",
+        to: "/stellate",
+        description:
+          "Ultrasound-guided rescue block for refractory VT/VF storm — anatomy, dosing, complications, and evidence.",
+        keywords:
+          "stellate ganglion block electrical storm vt storm vf storm ultrasound sympathetic block",
+        icon: Brain,
+        badge: "Rescue · VT/VF storm",
+      },
+      {
         key: "anticoagulation",
         title: "Anticoagulation",
         to: "/anticoagulation",
