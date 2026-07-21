@@ -87,7 +87,7 @@ function ProtocolPage() {
             <h2 className="text-lg font-semibold tracking-tight">Frequently asked questions</h2>
           </div>
           <div className="space-y-3">
-            {faqs.map((f) => (
+            {faqs.map((f: { q: string; a: string }) => (
               <details
                 key={f.q}
                 className="group rounded-lg border border-border bg-surface/60 p-4 open:bg-surface"
