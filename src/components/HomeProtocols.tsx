@@ -94,6 +94,17 @@ export function HomeProtocols() {
         keywords: "syncope triage red flags fainting vasovagal",
         icon: Stethoscope,
       },
+      {
+        key: "svt",
+        title: "SVT — Adenosine Evidence",
+        to: "/svt",
+        description:
+          "Vagal → adenosine → AV nodal blocker. Includes 2026 evidence for 12 mg first-dose adenosine (83% vs 52% conversion).",
+        keywords:
+          "svt supraventricular tachycardia adenosine 6mg 12mg avnrt avrt narrow complex vagal",
+        icon: Zap,
+        badge: "New evidence · 2026",
+      },
       ...protocolEntries,
       {
         key: "rhythms",
