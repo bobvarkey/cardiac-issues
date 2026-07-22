@@ -361,6 +361,119 @@ export function CCADMiniApp() {
           comorbidity, bleeding risk, and renal / hepatic function.
         </p>
       </section>
+
+      {/* Sources & citations */}
+      <section className="space-y-4">
+        <div className="flex items-center gap-2.5 text-xs text-primary">
+          <span className="pulse-dot" />
+          <span className="font-mono uppercase tracking-wider">Sources & citations</span>
+        </div>
+        <h2 className="text-2xl font-semibold tracking-tight">
+          LoDoCo2 & colchicine evidence base
+        </h2>
+        <p className="max-w-3xl text-sm text-muted-foreground">
+          Primary trial, precursor and confirmatory RCTs, meta-analyses, regulatory label, and
+          society guidance supporting low-dose colchicine 0.5 mg daily in chronic coronary disease.
+        </p>
+
+        <ol className="space-y-3">
+          {[
+            {
+              tag: "Primary RCT",
+              title:
+                "Nidorf SM, Fiolet ATL, Mosterd A, et al. Colchicine in Patients with Chronic Coronary Disease (LoDoCo2).",
+              cite: "N Engl J Med. 2020;383(19):1838–1847.",
+              doi: "10.1056/NEJMoa2021372",
+              url: "https://www.nejm.org/doi/full/10.1056/NEJMoa2021372",
+              note: "5,522 patients; MACE 6.8% vs 9.6%, HR 0.69 (95% CI 0.57–0.83), P<0.001.",
+            },
+            {
+              tag: "Post-ACS RCT",
+              title:
+                "Tardif JC, Kouz S, Waters DD, et al. Efficacy and Safety of Low-Dose Colchicine after Myocardial Infarction (COLCOT).",
+              cite: "N Engl J Med. 2019;381(26):2497–2505.",
+              doi: "10.1056/NEJMoa1912388",
+              url: "https://www.nejm.org/doi/full/10.1056/NEJMoa1912388",
+              note: "4,745 post-MI patients; HR 0.77 for ischemic CV events, benefit largest when started <3 days post-MI.",
+            },
+            {
+              tag: "Pilot RCT",
+              title:
+                "Nidorf SM, Eikelboom JW, Budgeon CA, Thompson PL. Low-dose colchicine for secondary prevention of cardiovascular disease (LoDoCo).",
+              cite: "J Am Coll Cardiol. 2013;61(4):404–410.",
+              doi: "10.1016/j.jacc.2012.10.027",
+              url: "https://www.jacc.org/doi/10.1016/j.jacc.2012.10.027",
+              note: "Original 532-patient signal that seeded LoDoCo2.",
+            },
+            {
+              tag: "Meta-analysis",
+              title:
+                "Fiolet ATL, Opstal TSJ, Mosterd A, et al. Efficacy and safety of low-dose colchicine in patients with coronary disease: a systematic review and meta-analysis of randomized trials.",
+              cite: "Eur Heart J. 2021;42(28):2765–2775.",
+              doi: "10.1093/eurheartj/ehab115",
+              url: "https://academic.oup.com/eurheartj/article/42/28/2765/6248800",
+              note: "Pooled MACE reduction consistent with LoDoCo2 and COLCOT.",
+            },
+            {
+              tag: "FDA label",
+              title:
+                "U.S. FDA. LODOCO (colchicine) 0.5 mg tablets — Prescribing Information. Approved June 2023 for CV risk reduction in adults with established atherosclerotic disease or multiple risk factors.",
+              cite: "FDA Drug Approvals, 2023.",
+              url: "https://www.accessdata.fda.gov/drugsatfda_docs/label/2023/216483s000lbl.pdf",
+              note: "First FDA-approved cardiovascular indication for colchicine.",
+            },
+            {
+              tag: "Guideline",
+              title:
+                "Virani SS, Newby LK, Arnold SV, et al. 2023 AHA/ACC/ACCP/ASPC/NLA/PCNA Guideline for the Management of Patients With Chronic Coronary Disease.",
+              cite: "Circulation. 2023;148(9):e9–e119.",
+              doi: "10.1161/CIR.0000000000001168",
+              url: "https://www.ahajournals.org/doi/10.1161/CIR.0000000000001168",
+              note: "Class 2b recommendation to consider colchicine 0.5 mg daily in CCD.",
+            },
+            {
+              tag: "Guideline",
+              title:
+                "Vrints C, Andreotti F, Koskinas KC, et al. 2024 ESC Guidelines for the management of chronic coronary syndromes.",
+              cite: "Eur Heart J. 2024;45(36):3415–3537.",
+              doi: "10.1093/eurheartj/ehae177",
+              url: "https://academic.oup.com/eurheartj/article/45/36/3415/7743115",
+              note: "Colchicine 0.5 mg daily may be considered to reduce MI, stroke, and need for revascularization (Class IIa).",
+            },
+          ].map((r) => (
+            <li key={r.title} className="surface-panel space-y-2 p-4">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="rounded-md border border-primary/30 bg-primary/10 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-primary">
+                  {r.tag}
+                </span>
+                {r.doi && (
+                  <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+                    DOI {r.doi}
+                  </span>
+                )}
+              </div>
+              <div className="text-sm font-medium leading-snug">{r.title}</div>
+              <div className="font-mono text-xs text-muted-foreground">{r.cite}</div>
+              {r.note && <div className="text-xs text-muted-foreground">{r.note}</div>}
+              <a
+                href={r.url}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-wider text-primary hover:underline"
+              >
+                <BookOpen className="h-3.5 w-3.5" />
+                View source
+                <ExternalLink className="h-3 w-3" />
+              </a>
+            </li>
+          ))}
+        </ol>
+
+        <p className="text-[11px] text-muted-foreground">
+          Citations are provided for verification and continuing education. Cross-check against
+          the latest full-text guideline updates before clinical application.
+        </p>
+      </section>
     </div>
   );
 }
