@@ -16,6 +16,7 @@ import { Route as LayoutWarfarinRouteImport } from './routes/_layout.warfarin'
 import { Route as LayoutTreatmentRouteImport } from './routes/_layout.treatment'
 import { Route as LayoutSyncopeTriageRouteImport } from './routes/_layout.syncope-triage'
 import { Route as LayoutSyncopeRouteImport } from './routes/_layout.syncope'
+import { Route as LayoutSvtRouteImport } from './routes/_layout.svt'
 import { Route as LayoutStellateRouteImport } from './routes/_layout.stellate'
 import { Route as LayoutScoresRouteImport } from './routes/_layout.scores'
 import { Route as LayoutRhythmsRouteImport } from './routes/_layout.rhythms'
@@ -59,6 +60,11 @@ const LayoutSyncopeTriageRoute = LayoutSyncopeTriageRouteImport.update({
 const LayoutSyncopeRoute = LayoutSyncopeRouteImport.update({
   id: '/syncope',
   path: '/syncope',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutSvtRoute = LayoutSvtRouteImport.update({
+  id: '/svt',
+  path: '/svt',
   getParentRoute: () => LayoutRoute,
 } as any)
 const LayoutStellateRoute = LayoutStellateRouteImport.update({
@@ -124,6 +130,7 @@ export interface FileRoutesByFullPath {
   '/rhythms': typeof LayoutRhythmsRoute
   '/scores': typeof LayoutScoresRoute
   '/stellate': typeof LayoutStellateRoute
+  '/svt': typeof LayoutSvtRoute
   '/syncope': typeof LayoutSyncopeRoute
   '/syncope-triage': typeof LayoutSyncopeTriageRoute
   '/treatment': typeof LayoutTreatmentRoute
@@ -141,6 +148,7 @@ export interface FileRoutesByTo {
   '/rhythms': typeof LayoutRhythmsRoute
   '/scores': typeof LayoutScoresRoute
   '/stellate': typeof LayoutStellateRoute
+  '/svt': typeof LayoutSvtRoute
   '/syncope': typeof LayoutSyncopeRoute
   '/syncope-triage': typeof LayoutSyncopeTriageRoute
   '/treatment': typeof LayoutTreatmentRoute
@@ -161,6 +169,7 @@ export interface FileRoutesById {
   '/_layout/rhythms': typeof LayoutRhythmsRoute
   '/_layout/scores': typeof LayoutScoresRoute
   '/_layout/stellate': typeof LayoutStellateRoute
+  '/_layout/svt': typeof LayoutSvtRoute
   '/_layout/syncope': typeof LayoutSyncopeRoute
   '/_layout/syncope-triage': typeof LayoutSyncopeTriageRoute
   '/_layout/treatment': typeof LayoutTreatmentRoute
@@ -182,6 +191,7 @@ export interface FileRouteTypes {
     | '/rhythms'
     | '/scores'
     | '/stellate'
+    | '/svt'
     | '/syncope'
     | '/syncope-triage'
     | '/treatment'
@@ -199,6 +209,7 @@ export interface FileRouteTypes {
     | '/rhythms'
     | '/scores'
     | '/stellate'
+    | '/svt'
     | '/syncope'
     | '/syncope-triage'
     | '/treatment'
@@ -218,6 +229,7 @@ export interface FileRouteTypes {
     | '/_layout/rhythms'
     | '/_layout/scores'
     | '/_layout/stellate'
+    | '/_layout/svt'
     | '/_layout/syncope'
     | '/_layout/syncope-triage'
     | '/_layout/treatment'
@@ -279,6 +291,13 @@ declare module '@tanstack/react-router' {
       path: '/syncope'
       fullPath: '/syncope'
       preLoaderRoute: typeof LayoutSyncopeRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/svt': {
+      id: '/_layout/svt'
+      path: '/svt'
+      fullPath: '/svt'
+      preLoaderRoute: typeof LayoutSvtRouteImport
       parentRoute: typeof LayoutRoute
     }
     '/_layout/stellate': {
@@ -365,6 +384,7 @@ interface LayoutRouteChildren {
   LayoutRhythmsRoute: typeof LayoutRhythmsRoute
   LayoutScoresRoute: typeof LayoutScoresRoute
   LayoutStellateRoute: typeof LayoutStellateRoute
+  LayoutSvtRoute: typeof LayoutSvtRoute
   LayoutSyncopeRoute: typeof LayoutSyncopeRoute
   LayoutSyncopeTriageRoute: typeof LayoutSyncopeTriageRoute
   LayoutTreatmentRoute: typeof LayoutTreatmentRoute
@@ -384,6 +404,7 @@ const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutRhythmsRoute: LayoutRhythmsRoute,
   LayoutScoresRoute: LayoutScoresRoute,
   LayoutStellateRoute: LayoutStellateRoute,
+  LayoutSvtRoute: LayoutSvtRoute,
   LayoutSyncopeRoute: LayoutSyncopeRoute,
   LayoutSyncopeTriageRoute: LayoutSyncopeTriageRoute,
   LayoutTreatmentRoute: LayoutTreatmentRoute,
