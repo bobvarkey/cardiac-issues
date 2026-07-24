@@ -23,6 +23,7 @@ import { Route as LayoutRhythmsRouteImport } from './routes/_layout.rhythms'
 import { Route as LayoutMedcalcRouteImport } from './routes/_layout.medcalc'
 import { Route as LayoutHuttRouteImport } from './routes/_layout.hutt'
 import { Route as LayoutGoldmanRouteImport } from './routes/_layout.goldman'
+import { Route as LayoutExerciseToleranceRouteImport } from './routes/_layout.exercise-tolerance'
 import { Route as LayoutCcadRouteImport } from './routes/_layout.ccad'
 import { Route as LayoutAnticoagulationRouteImport } from './routes/_layout.anticoagulation'
 import { Route as LayoutAntiarrhythmicsRouteImport } from './routes/_layout.antiarrhythmics'
@@ -97,6 +98,11 @@ const LayoutGoldmanRoute = LayoutGoldmanRouteImport.update({
   path: '/goldman',
   getParentRoute: () => LayoutRoute,
 } as any)
+const LayoutExerciseToleranceRoute = LayoutExerciseToleranceRouteImport.update({
+  id: '/exercise-tolerance',
+  path: '/exercise-tolerance',
+  getParentRoute: () => LayoutRoute,
+} as any)
 const LayoutCcadRoute = LayoutCcadRouteImport.update({
   id: '/ccad',
   path: '/ccad',
@@ -123,6 +129,7 @@ export interface FileRoutesByFullPath {
   '/antiarrhythmics': typeof LayoutAntiarrhythmicsRoute
   '/anticoagulation': typeof LayoutAnticoagulationRoute
   '/ccad': typeof LayoutCcadRoute
+  '/exercise-tolerance': typeof LayoutExerciseToleranceRoute
   '/goldman': typeof LayoutGoldmanRoute
   '/hutt': typeof LayoutHuttRoute
   '/index': typeof LayoutChar91indexChar93Route
@@ -141,6 +148,7 @@ export interface FileRoutesByTo {
   '/antiarrhythmics': typeof LayoutAntiarrhythmicsRoute
   '/anticoagulation': typeof LayoutAnticoagulationRoute
   '/ccad': typeof LayoutCcadRoute
+  '/exercise-tolerance': typeof LayoutExerciseToleranceRoute
   '/goldman': typeof LayoutGoldmanRoute
   '/hutt': typeof LayoutHuttRoute
   '/index': typeof LayoutChar91indexChar93Route
@@ -162,6 +170,7 @@ export interface FileRoutesById {
   '/_layout/antiarrhythmics': typeof LayoutAntiarrhythmicsRoute
   '/_layout/anticoagulation': typeof LayoutAnticoagulationRoute
   '/_layout/ccad': typeof LayoutCcadRoute
+  '/_layout/exercise-tolerance': typeof LayoutExerciseToleranceRoute
   '/_layout/goldman': typeof LayoutGoldmanRoute
   '/_layout/hutt': typeof LayoutHuttRoute
   '/_layout/index': typeof LayoutChar91indexChar93Route
@@ -184,6 +193,7 @@ export interface FileRouteTypes {
     | '/antiarrhythmics'
     | '/anticoagulation'
     | '/ccad'
+    | '/exercise-tolerance'
     | '/goldman'
     | '/hutt'
     | '/index'
@@ -202,6 +212,7 @@ export interface FileRouteTypes {
     | '/antiarrhythmics'
     | '/anticoagulation'
     | '/ccad'
+    | '/exercise-tolerance'
     | '/goldman'
     | '/hutt'
     | '/index'
@@ -222,6 +233,7 @@ export interface FileRouteTypes {
     | '/_layout/antiarrhythmics'
     | '/_layout/anticoagulation'
     | '/_layout/ccad'
+    | '/_layout/exercise-tolerance'
     | '/_layout/goldman'
     | '/_layout/hutt'
     | '/_layout/index'
@@ -342,6 +354,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutGoldmanRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/_layout/exercise-tolerance': {
+      id: '/_layout/exercise-tolerance'
+      path: '/exercise-tolerance'
+      fullPath: '/exercise-tolerance'
+      preLoaderRoute: typeof LayoutExerciseToleranceRouteImport
+      parentRoute: typeof LayoutRoute
+    }
     '/_layout/ccad': {
       id: '/_layout/ccad'
       path: '/ccad'
@@ -377,6 +396,7 @@ interface LayoutRouteChildren {
   LayoutAntiarrhythmicsRoute: typeof LayoutAntiarrhythmicsRoute
   LayoutAnticoagulationRoute: typeof LayoutAnticoagulationRoute
   LayoutCcadRoute: typeof LayoutCcadRoute
+  LayoutExerciseToleranceRoute: typeof LayoutExerciseToleranceRoute
   LayoutGoldmanRoute: typeof LayoutGoldmanRoute
   LayoutHuttRoute: typeof LayoutHuttRoute
   LayoutChar91indexChar93Route: typeof LayoutChar91indexChar93Route
@@ -397,6 +417,7 @@ const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutAntiarrhythmicsRoute: LayoutAntiarrhythmicsRoute,
   LayoutAnticoagulationRoute: LayoutAnticoagulationRoute,
   LayoutCcadRoute: LayoutCcadRoute,
+  LayoutExerciseToleranceRoute: LayoutExerciseToleranceRoute,
   LayoutGoldmanRoute: LayoutGoldmanRoute,
   LayoutHuttRoute: LayoutHuttRoute,
   LayoutChar91indexChar93Route: LayoutChar91indexChar93Route,
@@ -422,3 +443,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

@@ -88,6 +88,16 @@ const SECTIONS: Section[] = [
     ],
   },
   {
+    id: "investigations",
+    label: "Investigations",
+    icon: FlaskConical,
+    color: "text-emerald-400",
+    bg: "bg-emerald-500/15",
+    items: [
+      { label: "Exercise Tolerance", to: "/exercise-tolerance" },
+    ],
+  },
+  {
     id: "tools",
     label: "Tools",
     icon: Calculator,
