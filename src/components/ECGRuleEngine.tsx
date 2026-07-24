@@ -160,6 +160,7 @@ export function ECGRuleEngine() {
                     <option value="coved">Coved (Brugada Type 1)</option>
                     <option value="saddleback">Saddleback (Brugada Type 2)</option>
                   </select>
+                  <a href="/images/ecg/brugada-pattern.jpg" target="_blank" className="text-xs text-primary hover:underline ml-1">[View Brugada ECG]</a>
                 </div>
 
                 <div className="space-y-2">
@@ -193,7 +194,7 @@ export function ECGRuleEngine() {
                       onChange={(e) => handleInputChange("epsilon_wave_v1_v3", e.target.checked)}
                       className="rounded border-border"
                     />
-                    <span>Epsilon waves V1-V3 (ARVC)</span>
+                    <span>Epsilon waves V1-V3 (ARVC) <a href="/images/ecg/epsilon-wave.jpg" target="_blank" className="text-primary hover:underline">[View]</a></span>
                   </label>
                 </div>
 

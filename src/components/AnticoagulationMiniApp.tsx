@@ -1,82 +1,26 @@
 import React, { useMemo, useState } from "react";
-import {
-  ChevronRight,
-  Pill,
-  AlertTriangle,
-  Info,
-  Clock,
-  Heart,
-  Brain,
-  Droplets,
-  Image as ImageIcon,
-} from "lucide-react";
+import { ChevronRight, Pill, AlertTriangle, Info, Clock, Heart, Brain, Droplets, Image as ImageIcon } from "lucide-react";
 
 const imageFiles = [
-  {
-    src: "/images/anticoagulation/stroke-timing.jpg",
-    title: "Stroke Prevention - DOAC Timing",
-    desc: "Early DOAC initiation (≤4 days) after AF-related ischemic stroke",
-  },
-  {
-    src: "/images/anticoagulation/ich-restart.jpg",
-    title: "OAC After ICH",
-    desc: "Restart timing (4-8 weeks) and LAAC alternative",
-  },
-  {
-    src: "/images/anticoagulation/vte-initial.jpg",
-    title: "VTE Initial Treatment",
-    desc: "DOAC dosing for acute DVT/PE",
-  },
-  {
-    src: "/images/anticoagulation/extended-vte.jpg",
-    title: "Extended VTE Therapy",
-    desc: "Reduced dose options and recurrence risk",
-  },
-  {
-    src: "/images/anticoagulation/kidney-disease.jpg",
-    title: "DOACs in Kidney Disease",
-    desc: "CKD stages and dialysis considerations",
-  },
-  {
-    src: "/images/anticoagulation/liver-disease.jpg",
-    title: "DOACs in Liver Disease",
-    desc: "Child-Pugh classification",
-  },
-  {
-    src: "/images/anticoagulation/obesity.jpg",
-    title: "Frailty & Obesity",
-    desc: "BMI ≥40 kg/m² recommendations",
-  },
-  {
-    src: "/images/anticoagulation/cancer-thrombosis.jpg",
-    title: "Cancer-Associated Thrombosis",
-    desc: "DOACs vs LMWH, Khorana score",
-  },
-  {
-    src: "/images/anticoagulation/af-stroke-prevention.jpg",
-    title: "AF Stroke Prevention",
-    desc: "2023 ACC/AHA risk-based anticoagulation",
-  },
-  {
-    src: "/images/anticoagulation/vte-prevention-surgery.jpg",
-    title: "VTE Prevention After Surgery",
-    desc: "DOACs vs LMWH for hip/knee replacement",
-  },
-  {
-    src: "/images/anticoagulation/valvular-disease.jpg",
-    title: "Valvular Heart Disease",
-    desc: "DOACs in mechanical valves, RHD, TAVI",
-  },
-  {
-    src: "/images/anticoagulation/thrombophilia-aps.jpg",
-    title: "Thrombophilia & APS",
-    desc: "When DOACs are not the right choice",
-  },
-  {
-    src: "/images/anticoagulation/laac-ablation.jpg",
-    title: "LAAC & AF Ablation",
-    desc: "Alternatives to long-term OAC",
-  },
+  { src: "/images/anticoagulation/stroke-timing.jpg", title: "Stroke Prevention - DOAC Timing", desc: "Early DOAC initiation (≤4 days) after AF-related ischemic stroke" },
+  { src: "/images/anticoagulation/ich-restart.jpg", title: "OAC After ICH", desc: "Restart timing (4-8 weeks) and LAAC alternative" },
+  { src: "/images/anticoagulation/restarting-after-ich-v2.jpg", title: "Restarting After ICH", desc: "4-8 week delay for OAC resumption after intracranial hemorrhage" },
+  { src: "/images/anticoagulation/vte-initial.jpg", title: "VTE Initial Treatment", desc: "DOAC dosing for acute DVT/PE" },
+  { src: "/images/anticoagulation/extended-vte.jpg", title: "Extended VTE Therapy", desc: "Reduced dose options and recurrence risk" },
+  { src: "/images/anticoagulation/extended-vte-therapy-v2.jpg", title: "Extended VTE Therapy (v2)", desc: "Apixaban 2.5mg BID or Rivaroxaban 10mg daily for long-term prevention" },
+  { src: "/images/anticoagulation/kidney-disease.jpg", title: "DOACs in Kidney Disease", desc: "CKD stages and dialysis considerations" },
+  { src: "/images/anticoagulation/renal-clearance-rule-v2.jpg", title: "Renal Clearance Rule", desc: "CKD Stage 4/5 and dialysis: apixaban preferred, avoid dabigatran" },
+  { src: "/images/anticoagulation/liver-disease.jpg", title: "DOACs in Liver Disease", desc: "Child-Pugh classification" },
+  { src: "/images/anticoagulation/liver-function-check-v2.jpg", title: "Liver Function Check", desc: "Child-Pugh A: all DOACs safe; Class B: avoid rivaroxaban" },
+  { src: "/images/anticoagulation/obesity.jpg", title: "Frailty & Obesity", desc: "BMI ≥40 kg/m² recommendations" },
+  { src: "/images/anticoagulation/cancer-thrombosis.jpg", title: "Cancer-Associated Thrombosis", desc: "DOACs vs LMWH, Khorana score" },
+  { src: "/images/anticoagulation/af-stroke-prevention.jpg", title: "AF Stroke Prevention", desc: "2023 ACC/AHA risk-based anticoagulation" },
+  { src: "/images/anticoagulation/vte-prevention-surgery.jpg", title: "VTE Prevention After Surgery", desc: "DOACs vs LMWH for hip/knee replacement" },
+  { src: "/images/anticoagulation/valvular-disease.jpg", title: "Valvular Heart Disease", desc: "DOACs in mechanical valves, RHD, TAVI" },
+  { src: "/images/anticoagulation/no-go-valves-v2.jpg", title: "No-Go Valves", desc: "DOACs contraindicated: mechanical valves, rheumatic mitral stenosis" },
+  { src: "/images/anticoagulation/thrombophilia-aps.jpg", title: "Thrombophilia & APS", desc: "When DOACs are not the right choice" },
+  { src: "/images/anticoagulation/laac-ablation.jpg", title: "LAAC & AF Ablation", desc: "Alternatives to long-term OAC" },
+  { src: "/images/anticoagulation/doac-cheatsheet-v2.jpg", title: "DOAC Cheatsheet", desc: "Quick reference: acute stroke, mechanical valves, CKD, liver disease, extended VTE" },
 ];
 
 const data = {
@@ -152,15 +96,13 @@ const data = {
         },
         {
           dialysis: "ESKD",
-          recommendation:
-            "apixaban may be considered for nonvalvular AF; avoid dabigatran (removed by dialysis)",
+          recommendation: "apixaban may be considered for nonvalvular AF; avoid dabigatran (removed by dialysis)",
         },
       ],
     },
   ],
   stroke_secondary_prevention: {
-    early_initiation:
-      "≤4 days after AF-related ischemic stroke reduces 30-day recurrent stroke (OR 0.70)",
+    early_initiation: "≤4 days after AF-related ischemic stroke reduces 30-day recurrent stroke (OR 0.70)",
     avoid_within_48h: "avoid anticoagulation within 48 hours in unselected patients",
     exclude: "very severe stroke, large hemorrhagic transformation, endocarditis",
   },
@@ -216,74 +158,6 @@ const data = {
       ],
     },
   },
-  keyTakeaways: [
-    {
-      title: "Key Takeaway",
-      drug: "Rivaroxaban",
-      statement:
-        "Rivaroxaban is a BCS Class II compound with limited aqueous solubility (only 5-7 mg/L) but high permeability.",
-      doseEffect: {
-        lowDose: "For lower doses (≤10 mg), even this limited solubility is sufficient.",
-        higherDose: "For 15-20 mg doses, the drug cannot fully dissolve in gastric fluid alone.",
-      },
-      foodEffect:
-        "Food, particularly fat content and bile acids, enhances solubilization and absorption.",
-      bcsDefinition: "Class II drugs have low solubility but high permeability.",
-      mechanism:
-        "Food delays gastric emptying, increasing gastric residence time, which contributes to enhanced dissolution of rivaroxaban.",
-      acctFound: false,
-      dosingByIndication: [
-        {
-          indication: "Nonvalvular AF — stroke prevention",
-          dose: "20 mg once daily",
-          mealTiming: "With evening meal",
-        },
-        {
-          indication: "VTE (DVT/PE) — initial treatment",
-          dose: "15 mg BID × 21 days, then 20 mg once daily",
-          mealTiming: "With food (both 15 mg doses ~12 h apart, then evening meal)",
-        },
-        {
-          indication: "Extended VTE prevention (after ≥6 months)",
-          dose: "10 mg once daily",
-          mealTiming: "With or without food",
-        },
-        {
-          indication: "VTE prophylaxis after hip/knee arthroplasty",
-          dose: "10 mg once daily × 12–35 days",
-          mealTiming: "With or without food",
-        },
-        {
-          indication: "CAD/PAD (with aspirin 81 mg)",
-          dose: "2.5 mg BID",
-          mealTiming: "With or without food",
-        },
-      ],
-      dosingByRenal: [
-        {
-          range: "CrCl >50 mL/min",
-          af: "20 mg daily",
-          vte: "Standard (15 mg BID → 20 mg daily)",
-          note: "No adjustment",
-        },
-        {
-          range: "CrCl 30–50 mL/min",
-          af: "15 mg daily",
-          vte: "Standard; use with caution",
-          note: "Reduce AF dose",
-        },
-        {
-          range: "CrCl 15–29 mL/min",
-          af: "15 mg daily (use with caution)",
-          vte: "Avoid if possible",
-          note: "Limited data; consider apixaban",
-        },
-        { range: "CrCl <15 mL/min / dialysis", af: "Avoid", vte: "Avoid", note: "Not recommended" },
-      ],
-      mealTimingRule:
-        "Always give 15 mg and 20 mg doses WITH FOOD — absorption drops ~30–40% when taken fasting, risking subtherapeutic anticoagulation. 2.5 mg and 10 mg doses may be taken with or without food.",
-    },
-  ],
 };
 
 const steps = [
@@ -297,18 +171,8 @@ const scenarios = [
   { id: "vte", label: "VTE", icon: Droplets, description: "Venous thromboembolism treatment" },
   { id: "af", label: "AF / NVAF", icon: Heart, description: "Atrial fibrillation anticoagulation" },
   { id: "stroke", label: "Stroke", icon: Brain, description: "Ischemic stroke prevention" },
-  {
-    id: "ich",
-    label: "ICH",
-    icon: AlertTriangle,
-    description: "Intracranial hemorrhage management",
-  },
-  {
-    id: "aplas",
-    label: "APLAS",
-    icon: AlertTriangle,
-    description: "Antiphospholipid antibody syndrome",
-  },
+  { id: "ich", label: "ICH", icon: AlertTriangle, description: "Intracranial hemorrhage management" },
+  { id: "aplas", label: "APLAS", icon: AlertTriangle, description: "Antiphospholipid antibody syndrome" },
   { id: "rhd", label: "RHD", icon: Heart, description: "Rheumatic heart disease" },
 ];
 
@@ -317,13 +181,9 @@ function getRecommendation(sc: string, form: Record<string, string>) {
 
   if (sc === "vte") {
     out.bullets.push("Apixaban or rivaroxaban can be used without heparin lead-in.");
-    out.bullets.push(
-      "Dabigatran and edoxaban require at least 5 days of parenteral anticoagulation first.",
-    );
+    out.bullets.push("Dabigatran and edoxaban require at least 5 days of parenteral anticoagulation first.");
     if (form.phase === "extended") {
-      out.bullets.push(
-        "Extended therapy options include apixaban 2.5 mg BID or rivaroxaban 10 mg daily.",
-      );
+      out.bullets.push("Extended therapy options include apixaban 2.5 mg BID or rivaroxaban 10 mg daily.");
     }
     if (form.phase === "acute") {
       out.bullets.push("For initial VTE: apixaban 10 mg BID × 7 days, then 5 mg BID.");
@@ -334,45 +194,33 @@ function getRecommendation(sc: string, form: Record<string, string>) {
   if (sc === "af") {
     if (form.valvular === "rhd" || form.valvular === "mechanical") {
       out.bullets.push("Warfarin is preferred; DOACs are not appropriate.");
-      out.caution.push(
-        "Mechanical valves and rheumatic mitral stenosis are DOAC contraindications.",
-      );
+      out.caution.push("Mechanical valves and rheumatic mitral stenosis are DOAC contraindications.");
     } else {
       out.bullets.push("DOACs are preferred over warfarin for eligible nonvalvular AF.");
-      out.bullets.push(
-        "Use CHA₂DS₂-VASc for stroke risk; bleeding scores inform risk modification.",
-      );
+      out.bullets.push("Use CHA₂DS₂-VASc for stroke risk; bleeding scores inform risk modification.");
     }
   }
 
   if (sc === "stroke") {
-    out.bullets.push(
-      "Early DOAC initiation within 4 days may be reasonable in selected AF-related ischemic stroke cases.",
-    );
+    out.bullets.push("Early DOAC initiation within 4 days may be reasonable in selected AF-related ischemic stroke cases.");
     out.caution.push("Avoid routine anticoagulation within 48 hours in unselected patients.");
     out.caution.push("Exclude severe stroke, large hemorrhagic transformation, and endocarditis.");
   }
 
   if (sc === "ich") {
     out.bullets.push("For most patients, waiting 4 to 8 weeks before restarting OAC is prudent.");
-    out.bullets.push(
-      "Left atrial appendage closure is a reasonable alternative when long-term OAC is unsuitable.",
-    );
+    out.bullets.push("Left atrial appendage closure is a reasonable alternative when long-term OAC is unsuitable.");
     out.caution.push("Resuming OAC reduces ischemic stroke but increases recurrent ICH risk.");
   }
 
   if (sc === "aplas") {
     out.bullets.push("Avoid DOACs in thrombotic APS; warfarin is preferred.");
-    out.caution.push(
-      "Especially high-risk APS: triple-positive, arterial events, recurrent VTE on DOACs.",
-    );
+    out.caution.push("Especially high-risk APS: triple-positive, arterial events, recurrent VTE on DOACs.");
   }
 
   if (sc === "rhd") {
     out.bullets.push("Rheumatic mitral stenosis / RHD with AF should receive warfarin.");
-    out.bullets.push(
-      "Mechanical prosthetic valves also require warfarin; DOACs are contraindicated.",
-    );
+    out.bullets.push("Mechanical prosthetic valves also require warfarin; DOACs are contraindicated.");
   }
 
   if (form.egfr && Number(form.egfr) < 30) {
@@ -383,101 +231,6 @@ function getRecommendation(sc: string, form: Record<string, string>) {
   }
 
   return out;
-}
-
-function KeyTakeawayCard({ item }: { item: (typeof data.keyTakeaways)[number] }) {
-  return (
-    <div className="p-4 rounded-lg bg-slate-950/50 border border-cyan-500/30 md:col-span-2">
-      <h3 className="font-medium text-cyan-400 mb-3 flex items-center gap-2">
-        <Info className="h-4 w-4" />
-        {item.title} — {item.drug}
-      </h3>
-      <p className="text-sm text-slate-300 mb-3">{item.statement}</p>
-      <div className="grid gap-3 md:grid-cols-2">
-        <div className="p-3 rounded bg-slate-900 border border-slate-700">
-          <div className="text-xs text-emerald-400 font-medium mb-1">Low dose (≤10 mg)</div>
-          <div className="text-sm text-slate-300">{item.doseEffect.lowDose}</div>
-        </div>
-        <div className="p-3 rounded bg-slate-900 border border-slate-700">
-          <div className="text-xs text-amber-400 font-medium mb-1">Higher dose (15-20 mg)</div>
-          <div className="text-sm text-slate-300">{item.doseEffect.higherDose}</div>
-        </div>
-      </div>
-      <div className="mt-3 p-3 rounded bg-slate-900 border border-slate-700">
-        <div className="text-xs text-cyan-400 font-medium mb-1">Food effect</div>
-        <div className="text-sm text-slate-300">{item.foodEffect}</div>
-      </div>
-      <div className="mt-3 grid gap-3 md:grid-cols-2">
-        <div className="text-xs text-slate-400">
-          <span className="text-slate-300 font-medium">BCS definition:</span> {item.bcsDefinition}
-        </div>
-        <div className="text-xs text-slate-400">
-          <span className="text-slate-300 font-medium">Mechanism:</span> {item.mechanism}
-        </div>
-      </div>
-
-      <div className="mt-4 p-3 rounded bg-slate-900 border border-cyan-500/40">
-        <div className="text-xs text-cyan-400 font-medium mb-2 flex items-center gap-1">
-          <Clock className="h-3.5 w-3.5" /> Meal timing rule
-        </div>
-        <div className="text-sm text-slate-300">{item.mealTimingRule}</div>
-      </div>
-
-      <div className="mt-4">
-        <div className="text-xs uppercase tracking-wide text-cyan-400 font-semibold mb-2">
-          Dosing by indication
-        </div>
-        <div className="overflow-x-auto rounded border border-slate-700">
-          <table className="w-full text-sm">
-            <thead className="bg-slate-900 text-slate-400 text-xs">
-              <tr>
-                <th className="text-left p-2">Indication</th>
-                <th className="text-left p-2">Dose</th>
-                <th className="text-left p-2">Meal timing</th>
-              </tr>
-            </thead>
-            <tbody>
-              {item.dosingByIndication.map((r) => (
-                <tr key={r.indication} className="border-t border-slate-800">
-                  <td className="p-2 text-slate-300">{r.indication}</td>
-                  <td className="p-2 text-emerald-300 font-medium">{r.dose}</td>
-                  <td className="p-2 text-slate-400">{r.mealTiming}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <div className="mt-4">
-        <div className="text-xs uppercase tracking-wide text-cyan-400 font-semibold mb-2">
-          Dosing by renal function
-        </div>
-        <div className="overflow-x-auto rounded border border-slate-700">
-          <table className="w-full text-sm">
-            <thead className="bg-slate-900 text-slate-400 text-xs">
-              <tr>
-                <th className="text-left p-2">Renal function</th>
-                <th className="text-left p-2">AF (stroke prev.)</th>
-                <th className="text-left p-2">VTE</th>
-                <th className="text-left p-2">Note</th>
-              </tr>
-            </thead>
-            <tbody>
-              {item.dosingByRenal.map((r) => (
-                <tr key={r.range} className="border-t border-slate-800">
-                  <td className="p-2 text-slate-300 font-medium">{r.range}</td>
-                  <td className="p-2 text-emerald-300">{r.af}</td>
-                  <td className="p-2 text-emerald-300">{r.vte}</td>
-                  <td className="p-2 text-slate-400">{r.note}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  );
 }
 
 export function AnticoagulationMiniApp() {
@@ -538,369 +291,353 @@ export function AnticoagulationMiniApp() {
         </div>
 
         {activeTab === "calculator" && (
-          <>
-            {/* Stepper */}
-            <div className="flex flex-wrap gap-2">
-              {steps.map((s, i) => (
+        <>
+        {/* Stepper */}
+        <div className="flex flex-wrap gap-2">
+          {steps.map((s, i) => (
+            <button
+              key={s.id}
+              onClick={() => setStep(i)}
+              className={`rounded-full px-4 py-2 border text-sm font-medium transition ${
+                step === i
+                  ? "bg-cyan-400 text-slate-950 border-cyan-300"
+                  : "bg-slate-900 border-slate-700 text-slate-300 hover:border-slate-500"
+              }`}
+            >
+              {i + 1}. {s.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
+          {/* Scenario sidebar */}
+          <aside className="rounded-2xl border border-slate-800 bg-slate-900 p-4 space-y-3">
+            <h2 className="text-lg font-semibold">Clinical Scenario</h2>
+            {scenarios.map((s) => {
+              const Icon = s.icon;
+              return (
                 <button
                   key={s.id}
-                  onClick={() => setStep(i)}
-                  className={`rounded-full px-4 py-2 border text-sm font-medium transition ${
-                    step === i
-                      ? "bg-cyan-400 text-slate-950 border-cyan-300"
-                      : "bg-slate-900 border-slate-700 text-slate-300 hover:border-slate-500"
+                  onClick={() => setScenario(s.id)}
+                  className={`w-full rounded-xl border px-3 py-3 text-left transition ${
+                    scenario === s.id
+                      ? "border-cyan-400 bg-cyan-400/10"
+                      : "border-slate-700 bg-slate-950/40 hover:border-slate-500"
                   }`}
                 >
-                  {i + 1}. {s.label}
+                  <div className="flex items-center gap-2">
+                    <Icon className={`h-4 w-4 ${scenario === s.id ? "text-cyan-400" : "text-slate-400"}`} />
+                    <div className="font-medium">{s.label}</div>
+                  </div>
+                  <div className="mt-1 text-xs text-slate-400">{s.description}</div>
                 </button>
-              ))}
-            </div>
+              );
+            })}
+          </aside>
 
-            <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
-              {/* Scenario sidebar */}
-              <aside className="rounded-2xl border border-slate-800 bg-slate-900 p-4 space-y-3">
-                <h2 className="text-lg font-semibold">Clinical Scenario</h2>
-                {scenarios.map((s) => {
-                  const Icon = s.icon;
-                  return (
-                    <button
-                      key={s.id}
-                      onClick={() => setScenario(s.id)}
-                      className={`w-full rounded-xl border px-3 py-3 text-left transition ${
-                        scenario === s.id
-                          ? "border-cyan-400 bg-cyan-400/10"
-                          : "border-slate-700 bg-slate-950/40 hover:border-slate-500"
-                      }`}
-                    >
-                      <div className="flex items-center gap-2">
-                        <Icon
-                          className={`h-4 w-4 ${scenario === s.id ? "text-cyan-400" : "text-slate-400"}`}
-                        />
-                        <div className="font-medium">{s.label}</div>
-                      </div>
-                      <div className="mt-1 text-xs text-slate-400">{s.description}</div>
-                    </button>
-                  );
-                })}
-              </aside>
+          {/* Main content */}
+          <main className="rounded-2xl border border-slate-800 bg-slate-900 p-5 space-y-6">
+            {step === 0 && (
+              <section className="space-y-3">
+                <h2 className="text-xl font-semibold">Choose a pathway</h2>
+                <p className="text-slate-300">
+                  Select a clinical scenario on the left to drive the decision logic.
+                </p>
+                <div className="mt-4 p-4 rounded-lg bg-slate-950/50 border border-slate-700">
+                  <p className="text-sm text-slate-400">
+                    <Info className="inline h-4 w-4 mr-1" />
+                    Each pathway provides evidence-based recommendations from current guidelines
+                    (2024 KDIGO, COBRRA trial, stroke prevention in AF, ICH restart timing).
+                  </p>
+                </div>
+              </section>
+            )}
 
-              {/* Main content */}
-              <main className="rounded-2xl border border-slate-800 bg-slate-900 p-5 space-y-6">
-                {step === 0 && (
-                  <section className="space-y-3">
-                    <h2 className="text-xl font-semibold">Choose a pathway</h2>
-                    <p className="text-slate-300">
-                      Select a clinical scenario on the left to drive the decision logic.
-                    </p>
-                    <div className="mt-4 p-4 rounded-lg bg-slate-950/50 border border-slate-700">
-                      <p className="text-sm text-slate-400">
-                        <Info className="inline h-4 w-4 mr-1" />
-                        Each pathway provides evidence-based recommendations from current guidelines
-                        (2024 KDIGO, COBRRA trial, stroke prevention in AF, ICH restart timing).
-                      </p>
-                    </div>
-                  </section>
-                )}
-
-                {step === 1 && (
-                  <section className="grid gap-4 md:grid-cols-2">
-                    {scenario === "vte" && (
-                      <>
-                        <label className="space-y-2">
-                          <span className="block text-sm text-slate-300">Treatment Phase</span>
-                          <select
-                            value={form.phase}
-                            onChange={(e) => setForm({ ...form, phase: e.target.value })}
-                            className="w-full rounded-xl bg-slate-950 border border-slate-700 p-3 focus:border-cyan-400 focus:outline-none"
-                          >
-                            <option value="acute">Acute VTE (initial treatment)</option>
-                            <option value="extended">Extended therapy (≥3 months)</option>
-                          </select>
-                        </label>
-                      </>
-                    )}
-
-                    {scenario === "af" && (
-                      <label className="space-y-2">
-                        <span className="block text-sm text-slate-300">Valvular Status</span>
-                        <select
-                          value={form.valvular}
-                          onChange={(e) => setForm({ ...form, valvular: e.target.value })}
-                          className="w-full rounded-xl bg-slate-950 border border-slate-700 p-3 focus:border-cyan-400 focus:outline-none"
-                        >
-                          <option value="none">Nonvalvular AF</option>
-                          <option value="rhd">Rheumatic mitral stenosis</option>
-                          <option value="mechanical">Mechanical valve</option>
-                        </select>
-                      </label>
-                    )}
-
-                    {(scenario === "vte" || scenario === "af") && (
-                      <label className="space-y-2">
-                        <span className="block text-sm text-slate-300">eGFR (ml/min/1.73m²)</span>
-                        <input
-                          type="number"
-                          placeholder="Optional"
-                          value={form.egfr}
-                          onChange={(e) => setForm({ ...form, egfr: e.target.value })}
-                          className="w-full rounded-xl bg-slate-950 border border-slate-700 p-3 focus:border-cyan-400 focus:outline-none"
-                        />
-                        <span className="text-xs text-slate-500">
-                          Used to adjust DOAC selection for CKD
-                        </span>
-                      </label>
-                    )}
-
-                    {(scenario === "stroke" || scenario === "ich") && (
-                      <div className="p-4 rounded-lg bg-slate-950/50 border border-slate-700">
-                        <p className="text-sm text-slate-300">
-                          <Clock className="inline h-4 w-4 mr-1" />
-                          {scenario === "stroke" &&
-                            "Timing of anticoagulation after stroke is critical."}
-                          {scenario === "ich" &&
-                            "Timing of restarting anticoagulation after ICH is critical."}
-                        </p>
-                      </div>
-                    )}
-
-                    <label className="space-y-2 md:col-span-2">
-                      <span className="block text-sm text-slate-300">Clinical Notes</span>
-                      <textarea
-                        placeholder="Optional notes"
-                        value={form.notes}
-                        onChange={(e) => setForm({ ...form, notes: e.target.value })}
+            {step === 1 && (
+              <section className="grid gap-4 md:grid-cols-2">
+                {scenario === "vte" && (
+                  <>
+                    <label className="space-y-2">
+                      <span className="block text-sm text-slate-300">Treatment Phase</span>
+                      <select
+                        value={form.phase}
+                        onChange={(e) => setForm({ ...form, phase: e.target.value })}
                         className="w-full rounded-xl bg-slate-950 border border-slate-700 p-3 focus:border-cyan-400 focus:outline-none"
-                        rows={3}
-                      />
+                      >
+                        <option value="acute">Acute VTE (initial treatment)</option>
+                        <option value="extended">Extended therapy (≥3 months)</option>
+                      </select>
                     </label>
-                  </section>
+                  </>
                 )}
 
-                {step === 2 && (
-                  <section className="space-y-4">
-                    <h2 className="text-xl font-semibold">Recommendations</h2>
-                    <div className="p-4 rounded-lg bg-slate-950/50 border border-slate-700">
-                      <h3 className="font-medium text-cyan-400 mb-2">
-                        {selected?.label} — {form.phase === "extended" ? "Extended" : "Acute"}{" "}
-                        Treatment
-                      </h3>
-                      <ul className="space-y-2">
-                        {rec.bullets.map((b, i) => (
-                          <li key={i} className="flex items-start gap-2">
-                            <ChevronRight className="h-4 w-4 mt-1 text-cyan-400 flex-shrink-0" />
-                            <span>{b}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                    {rec.caution.length > 0 && (
-                      <div className="p-4 rounded-lg bg-amber-950/30 border border-amber-500/50">
-                        <h3 className="font-medium text-amber-400 mb-2 flex items-center gap-2">
-                          <AlertTriangle className="h-4 w-4" />
-                          Cautions
-                        </h3>
-                        <ul className="space-y-1 text-sm text-amber-100">
-                          {rec.caution.map((c, i) => (
-                            <li key={i}>• {c}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  </section>
+                {scenario === "af" && (
+                  <label className="space-y-2">
+                    <span className="block text-sm text-slate-300">Valvular Status</span>
+                    <select
+                      value={form.valvular}
+                      onChange={(e) => setForm({ ...form, valvular: e.target.value })}
+                      className="w-full rounded-xl bg-slate-950 border border-slate-700 p-3 focus:border-cyan-400 focus:outline-none"
+                    >
+                      <option value="none">Nonvalvular AF</option>
+                      <option value="rhd">Rheumatic mitral stenosis</option>
+                      <option value="mechanical">Mechanical valve</option>
+                    </select>
+                  </label>
                 )}
 
-                {step === 3 && (
-                  <section className="space-y-4">
-                    <h2 className="text-xl font-semibold">Summary</h2>
-                    <div className="p-4 rounded-lg bg-slate-950/50 border border-slate-700">
-                      <p className="text-sm text-slate-300">
-                        <strong>Scenario:</strong> {selected?.label}
-                      </p>
-                      {(scenario === "vte" || scenario === "af") && form.egfr && (
-                        <p className="text-sm text-slate-300 mt-1">
-                          <strong>eGFR:</strong> {form.egfr} ml/min/1.73m²
-                        </p>
-                      )}
-                      {scenario === "af" && (
-                        <p className="text-sm text-slate-300 mt-1">
-                          <strong>Valvular status:</strong>{" "}
-                          {form.valvular === "none"
-                            ? "Nonvalvular"
-                            : form.valvular === "rhd"
-                              ? "Rheumatic mitral stenosis"
-                              : "Mechanical valve"}
-                        </p>
-                      )}
-                    </div>
-                    <ul className="space-y-2">
-                      {rec.bullets.map((b, i) => (
-                        <li key={i} className="flex items-start gap-2 text-sm">
-                          <ChevronRight className="h-4 w-4 mt-0.5 text-cyan-400 flex-shrink-0" />
-                          <span>{b}</span>
-                        </li>
+                {(scenario === "vte" || scenario === "af") && (
+                  <label className="space-y-2">
+                    <span className="block text-sm text-slate-300">eGFR (ml/min/1.73m²)</span>
+                    <input
+                      type="number"
+                      placeholder="Optional"
+                      value={form.egfr}
+                      onChange={(e) => setForm({ ...form, egfr: e.target.value })}
+                      className="w-full rounded-xl bg-slate-950 border border-slate-700 p-3 focus:border-cyan-400 focus:outline-none"
+                    />
+                    <span className="text-xs text-slate-500">
+                      Used to adjust DOAC selection for CKD
+                    </span>
+                  </label>
+                )}
+
+                {(scenario === "stroke" || scenario === "ich") && (
+                  <div className="p-4 rounded-lg bg-slate-950/50 border border-slate-700">
+                    <p className="text-sm text-slate-300">
+                      <Clock className="inline h-4 w-4 mr-1" />
+                      {scenario === "stroke" && "Timing of anticoagulation after stroke is critical."}
+                      {scenario === "ich" && "Timing of restarting anticoagulation after ICH is critical."}
+                    </p>
+                  </div>
+                )}
+
+                <label className="space-y-2 md:col-span-2">
+                  <span className="block text-sm text-slate-300">Clinical Notes</span>
+                  <textarea
+                    placeholder="Optional notes"
+                    value={form.notes}
+                    onChange={(e) => setForm({ ...form, notes: e.target.value })}
+                    className="w-full rounded-xl bg-slate-950 border border-slate-700 p-3 focus:border-cyan-400 focus:outline-none"
+                    rows={3}
+                  />
+                </label>
+              </section>
+            )}
+
+            {step === 2 && (
+              <section className="space-y-4">
+                <h2 className="text-xl font-semibold">Recommendations</h2>
+                <div className="p-4 rounded-lg bg-slate-950/50 border border-slate-700">
+                  <h3 className="font-medium text-cyan-400 mb-2">
+                    {selected?.label} — {form.phase === "extended" ? "Extended" : "Acute"} Treatment
+                  </h3>
+                  <ul className="space-y-2">
+                    {rec.bullets.map((b, i) => (
+                      <li key={i} className="flex items-start gap-2">
+                        <ChevronRight className="h-4 w-4 mt-1 text-cyan-400 flex-shrink-0" />
+                        <span>{b}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                {rec.caution.length > 0 && (
+                  <div className="p-4 rounded-lg bg-amber-950/30 border border-amber-500/50">
+                    <h3 className="font-medium text-amber-400 mb-2 flex items-center gap-2">
+                      <AlertTriangle className="h-4 w-4" />
+                      Cautions
+                    </h3>
+                    <ul className="space-y-1 text-sm text-amber-100">
+                      {rec.caution.map((c, i) => (
+                        <li key={i}>• {c}</li>
                       ))}
                     </ul>
-                    {rec.caution.length > 0 && (
-                      <div className="p-3 rounded-lg bg-amber-950/30 border border-amber-500/50">
-                        <p className="text-xs text-amber-200">
-                          <AlertTriangle className="inline h-3 w-3 mr-1" />
-                          {rec.caution.length} caution(s) noted — see Recommend step for details.
-                        </p>
-                      </div>
-                    )}
-                    <div className="mt-6 p-3 rounded-lg bg-cyan-950/30 border border-cyan-500/30">
-                      <p className="text-xs text-cyan-200">
-                        For educational reference only. Not a substitute for clinical judgment,
-                        institutional protocols, or current guidelines.
-                      </p>
-                    </div>
-                  </section>
+                  </div>
                 )}
-              </main>
-            </div>
+              </section>
+            )}
 
-            {/* DOAC Reference Tables */}
-            <section className="rounded-2xl border border-slate-800 bg-slate-900 p-5 space-y-4">
-              <h2 className="text-xl font-semibold">DOAC Dosing Reference</h2>
-
-              <div className="grid gap-4 md:grid-cols-2">
-                {/* VTE Initial Treatment */}
+            {step === 3 && (
+              <section className="space-y-4">
+                <h2 className="text-xl font-semibold">Summary</h2>
                 <div className="p-4 rounded-lg bg-slate-950/50 border border-slate-700">
-                  <h3 className="font-medium text-cyan-400 mb-3">VTE Initial Treatment</h3>
-                  <div className="space-y-3">
-                    {(data.modules[0]?.agents ?? []).map((agent, i) => (
-                      <div key={i} className="text-sm">
-                        <div className="font-medium">{agent.drug}</div>
-                        <div className="text-slate-400">
-                          {agent.dose} {agent.frequency}
-                          {agent.duration && ` × ${agent.duration}`}
-                          {agent.then && `, then ${agent.then}`}
-                        </div>
-                        <div className="text-xs text-amber-300">{agent.note}</div>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="mt-3 pt-3 border-t border-slate-700 text-xs text-slate-400">
-                    {data.modules[0]?.comments}
-                  </div>
+                  <p className="text-sm text-slate-300">
+                    <strong>Scenario:</strong> {selected?.label}
+                  </p>
+                  {(scenario === "vte" || scenario === "af") && form.egfr && (
+                    <p className="text-sm text-slate-300 mt-1">
+                      <strong>eGFR:</strong> {form.egfr} ml/min/1.73m²
+                    </p>
+                  )}
+                  {scenario === "af" && (
+                    <p className="text-sm text-slate-300 mt-1">
+                      <strong>Valvular status:</strong>{" "}
+                      {form.valvular === "none"
+                        ? "Nonvalvular"
+                        : form.valvular === "rhd"
+                        ? "Rheumatic mitral stenosis"
+                        : "Mechanical valve"}
+                    </p>
+                  )}
                 </div>
-
-                {/* Extended VTE */}
-                <div className="p-4 rounded-lg bg-slate-950/50 border border-slate-700">
-                  <h3 className="font-medium text-cyan-400 mb-3">Extended VTE Therapy</h3>
-                  <div className="space-y-2">
-                    {(data.modules[1]?.rules?.[0]?.agents ?? []).map((agent, i) => (
-                      <div key={i} className="text-sm">
-                        <span className="font-medium">{agent.drug}</span>: {agent.dose}{" "}
-                        {agent.frequency}
-                      </div>
-                    ))}
+                <ul className="space-y-2">
+                  {rec.bullets.map((b, i) => (
+                    <li key={i} className="flex items-start gap-2 text-sm">
+                      <ChevronRight className="h-4 w-4 mt-0.5 text-cyan-400 flex-shrink-0" />
+                      <span>{b}</span>
+                    </li>
+                  ))}
+                </ul>
+                {rec.caution.length > 0 && (
+                  <div className="p-3 rounded-lg bg-amber-950/30 border border-amber-500/50">
+                    <p className="text-xs text-amber-200">
+                      <AlertTriangle className="inline h-3 w-3 mr-1" />
+                      {rec.caution.length} caution(s) noted — see Recommend step for details.
+                    </p>
                   </div>
-                  <div className="mt-3 pt-3 border-t border-slate-700 space-y-1 text-xs text-slate-400">
-                    <div>Provoked VTE recurrence: ~2%/year (short-term therapy)</div>
-                    <div>Unprovoked VTE recurrence: ~10%/year (consider indefinite)</div>
-                    <div className="text-amber-300">
-                      Aspirin: far less effective than extended DOAC
+                )}
+                <div className="mt-6 p-3 rounded-lg bg-cyan-950/30 border border-cyan-500/30">
+                  <p className="text-xs text-cyan-200">
+                    For educational reference only. Not a substitute for clinical judgment,
+                    institutional protocols, or current guidelines.
+                  </p>
+                </div>
+              </section>
+            )}
+          </main>
+        </div>
+
+        {/* DOAC Reference Tables */}
+        <section className="rounded-2xl border border-slate-800 bg-slate-900 p-5 space-y-4">
+          <h2 className="text-xl font-semibold">DOAC Dosing Reference</h2>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            {/* VTE Initial Treatment */}
+            <div className="p-4 rounded-lg bg-slate-950/50 border border-slate-700">
+              <h3 className="font-medium text-cyan-400 mb-3">VTE Initial Treatment</h3>
+              <div className="space-y-3">
+                {(data.modules[0]?.agents ?? []).map((agent, i) => (
+                  <div key={i} className="text-sm">
+                    <div className="font-medium">{agent.drug}</div>
+                    <div className="text-slate-400">
+                      {agent.dose} {agent.frequency}
+                      {agent.duration && ` × ${agent.duration}`}
+                      {agent.then && `, then ${agent.then}`}
                     </div>
+                    <div className="text-xs text-amber-300">{agent.note}</div>
                   </div>
-                </div>
-
-                {/* CKD Dosing */}
-                <div className="p-4 rounded-lg bg-slate-950/50 border border-slate-700 md:col-span-2">
-                  <h3 className="font-medium text-cyan-400 mb-3">
-                    DOACs in Kidney Disease (2024 KDIGO)
-                  </h3>
-                  <div className="grid gap-2 md:grid-cols-4">
-                    {(data.modules[2]?.stages ?? []).map((stage, i) => (
-                      <div key={i} className="p-2 rounded bg-slate-900">
-                        <div className="text-xs text-slate-400">
-                          {stage.ckd_stage || stage.dialysis} {stage.egfr && `(${stage.egfr})`}
-                        </div>
-                        <div className="text-sm mt-1">{stage.recommendation}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Drug Key Takeaways */}
-                {data.keyTakeaways.map((item, i) => (
-                  <KeyTakeawayCard key={i} item={item} />
                 ))}
               </div>
-            </section>
-
-            {/* Stroke & ICH Guidelines */}
-            <section className="rounded-2xl border border-slate-800 bg-slate-900 p-5 space-y-4">
-              <h2 className="text-xl font-semibold">Stroke & ICH Guidelines</h2>
-
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="p-4 rounded-lg bg-slate-950/50 border border-slate-700">
-                  <h3 className="font-medium text-cyan-400 mb-2 flex items-center gap-2">
-                    <Brain className="h-4 w-4" />
-                    Ischemic Stroke (AF-related)
-                  </h3>
-                  <ul className="space-y-1 text-sm">
-                    <li className="flex items-start gap-2">
-                      <ChevronRight className="h-4 w-4 mt-0.5 text-cyan-400 flex-shrink-0" />
-                      <span>{data.stroke_secondary_prevention.early_initiation}</span>
-                    </li>
-                    <li className="flex items-start gap-2 text-amber-200">
-                      <AlertTriangle className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                      <span>{data.stroke_secondary_prevention.avoid_within_48h}</span>
-                    </li>
-                    <li className="text-xs text-slate-400 mt-2">
-                      Exclude: {data.stroke_secondary_prevention.exclude}
-                    </li>
-                  </ul>
-                </div>
-
-                <div className="p-4 rounded-lg bg-slate-950/50 border border-slate-700">
-                  <h3 className="font-medium text-amber-400 mb-2 flex items-center gap-2">
-                    <AlertTriangle className="h-4 w-4" />
-                    OAC After ICH
-                  </h3>
-                  <ul className="space-y-1 text-sm">
-                    <li className="flex items-start gap-2">
-                      <ChevronRight className="h-4 w-4 mt-0.5 text-cyan-400 flex-shrink-0" />
-                      <span>{data.oac_after_brain_bleed.timing}</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <ChevronRight className="h-4 w-4 mt-0.5 text-cyan-400 flex-shrink-0" />
-                      <span>{data.oac_after_brain_bleed.alternative}</span>
-                    </li>
-                    <li className="text-xs text-slate-400 mt-2">
-                      Benefit: {data.oac_after_brain_bleed.resume_benefit} | Risk:{" "}
-                      {data.oac_after_brain_bleed.risk}
-                    </li>
-                  </ul>
-                </div>
+              <div className="mt-3 pt-3 border-t border-slate-700 text-xs text-slate-400">
+                {data.modules[0]?.comments}
               </div>
-            </section>
+            </div>
 
-            {/* Contraindications */}
-            <section className="rounded-2xl border border-red-900/50 bg-red-950/20 p-5">
-              <h2 className="text-lg font-semibold text-red-400 mb-3 flex items-center gap-2">
-                <AlertTriangle className="h-5 w-5" />
-                DOAC Contraindications & Special Populations
-              </h2>
-              <div className="grid gap-3 md:grid-cols-2">
-                <div className="p-3 rounded bg-red-950/30 border border-red-800/50">
-                  <h3 className="font-medium text-red-300 mb-1">Antiphospholipid Syndrome</h3>
-                  <p className="text-sm text-slate-300">
-                    Avoid DOACs in thrombotic APS, especially high-risk (triple-positive, arterial
-                    events). Warfarin preferred.
-                  </p>
-                </div>
-                <div className="p-3 rounded bg-red-950/30 border border-red-800/50">
-                  <h3 className="font-medium text-red-300 mb-1">Rheumatic Heart Disease</h3>
-                  <p className="text-sm text-slate-300">
-                    Rheumatic mitral stenosis with AF → warfarin. Mechanical valves → warfarin.
-                    DOACs contraindicated.
-                  </p>
-                </div>
+            {/* Extended VTE */}
+            <div className="p-4 rounded-lg bg-slate-950/50 border border-slate-700">
+              <h3 className="font-medium text-cyan-400 mb-3">Extended VTE Therapy</h3>
+              <div className="space-y-2">
+                {(data.modules[1]?.rules?.[0]?.agents ?? []).map((agent, i) => (
+                  <div key={i} className="text-sm">
+                    <span className="font-medium">{agent.drug}</span>: {agent.dose} {agent.frequency}
+                  </div>
+                ))}
               </div>
-            </section>
-          </>
+              <div className="mt-3 pt-3 border-t border-slate-700 space-y-1 text-xs text-slate-400">
+                <div>Provoked VTE recurrence: ~2%/year (short-term therapy)</div>
+                <div>Unprovoked VTE recurrence: ~10%/year (consider indefinite)</div>
+                <div className="text-amber-300">Aspirin: far less effective than extended DOAC</div>
+              </div>
+            </div>
+
+            {/* CKD Dosing */}
+            <div className="p-4 rounded-lg bg-slate-950/50 border border-slate-700 md:col-span-2">
+              <h3 className="font-medium text-cyan-400 mb-3">DOACs in Kidney Disease (2024 KDIGO)</h3>
+              <div className="grid gap-2 md:grid-cols-4">
+                {(data.modules[2]?.stages ?? []).map((stage, i) => (
+                  <div key={i} className="p-2 rounded bg-slate-900">
+                    <div className="text-xs text-slate-400">
+                      {stage.ckd_stage || stage.dialysis} {stage.egfr && `(${stage.egfr})`}
+                    </div>
+                    <div className="text-sm mt-1">{stage.recommendation}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Stroke & ICH Guidelines */}
+        <section className="rounded-2xl border border-slate-800 bg-slate-900 p-5 space-y-4">
+          <h2 className="text-xl font-semibold">Stroke & ICH Guidelines</h2>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="p-4 rounded-lg bg-slate-950/50 border border-slate-700">
+              <h3 className="font-medium text-cyan-400 mb-2 flex items-center gap-2">
+                <Brain className="h-4 w-4" />
+                Ischemic Stroke (AF-related)
+              </h3>
+              <ul className="space-y-1 text-sm">
+                <li className="flex items-start gap-2">
+                  <ChevronRight className="h-4 w-4 mt-0.5 text-cyan-400 flex-shrink-0" />
+                  <span>{data.stroke_secondary_prevention.early_initiation}</span>
+                </li>
+                <li className="flex items-start gap-2 text-amber-200">
+                  <AlertTriangle className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                  <span>{data.stroke_secondary_prevention.avoid_within_48h}</span>
+                </li>
+                <li className="text-xs text-slate-400 mt-2">
+                  Exclude: {data.stroke_secondary_prevention.exclude}
+                </li>
+              </ul>
+            </div>
+
+            <div className="p-4 rounded-lg bg-slate-950/50 border border-slate-700">
+              <h3 className="font-medium text-amber-400 mb-2 flex items-center gap-2">
+                <AlertTriangle className="h-4 w-4" />
+                OAC After ICH
+              </h3>
+              <ul className="space-y-1 text-sm">
+                <li className="flex items-start gap-2">
+                  <ChevronRight className="h-4 w-4 mt-0.5 text-cyan-400 flex-shrink-0" />
+                  <span>{data.oac_after_brain_bleed.timing}</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <ChevronRight className="h-4 w-4 mt-0.5 text-cyan-400 flex-shrink-0" />
+                  <span>{data.oac_after_brain_bleed.alternative}</span>
+                </li>
+                <li className="text-xs text-slate-400 mt-2">
+                  Benefit: {data.oac_after_brain_bleed.resume_benefit} | Risk: {data.oac_after_brain_bleed.risk}
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        {/* Contraindications */}
+        <section className="rounded-2xl border border-red-900/50 bg-red-950/20 p-5">
+          <h2 className="text-lg font-semibold text-red-400 mb-3 flex items-center gap-2">
+            <AlertTriangle className="h-5 w-5" />
+            DOAC Contraindications & Special Populations
+          </h2>
+          <div className="grid gap-3 md:grid-cols-2">
+            <div className="p-3 rounded bg-red-950/30 border border-red-800/50">
+              <h3 className="font-medium text-red-300 mb-1">Antiphospholipid Syndrome</h3>
+              <p className="text-sm text-slate-300">
+                Avoid DOACs in thrombotic APS, especially high-risk (triple-positive, arterial events).
+                Warfarin preferred.
+              </p>
+            </div>
+            <div className="p-3 rounded bg-red-950/30 border border-red-800/50">
+              <h3 className="font-medium text-red-300 mb-1">Rheumatic Heart Disease</h3>
+              <p className="text-sm text-slate-300">
+                Rheumatic mitral stenosis with AF → warfarin. Mechanical valves → warfarin.
+                DOACs contraindicated.
+              </p>
+            </div>
+          </div>
+        </section>
+        </>
         )}
 
         {/* Images Tab */}
@@ -910,11 +647,12 @@ export function AnticoagulationMiniApp() {
             <p className="text-slate-400">Reference infographics for anticoagulation management.</p>
             <div className="grid gap-6 md:grid-cols-2">
               {imageFiles.map((img, i) => (
-                <div
-                  key={i}
-                  className="rounded-xl border border-slate-700 bg-slate-950/50 overflow-hidden"
-                >
-                  <img src={img.src} alt={img.title} className="w-full h-auto" />
+                <div key={i} className="rounded-xl border border-slate-700 bg-slate-950/50 overflow-hidden">
+                  <img 
+                    src={img.src} 
+                    alt={img.title}
+                    className="w-full h-auto"
+                  />
                   <div className="p-3 border-t border-slate-700">
                     <h3 className="font-medium text-cyan-400">{img.title}</h3>
                     <p className="text-sm text-slate-400">{img.desc}</p>
