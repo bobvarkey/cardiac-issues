@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, Zap, AlertTriangle, CheckCircle2, BookOpen } from "lucide-react";
+import { ArrowLeft, Zap, AlertTriangle, CheckCircle2, BookOpen, GitBranch } from "lucide-react";
 import heroImg from "@/assets/svt-adenosine-12mg-hero.jpeg.asset.json";
 import studyImg from "@/assets/svt-adenosine-12mg-study.jpeg.asset.json";
+import { SVTDecisionAlgorithm } from "@/components/SVTDecisionAlgorithm";
 
 export const Route = createFileRoute("/_layout/svt")({
   head: () => ({
@@ -50,6 +51,22 @@ function SVTPage() {
           adenosine → AV nodal blocker.
         </p>
       </header>
+
+      {/* Interactive decision algorithm */}
+      <section className="space-y-4">
+        <div className="flex items-center gap-2 text-xs">
+          <span className="pulse-dot" />
+          <span className="font-mono uppercase tracking-wider text-primary">
+            Interactive · Step-by-step
+          </span>
+        </div>
+        <h2 className="text-2xl font-semibold tracking-tight">SVT Decision Algorithm</h2>
+        <p className="max-w-2xl text-sm text-muted-foreground">
+          Step through the decision tree: assess stability, QRS width, regularity, suspected SVT
+          type, contraindications, and management. Branches adapt to your selections.
+        </p>
+        <SVTDecisionAlgorithm />
+      </section>
 
       {/* Acute algorithm */}
       <section className="surface-panel space-y-4">

@@ -82,6 +82,7 @@ const SECTIONS: Section[] = [
     bg: "bg-fuchsia-500/15",
     items: [
       { label: "Rhythms", to: "/rhythms" },
+      { label: "SVT", to: "/svt" },
       { label: "Syncope", to: "/syncope" },
       { label: "Syncope Triage", to: "/syncope-triage" },
       { label: "Goldman Index", to: "/goldman" },
