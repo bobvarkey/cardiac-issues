@@ -7,6 +7,7 @@ import {
   BarChart3,
   CheckCircle2,
   ClipboardList,
+  Download,
   Droplets,
   FileText,
   Heart,
@@ -657,6 +658,103 @@ export function ExerciseToleranceTest() {
     window.print();
   }
 
+  function downloadProtocolSheet() {
+    const now = new Date();
+    const dateStr = now.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "numeric",
+      day: "numeric",
+    });
+    const timeStr = now.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    });
+
+    const stageDefs = modality === "treadmill" ? BRUCE_STAGES : BIKE_STAGES;
+
+    const stageTable = stageDefs
+      .map((s, i) => {
+        const recorded = stages.find((st) => st.stage === i + 1);
+        const workload =
+          modality === "treadmill"
+            ? `${(s as (typeof BRUCE_STAGES)[number]).speed} mph @ ${(s as (typeof BRUCE_STAGES)[number]).grade}%`
+            : `${(s as (typeof BIKE_STAGES)[number]).watts} W`;
+        const hr = recorded?.heartRate ?? "";
+        const sao2 = recorded?.sao2 ?? "";
+        const rpe = recorded?.rpe ?? "";
+        const lac = recorded?.lactate ?? "";
+        const sym = recorded?.symptoms ?? "";
+        const done = recorded ? "X" : "";
+        const pad = (v: string | number, w: number) => String(v).padEnd(w);
+        return `| ${pad(i + 1, 2)} | ${pad(workload, 16)} | ${pad(s.mets, 4)} | ${pad(hr, 3)} | ${pad(sao2, 3)} | ${pad(rpe, 2)} | ${pad(lac, 5)} | ${pad(sym, 12)} | ${pad(done, 3)} |`;
+      })
+      .join("\n");
+
+    const lines = [
+      "=" .repeat(58),
+      "EXERCISE TOLERANCE TEST — PROTOCOL SHEET",
+      "=" .repeat(58),
+      `Date: ${dateStr}, ${timeStr}`,
+      "",
+      "PATIENT",
+      ` Name: ${patient.name || "____________________"}`,
+      ` Age: ${patient.age || "____"}  Sex: ${patient.sex === "M" ? "Male" : "Female"}  Weight: ${patient.weightKg || "___"} kg`,
+      ` Suspected diagnosis: ${patient.suspected.replace(/_/g, " ")}`,
+      ` Orthopaedic limitations: ${patient.orthoLimitations || "None"}`,
+      "",
+      `MODALITY: ${modality === "treadmill" ? "Treadmill — Modified Bruce" : "Bicycle Ergometer"}`,
+      `SAMPLING METHOD: ${
+        samplingMethod === "capillary"
+          ? "Capillary (fingertip / earlobe)"
+          : samplingMethod === "iv_lactate"
+            ? "IV line — Lactate only"
+            : "IV line — Full Venous Blood Gas (VBG)"
+      }`,
+      "",
+      "PROTOCOL NOTE",
+      " Each stage = 3 minutes. Sample lactate in the last 30 s of the stage.",
+      " Mark the stage complete when finished.",
+      "",
+      "PRE-TEST PREPARATION CHECKLIST",
+      ` [${prepChecks.fasted ? "X" : " "}] Fasted 4-6 h (no heavy carbohydrate meal)`,
+      ` [${prepChecks.noExercise ? "X" : " "}] No strenuous exercise in last 24-48 h`,
+      ` [${prepChecks.noSubstances ? "X" : " "}] No caffeine / nicotine / alcohol in last 12 h`,
+      ` [${prepChecks.hydrated ? "X" : " "}] Adequate hydration until 1 h before test`,
+      ` [${prepChecks.consent ? "X" : " "}] Patient understands test & has given consent`,
+      "",
+      "PRE-TEST CPK (Creatine Kinase)",
+      ` Pre-test CPK: ${preCpk !== null ? `${preCpk} U/L` : "___ U/L"}`,
+      ` Post-test CPK: ${postCpk !== null ? `${postCpk} U/L` : "___ U/L"} (timing: 24h)`,
+      "",
+      "STAGE-BY-STAGE DATA (each stage = 3 min)",
+      "-".repeat(58),
+      "Stg | Workload         | METs | HR  | SaO2 | RPE | Lactate | Symptoms     | Done |",
+      "-".repeat(58),
+      stageTable,
+      "-".repeat(58),
+      "",
+      `Early termination: ${terminatedEarly ? `Yes — ${terminationReason || "Not specified"}` : "No"}`,
+      `Recovery completed: ${recoveryDone ? "Yes" : "No"}`,
+      "",
+      "",
+      "Signature (clinician): ______________________________",
+      "",
+      "-".repeat(58),
+      "This protocol sheet supports clinical reasoning only. It does not replace full diagnostic workup.",
+    ];
+
+    const blob = new Blob([lines.join("\n")], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `ett-protocol-${patient.name.replace(/\s+/g, "-") || "unnamed"}-${dateStr.replace(/\//g, "-")}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
   /* ---- Safety check ---- */
   const allPrepDone = Object.values(prepChecks).every(Boolean);
   const patientValid =
@@ -1228,6 +1326,14 @@ export function ExerciseToleranceTest() {
                 </p>
               </div>
               <div className="flex gap-2 print:hidden">
+                <button
+                  type="button"
+                  onClick={downloadProtocolSheet}
+                  className="flex items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-sm hover:bg-surface"
+                >
+                  <Download className="h-4 w-4" />
+                  Protocol Sheet
+                </button>
                 <button
                   type="button"
                   onClick={handlePrint}
