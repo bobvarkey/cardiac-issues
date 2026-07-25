@@ -1066,6 +1066,212 @@ function MethodExplainer() {
 }
 
 /* -------------------------------------------------------------------------- */
+/* Combined Lactate / Pyruvate / VBG chart across baseline → stages → recovery */
+/* -------------------------------------------------------------------------- */
+
+function MultiParamChart({
+  stages,
+  recovery,
+  secondWind,
+  totalStages,
+}: {
+  stages: StageData[];
+  recovery: VitalsRecovery;
+  secondWind: SecondWind;
+  totalStages: number;
+}) {
+  interface Pt {
+    label: string;
+    x: number;
+    lactate: number | null;
+    pyruvate: number | null;
+    ph: number | null;
+    hco3: number | null;
+    lp: number | null;
+  }
+  const points: Pt[] = [];
+  points.push({ label: "Base", x: 0, lactate: null, pyruvate: null, ph: null, hco3: null, lp: null });
+  stages.forEach((s) => {
+    const lp = s.lactate != null && s.pyruvate != null && s.pyruvate > 0
+      ? s.lactate / s.pyruvate
+      : null;
+    points.push({
+      label: `S${s.stage}`,
+      x: s.stage,
+      lactate: s.lactate,
+      pyruvate: s.pyruvate,
+      ph: s.ph,
+      hco3: s.hco3,
+      lp,
+    });
+  });
+  if (recovery.lactate != null || recovery.pyruvate != null) {
+    points.push({
+      label: "Rec",
+      x: (stages.length || 0) + 1,
+      lactate: recovery.lactate,
+      pyruvate: recovery.pyruvate,
+      ph: null,
+      hco3: null,
+      lp:
+        recovery.lactate != null && recovery.pyruvate != null && recovery.pyruvate > 0
+          ? recovery.lactate / recovery.pyruvate
+          : null,
+    });
+  }
+  if (secondWind.tested && (secondWind.lactate != null || secondWind.pyruvate != null)) {
+    points.push({
+      label: "SW",
+      x: (stages.length || 0) + 2,
+      lactate: secondWind.lactate,
+      pyruvate: secondWind.pyruvate,
+      ph: null,
+      hco3: null,
+      lp:
+        secondWind.lactate != null && secondWind.pyruvate != null && secondWind.pyruvate > 0
+          ? secondWind.lactate / secondWind.pyruvate
+          : null,
+    });
+  }
+
+  const hasData = points.some((p) => p.lactate != null || p.pyruvate != null);
+  if (!hasData) {
+    return (
+      <div className="flex items-center justify-center rounded-lg border border-dashed border-border py-8 text-xs text-muted-foreground">
+        Enter lactate and pyruvate to see the combined curve.
+      </div>
+    );
+  }
+
+  const W = 480;
+  const H = 220;
+  const pad = { top: 12, right: 46, bottom: 32, left: 40 };
+  const iw = W - pad.left - pad.right;
+  const ih = H - pad.top - pad.bottom;
+
+  const maxLac = Math.max(
+    10,
+    ...points.map((p) => p.lactate ?? 0),
+    ...points.map((p) => (p.pyruvate ?? 0) * 5),
+  );
+  const maxX = Math.max(...points.map((p) => p.x), 1);
+  const xScale = (x: number) => pad.left + (x / maxX) * iw;
+  const yScale = (v: number) => pad.top + ih - (v / maxLac) * ih;
+
+  // Detect lactate threshold (first stage lactate ≥ 4)
+  const threshold = points.find((p) => p.lactate != null && p.lactate >= 4);
+  const earlyThreshold =
+    threshold &&
+    threshold.x > 0 &&
+    totalStages > 0 &&
+    threshold.x / totalStages < 0.5;
+
+  const line = (accessor: (p: Pt) => number | null) =>
+    points
+      .filter((p) => accessor(p) != null)
+      .map((p) => `${xScale(p.x)},${yScale(accessor(p) as number)}`)
+      .join(" ");
+
+  const highLp = points.filter((p) => p.lp != null && p.lp > 20);
+
+  return (
+    <div className="space-y-2">
+      <svg viewBox={`0 0 ${W} ${H}`} className="w-full max-w-[560px]">
+        {[0, 2, 4, 6, 8, 10, 14, 18].filter((v) => v <= maxLac).map((v) => (
+          <g key={v}>
+            <line
+              x1={pad.left}
+              y1={yScale(v)}
+              x2={W - pad.right}
+              y2={yScale(v)}
+              stroke="currentColor"
+              className="text-border"
+              strokeWidth={0.5}
+            />
+            <text x={pad.left - 4} y={yScale(v) + 3} textAnchor="end" fontSize={9} className="fill-muted-foreground">{v}</text>
+          </g>
+        ))}
+        {/* threshold ref */}
+        {maxLac >= 4 && (
+          <>
+            <line x1={pad.left} y1={yScale(4)} x2={W - pad.right} y2={yScale(4)} stroke="#fbbf24" strokeDasharray="4 3" strokeWidth={1} opacity={0.7} />
+            <text x={W - pad.right - 2} y={yScale(4) - 3} textAnchor="end" fill="#fbbf24" fontSize={9}>Lactate threshold ≈ 4</text>
+          </>
+        )}
+        {/* threshold vertical marker */}
+        {threshold && (
+          <g>
+            <line x1={xScale(threshold.x)} y1={pad.top} x2={xScale(threshold.x)} y2={pad.top + ih} stroke={earlyThreshold ? "#f43f5e" : "#38bdf8"} strokeDasharray="3 3" strokeWidth={1} opacity={0.8} />
+            <text x={xScale(threshold.x) + 3} y={pad.top + 10} fontSize={9} fill={earlyThreshold ? "#f43f5e" : "#38bdf8"}>
+              LT @ {threshold.label}{earlyThreshold ? " (early)" : ""}
+            </text>
+          </g>
+        )}
+
+        {/* x-axis labels */}
+        {points.map((p) => (
+          <text key={p.label} x={xScale(p.x)} y={H - 12} textAnchor="middle" fontSize={9} className="fill-muted-foreground">{p.label}</text>
+        ))}
+
+        {/* Lactate line */}
+        <polyline points={line((p) => p.lactate)} fill="none" stroke="#f43f5e" strokeWidth={2} />
+        {points.filter((p) => p.lactate != null).map((p, i) => (
+          <circle key={`l${i}`} cx={xScale(p.x)} cy={yScale(p.lactate as number)} r={3} fill="#f43f5e" />
+        ))}
+        {/* Pyruvate line — scaled ×5 for visibility, dashed */}
+        <polyline
+          points={points.filter((p) => p.pyruvate != null).map((p) => `${xScale(p.x)},${yScale((p.pyruvate as number) * 5)}`).join(" ")}
+          fill="none"
+          stroke="#a855f7"
+          strokeWidth={2}
+          strokeDasharray="4 3"
+        />
+        {points.filter((p) => p.pyruvate != null).map((p, i) => (
+          <circle key={`p${i}`} cx={xScale(p.x)} cy={yScale((p.pyruvate as number) * 5)} r={3} fill="#a855f7" />
+        ))}
+        {/* pH line — normalise: (pH − 7.2) × 40 to overlay */}
+        <polyline
+          points={points.filter((p) => p.ph != null).map((p) => `${xScale(p.x)},${yScale(((p.ph as number) - 7.2) * 40)}`).join(" ")}
+          fill="none"
+          stroke="#38bdf8"
+          strokeWidth={1.5}
+          strokeDasharray="1 2"
+        />
+
+        {/* L:P > 20 callouts */}
+        {highLp.map((p, i) => (
+          <g key={`lp${i}`}>
+            <circle cx={xScale(p.x)} cy={yScale(p.lactate ?? 0)} r={7} fill="none" stroke="#f43f5e" strokeWidth={1.2} />
+            <text x={xScale(p.x)} y={yScale(p.lactate ?? 0) - 10} textAnchor="middle" fontSize={9} fill="#f43f5e">
+              L:P {p.lp!.toFixed(1)}
+            </text>
+          </g>
+        ))}
+
+        {/* Legend */}
+        <g transform={`translate(${pad.left}, ${pad.top - 2})`}>
+          <text x={0} y={-2} fontSize={9} fill="#f43f5e">■ Lactate</text>
+          <text x={60} y={-2} fontSize={9} fill="#a855f7">■ Pyruvate ×5</text>
+          <text x={140} y={-2} fontSize={9} fill="#38bdf8">■ pH (normalised)</text>
+        </g>
+      </svg>
+      <div className="flex flex-wrap gap-2 text-[11px]">
+        {earlyThreshold && (
+          <span className="rounded bg-rose-500/15 px-2 py-0.5 text-rose-400">
+            Early lactate threshold ({"<"}50% workload) — consider mitochondrial dysfunction
+          </span>
+        )}
+        {highLp.length > 0 && (
+          <span className="rounded bg-rose-500/15 px-2 py-0.5 text-rose-400">
+            L:P ratio {'>'} 20 detected — supports mitochondrial dysfunction
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
 /* Main */
 /* -------------------------------------------------------------------------- */
 
