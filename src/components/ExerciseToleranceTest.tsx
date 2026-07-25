@@ -2230,6 +2230,14 @@ export function ExerciseToleranceTest() {
                   />
                 </div>
                 <NumberInput
+                  label="Pyruvate"
+                  value={pyruvate}
+                  onChange={setPyruvate}
+                  unit="mmol/L"
+                  step={0.01}
+                  placeholder="e.g. 0.10"
+                />
+                <NumberInput
                   label="SpO₂"
                   value={sao2}
                   onChange={setSao2}
