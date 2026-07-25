@@ -145,6 +145,127 @@ const TERMINATION_REASONS = [
   "Other",
 ];
 
+/* Blood-sampling timeline (baseline, during, post) */
+const SAMPLING_TIMELINE: {
+  when: string;
+  samples: string[];
+  notes: string;
+}[] = [
+  {
+    when: "Baseline (T = 0, before exercise)",
+    samples: ["Lactate", "Ammonia (on ice)", "CPK", "VBG (pH, HCO₃⁻, pCO₂)"],
+    notes:
+      "Resting supine 10 min. IV or capillary — record method. Confirms starting metabolic state.",
+  },
+  {
+    when: "During test — end of each 3-min stage",
+    samples: ["Lactate", "SpO₂ (continuous)"],
+    notes:
+      "Draw in last 30 s of stage. Ammonia/VBG optional at peak workload if line permits.",
+  },
+  {
+    when: "Immediate post-exercise (T = 0 min recovery)",
+    samples: ["Lactate", "Ammonia", "VBG"],
+    notes: "Draw within 60 s of stopping — peak lactate typically here or +2 min.",
+  },
+  {
+    when: "Recovery +2, +5, +10 min",
+    samples: ["Lactate", "HR", "SpO₂"],
+    notes:
+      "Tracks lactate clearance. Failure to clear by 30 min suggests severe metabolic block.",
+  },
+  {
+    when: "24 h post-exercise",
+    samples: ["CPK", "Myoglobin (if rhabdo suspected)"],
+    notes: "Detects delayed muscle-fibre injury / exertional rhabdomyolysis.",
+  },
+];
+
+/* Absolute + relative stopping criteria */
+const STOPPING_CRITERIA_ABSOLUTE: string[] = [
+  "Patient requests to stop (always honoured)",
+  "Sustained ventricular tachycardia or other haemodynamically significant arrhythmia",
+  "ST-elevation ≥1 mm in non-Q-wave leads",
+  "Drop in SBP ≥10 mmHg below baseline with signs of ischaemia",
+  "Moderate-to-severe angina",
+  "CNS symptoms (ataxia, dizziness, near-syncope, confusion)",
+  "Signs of poor perfusion (cyanosis, pallor)",
+  "SpO₂ < 85% sustained",
+  "Failure of HR to rise with increasing workload (chronotropic failure) with symptoms",
+  "Technical difficulty monitoring ECG or BP",
+];
+
+const STOPPING_CRITERIA_RELATIVE: string[] = [
+  "SBP ≥ 250 mmHg or DBP ≥ 115 mmHg",
+  "ST depression ≥ 2 mm horizontal / down-sloping",
+  "Multifocal PVCs, triplets, SVT, bradyarrhythmias, heart block",
+  "Severe leg cramps / claudication or disabling muscle pain",
+  "Increasing chest pain not yet meeting angina criteria",
+  "Fatigue, SOB, wheezing that limit continuation",
+  "HR ≥ 100% of predicted HRmax (220 − age) with symptoms",
+  "SpO₂ 85–89% with symptoms",
+  "Hypertensive response with headache",
+];
+
+/* Modality-specific equipment / setup / execution */
+interface ModalitySpec {
+  equipment: string[];
+  setup: string[];
+  execution: string[];
+}
+
+const TREADMILL_SPEC: ModalitySpec = {
+  equipment: [
+    "Motorised treadmill (0–22% grade, 0–7 mph)",
+    "Front handrails (light touch only — do not weight-bear)",
+    "12-lead exercise ECG with cable long enough for full stride",
+    "Automated BP cuff (arm brace to reduce motion artefact)",
+    "Pulse oximeter on non-dominant finger or forehead",
+    "Rating of Perceived Exertion (Borg 6–20) chart at eye level",
+  ],
+  setup: [
+    "Skin prep and place 10 ECG electrodes (Mason–Likar torso positions).",
+    "Baseline supine and standing 12-lead ECG + BP × 2.",
+    "Fit SpO₂ probe; confirm signal quality with walking motion.",
+    "Explain Bruce ramp (speed + grade every 3 min) and hand signals for stop.",
+    "Trial 1 min at 1.7 mph / 0% flat to teach gait and handrail use.",
+  ],
+  execution: [
+    "Start Stage 1 (1.7 mph @ 10%) — begin continuous ECG recording.",
+    "At each 3-min stage: record HR, BP, SpO₂, RPE, symptoms, lactate.",
+    "Increment speed AND grade at every stage transition per Bruce protocol.",
+    "Verbal encouragement each minute; check patient every 30 s in last stage.",
+    "Terminate for any absolute criterion OR patient request; hit E-STOP.",
+    "Cool-down: 1.5 mph / 0% for 3 min unless clinically unstable.",
+  ],
+};
+
+const BIKE_SPEC: ModalitySpec = {
+  equipment: [
+    "Electronically braked cycle ergometer (25 W increments)",
+    "Adjustable seat and handlebars (knee 5–10° flexion at pedal bottom)",
+    "12-lead ECG with limb leads on torso (Mason–Likar)",
+    "Automated BP cuff on the arm resting on handlebar",
+    "Pulse oximeter on ear-clip (finger motion is less on bike but still noisy)",
+    "Rating of Perceived Exertion (Borg 6–20) chart",
+  ],
+  setup: [
+    "Adjust saddle height so knee ~10° flexion at pedal bottom.",
+    "Place 10 ECG electrodes (Mason–Likar torso positions).",
+    "Baseline seated + standing ECG and BP.",
+    "Set target cadence 60 rpm; teach patient to hold cadence within ±5 rpm.",
+    "Zero the ergometer; unloaded 1-min warm-up at 0 W, 60 rpm.",
+  ],
+  execution: [
+    "Start Stage 1 (25 W) — begin continuous ECG recording.",
+    "Every 3 min: increase load by 25 W (or 15 W for de-conditioned patients).",
+    "At each stage: record HR, BP, SpO₂, RPE, symptoms, lactate in last 30 s.",
+    "Terminate if cadence drops below 50 rpm despite encouragement, or any stopping criterion.",
+    "Cool-down: 3 min at 25 W, 60 rpm; continue ECG until HR < 100 or 5 min.",
+  ],
+};
+
+
 /* -------------------------------------------------------------------------- */
 /* Helpers */
 /* -------------------------------------------------------------------------- */
