@@ -8,6 +8,8 @@ import {
   CheckCircle2,
   ClipboardList,
   Download,
+  Droplets,
+
   FileText,
   Heart,
   Info,
@@ -144,6 +146,127 @@ const TERMINATION_REASONS = [
   "Equipment malfunction",
   "Other",
 ];
+
+/* Blood-sampling timeline (baseline, during, post) */
+const SAMPLING_TIMELINE: {
+  when: string;
+  samples: string[];
+  notes: string;
+}[] = [
+  {
+    when: "Baseline (T = 0, before exercise)",
+    samples: ["Lactate", "Ammonia (on ice)", "CPK", "VBG (pH, HCO₃⁻, pCO₂)"],
+    notes:
+      "Resting supine 10 min. IV or capillary — record method. Confirms starting metabolic state.",
+  },
+  {
+    when: "During test — end of each 3-min stage",
+    samples: ["Lactate", "SpO₂ (continuous)"],
+    notes:
+      "Draw in last 30 s of stage. Ammonia/VBG optional at peak workload if line permits.",
+  },
+  {
+    when: "Immediate post-exercise (T = 0 min recovery)",
+    samples: ["Lactate", "Ammonia", "VBG"],
+    notes: "Draw within 60 s of stopping — peak lactate typically here or +2 min.",
+  },
+  {
+    when: "Recovery +2, +5, +10 min",
+    samples: ["Lactate", "HR", "SpO₂"],
+    notes:
+      "Tracks lactate clearance. Failure to clear by 30 min suggests severe metabolic block.",
+  },
+  {
+    when: "24 h post-exercise",
+    samples: ["CPK", "Myoglobin (if rhabdo suspected)"],
+    notes: "Detects delayed muscle-fibre injury / exertional rhabdomyolysis.",
+  },
+];
+
+/* Absolute + relative stopping criteria */
+const STOPPING_CRITERIA_ABSOLUTE: string[] = [
+  "Patient requests to stop (always honoured)",
+  "Sustained ventricular tachycardia or other haemodynamically significant arrhythmia",
+  "ST-elevation ≥1 mm in non-Q-wave leads",
+  "Drop in SBP ≥10 mmHg below baseline with signs of ischaemia",
+  "Moderate-to-severe angina",
+  "CNS symptoms (ataxia, dizziness, near-syncope, confusion)",
+  "Signs of poor perfusion (cyanosis, pallor)",
+  "SpO₂ < 85% sustained",
+  "Failure of HR to rise with increasing workload (chronotropic failure) with symptoms",
+  "Technical difficulty monitoring ECG or BP",
+];
+
+const STOPPING_CRITERIA_RELATIVE: string[] = [
+  "SBP ≥ 250 mmHg or DBP ≥ 115 mmHg",
+  "ST depression ≥ 2 mm horizontal / down-sloping",
+  "Multifocal PVCs, triplets, SVT, bradyarrhythmias, heart block",
+  "Severe leg cramps / claudication or disabling muscle pain",
+  "Increasing chest pain not yet meeting angina criteria",
+  "Fatigue, SOB, wheezing that limit continuation",
+  "HR ≥ 100% of predicted HRmax (220 − age) with symptoms",
+  "SpO₂ 85–89% with symptoms",
+  "Hypertensive response with headache",
+];
+
+/* Modality-specific equipment / setup / execution */
+interface ModalitySpec {
+  equipment: string[];
+  setup: string[];
+  execution: string[];
+}
+
+const TREADMILL_SPEC: ModalitySpec = {
+  equipment: [
+    "Motorised treadmill (0–22% grade, 0–7 mph)",
+    "Front handrails (light touch only — do not weight-bear)",
+    "12-lead exercise ECG with cable long enough for full stride",
+    "Automated BP cuff (arm brace to reduce motion artefact)",
+    "Pulse oximeter on non-dominant finger or forehead",
+    "Rating of Perceived Exertion (Borg 6–20) chart at eye level",
+  ],
+  setup: [
+    "Skin prep and place 10 ECG electrodes (Mason–Likar torso positions).",
+    "Baseline supine and standing 12-lead ECG + BP × 2.",
+    "Fit SpO₂ probe; confirm signal quality with walking motion.",
+    "Explain Bruce ramp (speed + grade every 3 min) and hand signals for stop.",
+    "Trial 1 min at 1.7 mph / 0% flat to teach gait and handrail use.",
+  ],
+  execution: [
+    "Start Stage 1 (1.7 mph @ 10%) — begin continuous ECG recording.",
+    "At each 3-min stage: record HR, BP, SpO₂, RPE, symptoms, lactate.",
+    "Increment speed AND grade at every stage transition per Bruce protocol.",
+    "Verbal encouragement each minute; check patient every 30 s in last stage.",
+    "Terminate for any absolute criterion OR patient request; hit E-STOP.",
+    "Cool-down: 1.5 mph / 0% for 3 min unless clinically unstable.",
+  ],
+};
+
+const BIKE_SPEC: ModalitySpec = {
+  equipment: [
+    "Electronically braked cycle ergometer (25 W increments)",
+    "Adjustable seat and handlebars (knee 5–10° flexion at pedal bottom)",
+    "12-lead ECG with limb leads on torso (Mason–Likar)",
+    "Automated BP cuff on the arm resting on handlebar",
+    "Pulse oximeter on ear-clip (finger motion is less on bike but still noisy)",
+    "Rating of Perceived Exertion (Borg 6–20) chart",
+  ],
+  setup: [
+    "Adjust saddle height so knee ~10° flexion at pedal bottom.",
+    "Place 10 ECG electrodes (Mason–Likar torso positions).",
+    "Baseline seated + standing ECG and BP.",
+    "Set target cadence 60 rpm; teach patient to hold cadence within ±5 rpm.",
+    "Zero the ergometer; unloaded 1-min warm-up at 0 W, 60 rpm.",
+  ],
+  execution: [
+    "Start Stage 1 (25 W) — begin continuous ECG recording.",
+    "Every 3 min: increase load by 25 W (or 15 W for de-conditioned patients).",
+    "At each stage: record HR, BP, SpO₂, RPE, symptoms, lactate in last 30 s.",
+    "Terminate if cadence drops below 50 rpm despite encouragement, or any stopping criterion.",
+    "Cool-down: 3 min at 25 W, 60 rpm; continue ECG until HR < 100 or 5 min.",
+  ],
+};
+
 
 /* -------------------------------------------------------------------------- */
 /* Helpers */
@@ -1117,6 +1240,34 @@ export function ExerciseToleranceTest() {
       " Each stage = 3 minutes. Sample lactate in the last 30 s of the stage.",
       " Continuous ECG + BP monitoring; record HR, SpO₂, RPE, symptoms every stage.",
       "",
+      "BLOOD-SAMPLING TIMELINE",
+      ...SAMPLING_TIMELINE.flatMap((s) => [
+        ` • ${s.when}`,
+        `     Samples: ${s.samples.join(", ")}`,
+        `     Notes:   ${s.notes}`,
+      ]),
+      "",
+      "STOPPING CRITERIA — ABSOLUTE (stop immediately)",
+      ...STOPPING_CRITERIA_ABSOLUTE.map((c) => ` • ${c}`),
+      "",
+      "STOPPING CRITERIA — RELATIVE (stop if concerning trend)",
+      ...STOPPING_CRITERIA_RELATIVE.map((c) => ` • ${c}`),
+      "",
+      `MODALITY-SPECIFIC — ${modality === "treadmill" ? "TREADMILL (Modified Bruce)" : "BICYCLE ERGOMETER"}`,
+      " Equipment:",
+      ...(modality === "treadmill" ? TREADMILL_SPEC : BIKE_SPEC).equipment.map(
+        (e) => `   • ${e}`,
+      ),
+      " Setup:",
+      ...(modality === "treadmill" ? TREADMILL_SPEC : BIKE_SPEC).setup.map(
+        (s, i) => `   ${i + 1}. ${s}`,
+      ),
+      " Step-by-step execution:",
+      ...(modality === "treadmill" ? TREADMILL_SPEC : BIKE_SPEC).execution.map(
+        (s, i) => `   ${i + 1}. ${s}`,
+      ),
+      "",
+
       "STAGE-BY-STAGE DATA",
       "-".repeat(60),
       "Stg | Workload         | METs | HR  | SpO₂ | RPE | Lact  | Symptoms     | Done |",
@@ -1475,8 +1626,128 @@ export function ExerciseToleranceTest() {
               </button>
             </div>
           </SectionCard>
+
+          <SectionCard title="Blood-sampling Timeline" icon={Droplets}>
+            <div className="space-y-2 text-xs">
+              {SAMPLING_TIMELINE.map((row) => (
+                <div
+                  key={row.when}
+                  className="rounded-lg border border-border bg-surface/40 p-3"
+                >
+                  <div className="font-semibold text-rose-400">{row.when}</div>
+                  <div className="mt-0.5">
+                    <span className="text-muted-foreground">Samples: </span>
+                    {row.samples.join(", ")}
+                  </div>
+                  <div className="mt-0.5 text-muted-foreground">{row.notes}</div>
+                </div>
+              ))}
+            </div>
+          </SectionCard>
+
+          <SectionCard title="Stopping Criteria" icon={AlertTriangle}>
+            <div className="grid gap-3 md:grid-cols-2">
+              <div className="rounded-lg border border-rose-500/30 bg-rose-500/5 p-3">
+                <div className="mb-2 text-xs font-semibold text-rose-400">
+                  Absolute — stop immediately
+                </div>
+                <ul className="ml-4 list-disc space-y-1 text-xs">
+                  {STOPPING_CRITERIA_ABSOLUTE.map((c) => (
+                    <li key={c}>{c}</li>
+                  ))}
+                </ul>
+              </div>
+              <div className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-3">
+                <div className="mb-2 text-xs font-semibold text-amber-400">
+                  Relative — stop if concerning trend
+                </div>
+                <ul className="ml-4 list-disc space-y-1 text-xs">
+                  {STOPPING_CRITERIA_RELATIVE.map((c) => (
+                    <li key={c}>{c}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </SectionCard>
+
+          <SectionCard
+            title="Modality-specific Setup & Execution"
+            icon={Activity}
+          >
+            <div className="mb-3">
+              <SelectInput
+                label="Choose modality (pre-configures the protocol step)"
+                value={modality}
+                onChange={(v) => setModality(v as Modality)}
+                options={[
+                  { value: "treadmill", label: "Treadmill (Modified Bruce)" },
+                  { value: "bike", label: "Bicycle Ergometer" },
+                ]}
+              />
+            </div>
+            {(["treadmill", "bike"] as const).map((m) => {
+              const spec = m === "treadmill" ? TREADMILL_SPEC : BIKE_SPEC;
+              const active = modality === m;
+              return (
+                <div
+                  key={m}
+                  className={`mt-3 rounded-lg border p-3 text-xs ${
+                    active
+                      ? "border-rose-500/40 bg-rose-500/5"
+                      : "border-border bg-surface/30 opacity-70"
+                  }`}
+                >
+                  <div className="mb-2 flex items-center justify-between">
+                    <div className="text-sm font-semibold">
+                      {m === "treadmill"
+                        ? "Treadmill — Modified Bruce"
+                        : "Bicycle Ergometer"}
+                    </div>
+                    {active && (
+                      <span className="rounded bg-rose-500/15 px-2 py-0.5 text-[10px] font-medium text-rose-400">
+                        Selected
+                      </span>
+                    )}
+                  </div>
+                  <div className="grid gap-3 md:grid-cols-3">
+                    <div>
+                      <div className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                        Required equipment
+                      </div>
+                      <ul className="ml-4 list-disc space-y-0.5">
+                        {spec.equipment.map((e) => (
+                          <li key={e}>{e}</li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div>
+                      <div className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                        Setup
+                      </div>
+                      <ol className="ml-4 list-decimal space-y-0.5">
+                        {spec.setup.map((s) => (
+                          <li key={s}>{s}</li>
+                        ))}
+                      </ol>
+                    </div>
+                    <div>
+                      <div className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                        Step-by-step execution
+                      </div>
+                      <ol className="ml-4 list-decimal space-y-0.5">
+                        {spec.execution.map((s) => (
+                          <li key={s}>{s}</li>
+                        ))}
+                      </ol>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </SectionCard>
         </div>
       )}
+
 
       {/* ========== PROTOCOL ========== */}
       {step === "protocol" && (
