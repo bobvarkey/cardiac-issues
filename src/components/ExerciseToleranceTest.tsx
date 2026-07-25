@@ -359,6 +359,106 @@ function analyzeLactate(stages: StageData[]): string {
   return parts.join(" ");
 }
 
+/* Indications and interpretive thresholds (metabolic myopathy focus) */
+const ETT_INDICATIONS: string[] = [
+  "Exercise intolerance disproportionate to weakness",
+  "Suspected mitochondrial myopathy (CPEO, MELAS, MERRF)",
+  "Evaluation of the second-wind phenomenon in glycogen storage diseases",
+  "Unexplained exertional dyspnoea with normal cardiopulmonary work-up",
+  "Assessment of functional capacity in known metabolic myopathies",
+  "Differentiation between deconditioning and metabolic muscle disease",
+];
+
+const ETT_KEY_INTERPRETATIONS: { title: string; text: string }[] = [
+  {
+    title: "VO₂max",
+    text: "Reduced (<80% predicted) suggests impaired oxidative capacity — seen in mitochondrial myopathies.",
+  },
+  {
+    title: "Lactate threshold",
+    text: "Premature rise (<50% of predicted workload) indicates mitochondrial dysfunction.",
+  },
+  {
+    title: "Excessive lactate",
+    text: ">8–10 mmol/L at submaximal work suggests mitochondrial disease.",
+  },
+  {
+    title: "Lactate : Pyruvate ratio",
+    text: "Elevated (>20:1) supports mitochondrial dysfunction (block at complex I / respiratory chain).",
+  },
+  {
+    title: "Second-wind phenomenon",
+    text: "Improved performance after 8–10 min suggests McArdle disease (glycogenosis V).",
+  },
+  {
+    title: "Normal test",
+    text: "Does not exclude metabolic myopathy — some disorders only manifest during specific activities.",
+  },
+];
+
+interface MitoFlags {
+  pctPredictedVo2: number | null;
+  vo2Reduced: boolean;
+  earlyLactateThreshold: boolean;
+  excessiveSubmaxLactate: boolean;
+  elevatedLpRatio: boolean;
+  worstLpRatio: number | null;
+  secondWindPositive: boolean;
+}
+
+function computeMitoFlags(
+  peakVo2: number,
+  predictedVo2: number,
+  stages: StageData[],
+  totalStages: number,
+  secondWind: SecondWind,
+): MitoFlags {
+  const pctPredictedVo2 = predictedVo2 > 0 ? (peakVo2 / predictedVo2) * 100 : null;
+
+  // Lactate threshold ≈ first stage where lactate ≥ 4 mmol/L (OBLA); early if occurs before 50% of planned stages
+  const thresholdStage = stages.find((s) => s.lactate != null && s.lactate >= 4);
+  const earlyLactateThreshold =
+    !!thresholdStage &&
+    totalStages > 0 &&
+    thresholdStage.stage / totalStages < 0.5;
+
+  // Excessive submax lactate: >8 mmol/L before the last stage
+  const excessiveSubmaxLactate = stages.some(
+    (s, i) =>
+      s.lactate != null && s.lactate > 8 && i < Math.max(0, stages.length - 1),
+  );
+
+  // L:P ratio
+  const ratios = stages
+    .map((s) =>
+      s.lactate != null && s.pyruvate != null && s.pyruvate > 0
+        ? s.lactate / s.pyruvate
+        : null,
+    )
+    .filter((r): r is number => r != null);
+  const worstLpRatio = ratios.length ? Math.max(...ratios) : null;
+  const elevatedLpRatio = worstLpRatio != null && worstLpRatio > 20;
+
+  // Second wind: HR drop or lactate drop/stabilisation with continued exercise around 8–10 min
+  const secondWindPositive =
+    secondWind.tested &&
+    (secondWind.improved ||
+      (secondWind.lactate != null &&
+        stages.some(
+          (s) => s.lactate != null && secondWind.lactate! < s.lactate,
+        )));
+
+  return {
+    pctPredictedVo2,
+    vo2Reduced: pctPredictedVo2 != null && pctPredictedVo2 < 80,
+    earlyLactateThreshold,
+    excessiveSubmaxLactate,
+    elevatedLpRatio,
+    worstLpRatio,
+    secondWindPositive,
+  };
+}
+
 /* -------------------------------------------------------------------------- */
 /* Small reusable UI */
 /* -------------------------------------------------------------------------- */
