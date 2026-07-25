@@ -1,14 +1,13 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
+import jsPDF from "jspdf";
 import {
   Activity,
   AlertTriangle,
   ArrowLeft,
   ArrowRight,
-  BarChart3,
   CheckCircle2,
   ClipboardList,
   Download,
-  Droplets,
   FileText,
   Heart,
   Info,
@@ -40,6 +39,7 @@ interface Patient {
   sex: Sex;
   weightKg: number;
   heightCm: number;
+  restingHr: number;
   suspected: SuspectedDiagnosis;
   orthoLimitations: string;
 }
@@ -50,6 +50,19 @@ interface PrepChecks {
   noSubstances: boolean;
   hydrated: boolean;
   consent: boolean;
+}
+
+interface EquipmentChecks {
+  treadmillOrBike: boolean;
+  ecg: boolean;
+  pulseOx: boolean;
+  bpCuff: boolean;
+  lactateMeter: boolean;
+  vbgSyringes: boolean;
+  cpkTubes: boolean;
+  ammoniaTubes: boolean;
+  ivAccess: boolean;
+  crashCart: boolean;
 }
 
 interface StageData {
@@ -154,6 +167,10 @@ function predictedVo2Max(age: number, sex: Sex): number {
   return 48 - 0.37 * age;
 }
 
+function predictedHRmax(age: number) {
+  return 220 - age;
+}
+
 function categorizeFitness(vo2: number, age: number, sex: Sex): string {
   const pred = predictedVo2Max(age, sex);
   const pct = (vo2 / pred) * 100;
@@ -182,43 +199,32 @@ function analyzeLactate(stages: StageData[]): string {
   ];
 
   const early = lacs.slice(0, Math.min(3, lacs.length));
-  if (early.some((l) => l > 3.5)) {
+  if (early.some((l) => l > 3.5))
     parts.push(
       "Early lactate spike (>3.5 mmol/L at low workload) → suggests impaired oxidative phosphorylation (mitochondrial myopathy possible).",
     );
-  }
-  if (peak > 6.0 && stages.length <= 3) {
+  if (peak > 6.0 && stages.length <= 3)
     parts.push(
       "Severe lactic acidosis (>6 mmol/L) at modest workload → highly suspicious for mitochondrial disease.",
     );
-  }
-  if (peak < 2.0 && baseline <= 1.5 && lacs.length >= 3) {
+  if (peak < 2.0 && baseline <= 1.5 && lacs.length >= 3)
     parts.push(
       "Completely flat lactate curve (<2 mmol/L) despite rising workload → classic for blocked glycogenolysis (McArdle disease / GSD V).",
     );
-  }
-  if (hrs.length >= 3 && hrs[2] <= hrs[1]) {
+  if (hrs.length >= 3 && hrs[2] <= hrs[1])
     parts.push(
       "Heart-rate plateau or drop after ~6–9 min may represent the 'second-wind' phenomenon (supports McArdle).",
     );
-  }
 
-  if (parts.length === 1) {
+  if (parts.length === 1)
     parts.push(
       "No clear mitochondrial or glycogen-storage signature; clinical correlation required.",
     );
-  }
   return parts.join(" ");
 }
 
-function formatTime(minutes: number): string {
-  const m = Math.floor(minutes);
-  const s = Math.round((minutes - m) * 60);
-  return `${m}:${s.toString().padStart(2, "0")}`;
-}
-
 /* -------------------------------------------------------------------------- */
-/* Sub-components */
+/* Small reusable UI */
 /* -------------------------------------------------------------------------- */
 
 function ProgressBar({ current, total }: { current: number; total: number }) {
@@ -319,19 +325,17 @@ function NumberInput({
           </span>
         )}
       </span>
-      <div className="relative">
-        <input
-          type="number"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder={placeholder}
-          min={min}
-          max={max}
-          step={step}
-          disabled={disabled}
-          className="w-full rounded-lg border border-border bg-surface/40 px-3 py-2 text-sm focus:border-rose-500 focus:outline-none focus:ring-1 focus:ring-rose-500/30 disabled:opacity-40"
-        />
-      </div>
+      <input
+        type="number"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        min={min}
+        max={max}
+        step={step}
+        disabled={disabled}
+        className="w-full rounded-lg border border-border bg-surface/40 px-3 py-2 text-sm focus:border-rose-500 focus:outline-none focus:ring-1 focus:ring-rose-500/30 disabled:opacity-40"
+      />
     </label>
   );
 }
@@ -368,8 +372,41 @@ function SelectInput({
   );
 }
 
+function InfoPopover({
+  title,
+  children,
+  className = "",
+}: {
+  title: string;
+  children: React.ReactNode;
+  className?: string;
+}) {
+  const [open, setOpen] = useState(false);
+  return (
+    <span className={`relative inline-block ${className}`}>
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        onBlur={() => setTimeout(() => setOpen(false), 150)}
+        className="inline-flex h-4 w-4 items-center justify-center rounded-full text-muted-foreground hover:text-rose-400"
+        aria-label={title}
+      >
+        <Info className="h-3.5 w-3.5" />
+      </button>
+      {open && (
+        <span className="absolute left-1/2 top-6 z-30 w-72 -translate-x-1/2 rounded-lg border border-border bg-popover p-3 text-xs text-popover-foreground shadow-xl">
+          <span className="mb-1 block text-xs font-semibold text-rose-400">
+            {title}
+          </span>
+          <span className="block leading-relaxed">{children}</span>
+        </span>
+      )}
+    </span>
+  );
+}
+
 /* -------------------------------------------------------------------------- */
-/* Lactate Curve Chart (simple SVG) */
+/* Lactate curve with reference lines */
 /* -------------------------------------------------------------------------- */
 
 function LactateCurve({ stages }: { stages: StageData[] }) {
@@ -385,61 +422,83 @@ function LactateCurve({ stages }: { stages: StageData[] }) {
     );
   }
 
-  const W = 320;
-  const H = 160;
-  const pad = { top: 16, right: 16, bottom: 28, left: 36 };
+  const W = 360;
+  const H = 180;
+  const pad = { top: 12, right: 12, bottom: 30, left: 38 };
   const iw = W - pad.left - pad.right;
   const ih = H - pad.top - pad.bottom;
 
-  const maxLac = Math.max(...data.map((d) => d.lactate)) * 1.15;
-  const minLac = Math.min(...data.map((d) => d.lactate)) * 0.85;
-  const lacRange = maxLac - minLac || 1;
+  const maxLac = Math.max(6.5, ...data.map((d) => d.lactate)) * 1.1;
+  const lacRange = maxLac || 1;
   const maxStage = Math.max(...data.map((d) => d.stage));
 
-  const xScale = (s: number) => pad.left + (s / maxStage) * iw;
-  const yScale = (l: number) => pad.top + ih - ((l - minLac) / lacRange) * ih;
+  const xScale = (s: number) => pad.left + ((s - 1) / Math.max(1, maxStage - 1)) * iw;
+  const yScale = (l: number) => pad.top + ih - (l / lacRange) * ih;
 
   const points = data.map((d) => `${xScale(d.stage)},${yScale(d.lactate)}`).join(" ");
 
-  const yTicks = 4;
-  const yLabels = Array.from({ length: yTicks + 1 }, (_, i) =>
-    (minLac + (lacRange / yTicks) * i).toFixed(1),
-  );
+  const refs = [
+    { y: 2, label: "AT ~2", color: "#38bdf8" },
+    { y: 4, label: "OBLA ~4", color: "#fbbf24" },
+    { y: 6, label: "Severe ≥6", color: "#f43f5e" },
+  ];
 
   return (
     <div className="overflow-x-auto">
-      <svg viewBox={`0 0 ${W} ${H}`} className="w-full max-w-[360px]">
-        {/* Grid lines */}
-        {yLabels.map((_, i) => {
-          const y = pad.top + (ih / yTicks) * i;
-          return (
-            <g key={i}>
+      <svg viewBox={`0 0 ${W} ${H}`} className="w-full max-w-[420px]">
+        {[0, 2, 4, 6, 8, 10].filter((v) => v <= maxLac).map((v) => (
+          <g key={v}>
+            <line
+              x1={pad.left}
+              y1={yScale(v)}
+              x2={W - pad.right}
+              y2={yScale(v)}
+              stroke="currentColor"
+              className="text-border"
+              strokeWidth={0.5}
+            />
+            <text
+              x={pad.left - 4}
+              y={yScale(v) + 3}
+              textAnchor="end"
+              className="fill-muted-foreground"
+              fontSize={9}
+            >
+              {v}
+            </text>
+          </g>
+        ))}
+
+        {refs.map((r) =>
+          r.y < maxLac ? (
+            <g key={r.y}>
               <line
                 x1={pad.left}
-                y1={y}
+                y1={yScale(r.y)}
                 x2={W - pad.right}
-                y2={y}
-                stroke="currentColor"
-                className="text-border"
-                strokeWidth={0.5}
+                y2={yScale(r.y)}
+                stroke={r.color}
+                strokeDasharray="3 3"
+                strokeWidth={1}
+                opacity={0.6}
               />
               <text
-                x={pad.left - 4}
-                y={y + 3}
+                x={W - pad.right - 2}
+                y={yScale(r.y) - 3}
                 textAnchor="end"
-                className="fill-muted-foreground"
-                fontSize={9}
+                fill={r.color}
+                fontSize={8.5}
+                opacity={0.9}
               >
-                {yLabels[yTicks - i]}
+                {r.label}
               </text>
             </g>
-          );
-        })}
+          ) : null,
+        )}
 
-        {/* Axes labels */}
         <text
           x={W / 2}
-          y={H - 2}
+          y={H - 4}
           textAnchor="middle"
           className="fill-muted-foreground"
           fontSize={9}
@@ -457,7 +516,6 @@ function LactateCurve({ stages }: { stages: StageData[] }) {
           Lactate (mmol/L)
         </text>
 
-        {/* Line */}
         <polyline
           points={points}
           fill="none"
@@ -465,8 +523,6 @@ function LactateCurve({ stages }: { stages: StageData[] }) {
           strokeWidth={2}
           strokeLinejoin="round"
         />
-
-        {/* Dots */}
         {data.map((d, i) => (
           <circle
             key={i}
@@ -474,7 +530,6 @@ function LactateCurve({ stages }: { stages: StageData[] }) {
             cy={yScale(d.lactate)}
             r={3.5}
             fill="#f43f5e"
-            className="drop-shadow-sm"
           />
         ))}
       </svg>
@@ -483,7 +538,299 @@ function LactateCurve({ stages }: { stages: StageData[] }) {
 }
 
 /* -------------------------------------------------------------------------- */
-/* Main Component */
+/* HR chart with rich tooltip + predicted HRmax overlay */
+/* -------------------------------------------------------------------------- */
+
+function HRChart({
+  stages,
+  modality,
+  age,
+}: {
+  stages: StageData[];
+  modality: Modality;
+  age: number;
+}) {
+  const stageDefs = modality === "treadmill" ? BRUCE_STAGES : BIKE_STAGES;
+  const [hovered, setHovered] = useState<number | null>(null);
+  const svgRef = useRef<SVGSVGElement>(null);
+
+  const data = stages
+    .filter((s) => s.heartRate != null)
+    .map((s) => {
+      const def = stageDefs[s.stage - 1];
+      const workload =
+        modality === "treadmill" && def
+          ? `${(def as (typeof BRUCE_STAGES)[number]).speed} mph @ ${(def as (typeof BRUCE_STAGES)[number]).grade}%`
+          : def
+            ? `${(def as (typeof BIKE_STAGES)[number]).watts} W`
+            : "—";
+      return {
+        stage: s.stage,
+        hr: s.heartRate as number,
+        mets: def?.mets ?? 0,
+        workload,
+        time: s.stage * 3,
+      };
+    });
+
+  if (data.length < 1)
+    return (
+      <div className="flex items-center justify-center rounded-lg border border-dashed border-border py-8 text-xs text-muted-foreground">
+        Enter at least one HR to see the chart.
+      </div>
+    );
+
+  const W = 420;
+  const H = 200;
+  const pad = { top: 12, right: 14, bottom: 30, left: 38 };
+  const iw = W - pad.left - pad.right;
+  const ih = H - pad.top - pad.bottom;
+
+  const hrMax = predictedHRmax(age);
+  const yMax = Math.max(hrMax + 15, ...data.map((d) => d.hr)) * 1.05;
+  const maxStage = Math.max(...data.map((d) => d.stage), 2);
+
+  const xScale = (s: number) => pad.left + ((s - 1) / Math.max(1, maxStage - 1)) * iw;
+  const yScale = (v: number) => pad.top + ih - (v / yMax) * ih;
+
+  const points = data.map((d) => `${xScale(d.stage)},${yScale(d.hr)}`).join(" ");
+
+  return (
+    <div className="relative">
+      <svg
+        ref={svgRef}
+        viewBox={`0 0 ${W} ${H}`}
+        className="w-full max-w-[480px]"
+        onMouseLeave={() => setHovered(null)}
+      >
+        {[0, 60, 100, 140, 180, 220].filter((v) => v <= yMax).map((v) => (
+          <g key={v}>
+            <line
+              x1={pad.left}
+              y1={yScale(v)}
+              x2={W - pad.right}
+              y2={yScale(v)}
+              stroke="currentColor"
+              className="text-border"
+              strokeWidth={0.5}
+            />
+            <text
+              x={pad.left - 4}
+              y={yScale(v) + 3}
+              textAnchor="end"
+              className="fill-muted-foreground"
+              fontSize={9}
+            >
+              {v}
+            </text>
+          </g>
+        ))}
+
+        {/* Predicted HRmax line */}
+        <line
+          x1={pad.left}
+          y1={yScale(hrMax)}
+          x2={W - pad.right}
+          y2={yScale(hrMax)}
+          stroke="#fbbf24"
+          strokeDasharray="4 3"
+          strokeWidth={1.2}
+        />
+        <text
+          x={W - pad.right - 2}
+          y={yScale(hrMax) - 3}
+          textAnchor="end"
+          fill="#fbbf24"
+          fontSize={9}
+        >
+          Predicted HRmax {hrMax}
+        </text>
+
+        <text
+          x={W / 2}
+          y={H - 4}
+          textAnchor="middle"
+          className="fill-muted-foreground"
+          fontSize={9}
+        >
+          Stage
+        </text>
+        <text
+          x={10}
+          y={H / 2}
+          textAnchor="middle"
+          className="fill-muted-foreground"
+          fontSize={9}
+          transform={`rotate(-90, 10, ${H / 2})`}
+        >
+          HR (bpm)
+        </text>
+
+        <polyline
+          points={points}
+          fill="none"
+          stroke="#f43f5e"
+          strokeWidth={2}
+          strokeLinejoin="round"
+        />
+        {data.map((d, i) => (
+          <circle
+            key={i}
+            cx={xScale(d.stage)}
+            cy={yScale(d.hr)}
+            r={hovered === i ? 5 : 3.5}
+            fill="#f43f5e"
+            onMouseEnter={() => setHovered(i)}
+            style={{ cursor: "pointer" }}
+          />
+        ))}
+      </svg>
+
+      {hovered !== null && data[hovered] && (
+        <div
+          className="pointer-events-none absolute z-20 rounded-lg border border-border bg-popover px-3 py-2 text-[11px] shadow-xl"
+          style={{
+            left: `${(xScale(data[hovered].stage) / W) * 100}%`,
+            top: 4,
+            transform: "translateX(-50%)",
+            minWidth: 160,
+          }}
+        >
+          <div className="mb-1 font-semibold text-rose-400">
+            Stage {data[hovered].stage} · {data[hovered].time} min
+          </div>
+          <div>Workload: {data[hovered].workload}</div>
+          <div>METs: {data[hovered].mets.toFixed(1)}</div>
+          <div>HR: {data[hovered].hr} bpm</div>
+          <div>Predicted HRmax: {hrMax}</div>
+          <div className="mt-0.5 text-fuchsia-400">
+            {((data[hovered].hr / hrMax) * 100).toFixed(0)}% of predicted
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/* RPE chart */
+/* -------------------------------------------------------------------------- */
+
+function RPEChart({ stages }: { stages: StageData[] }) {
+  const data = stages
+    .filter((s) => s.rpe != null)
+    .map((s) => ({ stage: s.stage, rpe: s.rpe as number }));
+  if (data.length < 1)
+    return (
+      <div className="flex items-center justify-center rounded-lg border border-dashed border-border py-8 text-xs text-muted-foreground">
+        No RPE recorded.
+      </div>
+    );
+  const W = 360;
+  const H = 160;
+  const pad = { top: 12, right: 12, bottom: 28, left: 32 };
+  const iw = W - pad.left - pad.right;
+  const ih = H - pad.top - pad.bottom;
+  const maxStage = Math.max(...data.map((d) => d.stage), 2);
+  const xScale = (s: number) => pad.left + ((s - 1) / Math.max(1, maxStage - 1)) * iw;
+  const yScale = (v: number) => pad.top + ih - ((v - 6) / 14) * ih;
+  const points = data.map((d) => `${xScale(d.stage)},${yScale(d.rpe)}`).join(" ");
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} className="w-full max-w-[420px]">
+      {[6, 10, 14, 18, 20].map((v) => (
+        <g key={v}>
+          <line
+            x1={pad.left}
+            y1={yScale(v)}
+            x2={W - pad.right}
+            y2={yScale(v)}
+            stroke="currentColor"
+            className="text-border"
+            strokeWidth={0.5}
+          />
+          <text
+            x={pad.left - 4}
+            y={yScale(v) + 3}
+            textAnchor="end"
+            className="fill-muted-foreground"
+            fontSize={9}
+          >
+            {v}
+          </text>
+        </g>
+      ))}
+      <polyline
+        points={points}
+        fill="none"
+        stroke="#a855f7"
+        strokeWidth={2}
+        strokeLinejoin="round"
+      />
+      {data.map((d, i) => (
+        <circle key={i} cx={xScale(d.stage)} cy={yScale(d.rpe)} r={3.5} fill="#a855f7" />
+      ))}
+      <text
+        x={10}
+        y={H / 2}
+        textAnchor="middle"
+        className="fill-muted-foreground"
+        fontSize={9}
+        transform={`rotate(-90, 10, ${H / 2})`}
+      >
+        Borg RPE
+      </text>
+    </svg>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/* Formula explainer (always shown) */
+/* -------------------------------------------------------------------------- */
+
+function MethodExplainer() {
+  return (
+    <div className="rounded-lg border border-border bg-surface/40 p-4 text-xs leading-relaxed">
+      <h4 className="mb-2 text-sm font-semibold text-rose-400">
+        How the Estimated VO₂max is calculated
+      </h4>
+      <p className="mb-2">
+        VO₂max is <em>estimated</em> from time-to-exhaustion (treadmill) or peak
+        workload (bike). This is a prediction — not a gas-exchange measurement.
+      </p>
+      <ul className="ml-4 list-disc space-y-1">
+        <li>
+          <strong>T</strong> = total time to exhaustion on the treadmill in{" "}
+          <em>decimal minutes</em>. Convert seconds by dividing by 60. Examples:
+          9 min 15 s → 9.25 min; 7 min 30 s → 7.50 min; 10 min 45 s → 10.75 min.
+        </li>
+        <li>
+          <strong>Bruce (men):</strong> VO₂ = 14.76 − 1.379·T + 0.451·T² −
+          0.012·T³
+        </li>
+        <li>
+          <strong>Bruce (women):</strong> VO₂ = 4.38·T − 3.9
+        </li>
+        <li>
+          <strong>Bicycle:</strong> VO₂ = (10.8 × Watts / body-mass kg) + 7
+        </li>
+        <li>
+          <strong>METs conversion:</strong> METs = VO₂ ÷ 3.5 (1 MET ≈ 3.5
+          mL/kg/min)
+        </li>
+        <li>
+          <strong>Predicted HRmax:</strong> 220 − age
+        </li>
+      </ul>
+      <p className="mt-2 text-amber-400">
+        Caveat: estimated only — a metabolic cart (gas exchange) is required for
+        true VO₂max.
+      </p>
+    </div>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/* Main */
 /* -------------------------------------------------------------------------- */
 
 export function ExerciseToleranceTest() {
@@ -491,18 +838,17 @@ export function ExerciseToleranceTest() {
     "patient" | "prep" | "protocol" | "recovery" | "report"
   >("patient");
 
-  /* ---- Patient ---- */
   const [patient, setPatient] = useState<Patient>({
     name: "",
     age: 0,
     sex: "M",
     weightKg: 70,
     heightCm: 170,
+    restingHr: 70,
     suspected: "unspecified",
     orthoLimitations: "",
   });
 
-  /* ---- Pre-test ---- */
   const [prepChecks, setPrepChecks] = useState<PrepChecks>({
     fasted: false,
     noExercise: false,
@@ -510,18 +856,27 @@ export function ExerciseToleranceTest() {
     hydrated: false,
     consent: false,
   });
+  const [equipment, setEquipment] = useState<EquipmentChecks>({
+    treadmillOrBike: false,
+    ecg: false,
+    pulseOx: false,
+    bpCuff: false,
+    lactateMeter: false,
+    vbgSyringes: false,
+    cpkTubes: false,
+    ammoniaTubes: false,
+    ivAccess: false,
+    crashCart: false,
+  });
   const [preCpk, setPreCpk] = useState<number | null>(null);
 
-  /* ---- Protocol ---- */
   const [modality, setModality] = useState<Modality>("treadmill");
-  const [samplingMethod, setSamplingMethod] =
-    useState<SamplingMethod>("capillary");
+  const [samplingMethod, setSamplingMethod] = useState<SamplingMethod>("capillary");
   const [stages, setStages] = useState<StageData[]>([]);
   const [currentStageIdx, setCurrentStageIdx] = useState(0);
   const [terminatedEarly, setTerminatedEarly] = useState(false);
   const [terminationReason, setTerminationReason] = useState("");
 
-  /* ---- Recovery ---- */
   const [postCpk, setPostCpk] = useState<number | null>(null);
   const [recoveryVitals, setRecoveryVitals] = useState<VitalsRecovery>({
     hr: null,
@@ -531,7 +886,6 @@ export function ExerciseToleranceTest() {
   });
   const [recoveryDone, setRecoveryDone] = useState(false);
 
-  /* ---- Current stage form ---- */
   const [hr, setHr] = useState("");
   const [rpe, setRpe] = useState("");
   const [lactate, setLactate] = useState("");
@@ -542,9 +896,7 @@ export function ExerciseToleranceTest() {
   const [pco2, setPco2] = useState("");
   const [po2, setPo2] = useState("");
 
-  /* ---- Computed ---- */
-  const totalSteps = 5; // patient, prep, protocol, recovery, report
-
+  const totalSteps = 5;
   const stageDefs = modality === "treadmill" ? BRUCE_STAGES : BIKE_STAGES;
   const currentStageDef = stageDefs[currentStageIdx];
 
@@ -553,27 +905,50 @@ export function ExerciseToleranceTest() {
     const last = stages[stages.length - 1];
     const idx = last.stage - 1;
     if (modality === "treadmill") {
-      const T = idx + 1;
+      const T = (idx + 1) * 3; // Each Bruce stage = 3 min → T in decimal minutes
       const vo2 =
-        patient.sex === "M"
-          ? vo2BruceMen(T)
-          : vo2BruceWomen(T);
-      return { vo2, mets: metsFromVo2(vo2) };
+        patient.sex === "M" ? vo2BruceMen(T) : vo2BruceWomen(T);
+      return { vo2, mets: metsFromVo2(vo2), T, watts: null as number | null };
     } else {
       const watts = BIKE_STAGES[idx]?.watts ?? 0;
       const vo2 = vo2FromBike(watts, patient.weightKg);
-      return { vo2, mets: metsFromVo2(vo2) };
+      return { vo2, mets: metsFromVo2(vo2), T: null as number | null, watts };
     }
   }, [stages, modality, patient.sex, patient.weightKg]);
 
   const peakVo2 = computedVo2?.vo2 ?? 0;
   const peakMets = computedVo2?.mets ?? 0;
-  const fitness = peakVo2
-    ? categorizeFitness(peakVo2, patient.age, patient.sex)
-    : "";
+  const fitness = peakVo2 ? categorizeFitness(peakVo2, patient.age, patient.sex) : "";
+
+  const hrValues = stages.map((s) => s.heartRate).filter((h): h is number => h != null);
+  const rpeValues = stages.map((s) => s.rpe).filter((r): r is number => r != null);
+  const peakHR = hrValues.length ? Math.max(...hrValues) : 0;
+  const peakRpe = rpeValues.length ? Math.max(...rpeValues) : 0;
+  const hrMax = predictedHRmax(patient.age);
+  const pctHRmax = peakHR && hrMax ? (peakHR / hrMax) * 100 : 0;
+  const chronotropicIndex =
+    peakHR && patient.restingHr && hrMax > patient.restingHr
+      ? (peakHR - patient.restingHr) / (hrMax - patient.restingHr)
+      : 0;
+  const chronotropicInterp =
+    chronotropicIndex >= 0.8
+      ? "Normal chronotropic response"
+      : chronotropicIndex >= 0.6
+        ? "Borderline chronotropic response"
+        : chronotropicIndex > 0
+          ? "Chronotropic incompetence (CI < 0.8)"
+          : "—";
+  const hrAlert =
+    pctHRmax >= 100
+      ? { level: "high", msg: "Peak HR ≥ predicted HRmax — near-maximal effort." }
+      : pctHRmax > 0 && pctHRmax < 75
+        ? {
+            level: "low",
+            msg: "Peak HR < 75% of predicted — sub-maximal effort or chronotropic issue.",
+          }
+        : null;
 
   /* ---- Handlers ---- */
-
   function addStage() {
     const stageNum = currentStageIdx + 1;
     const data: StageData = {
@@ -590,7 +965,6 @@ export function ExerciseToleranceTest() {
     };
     setStages((prev) => [...prev, data]);
     setCurrentStageIdx((prev) => prev + 1);
-    // Reset form
     setHr("");
     setRpe("");
     setLactate("");
@@ -603,10 +977,7 @@ export function ExerciseToleranceTest() {
   }
 
   function finishProtocol() {
-    // Add current stage if data entered
-    if (hr || lactate || rpe) {
-      addStage();
-    }
+    if (hr || lactate || rpe) addStage();
     setStep("recovery");
   }
 
@@ -623,6 +994,7 @@ export function ExerciseToleranceTest() {
       sex: "M",
       weightKg: 70,
       heightCm: 170,
+      restingHr: 70,
       suspected: "unspecified",
       orthoLimitations: "",
     });
@@ -632,6 +1004,18 @@ export function ExerciseToleranceTest() {
       noSubstances: false,
       hydrated: false,
       consent: false,
+    });
+    setEquipment({
+      treadmillOrBike: false,
+      ecg: false,
+      pulseOx: false,
+      bpCuff: false,
+      lactateMeter: false,
+      vbgSyringes: false,
+      cpkTubes: false,
+      ammoniaTubes: false,
+      ivAccess: false,
+      crashCart: false,
     });
     setPreCpk(null);
     setModality("treadmill");
@@ -658,114 +1042,189 @@ export function ExerciseToleranceTest() {
     window.print();
   }
 
-  function downloadProtocolSheet() {
+  function buildProtocolText(): string {
     const now = new Date();
-    const dateStr = now.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "numeric",
-      day: "numeric",
-    });
-    const timeStr = now.toLocaleTimeString("en-US", {
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true,
-    });
+    const dateStr = now.toLocaleDateString();
+    const timeStr = now.toLocaleTimeString();
 
-    const stageDefs = modality === "treadmill" ? BRUCE_STAGES : BIKE_STAGES;
-
-    const stageTable = stageDefs
+    const defs = modality === "treadmill" ? BRUCE_STAGES : BIKE_STAGES;
+    const stageTable = defs
       .map((s, i) => {
         const recorded = stages.find((st) => st.stage === i + 1);
         const workload =
           modality === "treadmill"
             ? `${(s as (typeof BRUCE_STAGES)[number]).speed} mph @ ${(s as (typeof BRUCE_STAGES)[number]).grade}%`
             : `${(s as (typeof BIKE_STAGES)[number]).watts} W`;
-        const hr = recorded?.heartRate ?? "";
-        const sao2 = recorded?.sao2 ?? "";
-        const rpe = recorded?.rpe ?? "";
+        const hrv = recorded?.heartRate ?? "";
+        const sao2v = recorded?.sao2 ?? "";
+        const rpev = recorded?.rpe ?? "";
         const lac = recorded?.lactate ?? "";
         const sym = recorded?.symptoms ?? "";
         const done = recorded ? "X" : "";
         const pad = (v: string | number, w: number) => String(v).padEnd(w);
-        return `| ${pad(i + 1, 2)} | ${pad(workload, 16)} | ${pad(s.mets, 4)} | ${pad(hr, 3)} | ${pad(sao2, 3)} | ${pad(rpe, 2)} | ${pad(lac, 5)} | ${pad(sym, 12)} | ${pad(done, 3)} |`;
+        return `| ${pad(i + 1, 2)} | ${pad(workload, 16)} | ${pad(s.mets, 4)} | ${pad(hrv, 3)} | ${pad(sao2v, 3)} | ${pad(rpev, 2)} | ${pad(lac, 5)} | ${pad(sym, 12)} | ${pad(done, 3)} |`;
       })
       .join("\n");
 
+    const samplingLabel =
+      samplingMethod === "capillary"
+        ? "Capillary (fingertip / earlobe)"
+        : samplingMethod === "iv_lactate"
+          ? "IV line — Lactate only"
+          : "IV line — Full Venous Blood Gas (VBG)";
+
     const lines = [
-      "=" .repeat(58),
+      "=".repeat(60),
       "EXERCISE TOLERANCE TEST — PROTOCOL SHEET",
-      "=" .repeat(58),
-      `Date: ${dateStr}, ${timeStr}`,
+      "=".repeat(60),
+      `Date: ${dateStr} ${timeStr}`,
       "",
       "PATIENT",
       ` Name: ${patient.name || "____________________"}`,
-      ` Age: ${patient.age || "____"}  Sex: ${patient.sex === "M" ? "Male" : "Female"}  Weight: ${patient.weightKg || "___"} kg`,
+      ` Age: ${patient.age || "____"}  Sex: ${patient.sex === "M" ? "Male" : "Female"}  Weight: ${patient.weightKg || "___"} kg  Height: ${patient.heightCm || "___"} cm`,
+      ` Resting HR: ${patient.restingHr} bpm`,
       ` Suspected diagnosis: ${patient.suspected.replace(/_/g, " ")}`,
       ` Orthopaedic limitations: ${patient.orthoLimitations || "None"}`,
       "",
       `MODALITY: ${modality === "treadmill" ? "Treadmill — Modified Bruce" : "Bicycle Ergometer"}`,
-      `SAMPLING METHOD: ${
-        samplingMethod === "capillary"
-          ? "Capillary (fingertip / earlobe)"
-          : samplingMethod === "iv_lactate"
-            ? "IV line — Lactate only"
-            : "IV line — Full Venous Blood Gas (VBG)"
-      }`,
+      `SAMPLING METHOD: ${samplingLabel}`,
+      "",
+      "REQUIRED EQUIPMENT & BLOOD TESTS",
+      " [ ] Treadmill or bicycle ergometer",
+      " [ ] 12-lead ECG monitor (continuous)",
+      " [ ] Pulse oximeter (SpO₂)",
+      " [ ] Sphygmomanometer / automated BP cuff",
+      " [ ] Point-of-care lactate meter + strips",
+      " [ ] VBG syringes (if IV / VBG sampling)",
+      " [ ] CPK tubes (pre-test + 24 h post)",
+      " [ ] Ammonia tubes (on ice — for forearm/exercise tests)",
+      " [ ] IV access + saline flush",
+      " [ ] Crash cart / defibrillator / oxygen",
+      " [ ] Rating of Perceived Exertion (Borg 6–20) chart",
+      "",
+      "PRE-TEST PREPARATION CHECKLIST",
+      ` [${prepChecks.fasted ? "X" : " "}] Fasted 4–6 h`,
+      ` [${prepChecks.noExercise ? "X" : " "}] No strenuous exercise in last 24–48 h`,
+      ` [${prepChecks.noSubstances ? "X" : " "}] No caffeine / nicotine / alcohol in last 12 h`,
+      ` [${prepChecks.hydrated ? "X" : " "}] Adequate hydration until 1 h before test`,
+      ` [${prepChecks.consent ? "X" : " "}] Informed consent obtained`,
+      "",
+      "CPK (Creatine Kinase)",
+      ` Pre-test CPK: ${preCpk !== null ? `${preCpk} U/L` : "___ U/L"}`,
+      ` Post-test CPK (24 h): ${postCpk !== null ? `${postCpk} U/L` : "___ U/L"}`,
       "",
       "PROTOCOL NOTE",
       " Each stage = 3 minutes. Sample lactate in the last 30 s of the stage.",
-      " Mark the stage complete when finished.",
+      " Continuous ECG + BP monitoring; record HR, SpO₂, RPE, symptoms every stage.",
       "",
-      "PRE-TEST PREPARATION CHECKLIST",
-      ` [${prepChecks.fasted ? "X" : " "}] Fasted 4-6 h (no heavy carbohydrate meal)`,
-      ` [${prepChecks.noExercise ? "X" : " "}] No strenuous exercise in last 24-48 h`,
-      ` [${prepChecks.noSubstances ? "X" : " "}] No caffeine / nicotine / alcohol in last 12 h`,
-      ` [${prepChecks.hydrated ? "X" : " "}] Adequate hydration until 1 h before test`,
-      ` [${prepChecks.consent ? "X" : " "}] Patient understands test & has given consent`,
-      "",
-      "PRE-TEST CPK (Creatine Kinase)",
-      ` Pre-test CPK: ${preCpk !== null ? `${preCpk} U/L` : "___ U/L"}`,
-      ` Post-test CPK: ${postCpk !== null ? `${postCpk} U/L` : "___ U/L"} (timing: 24h)`,
-      "",
-      "STAGE-BY-STAGE DATA (each stage = 3 min)",
-      "-".repeat(58),
-      "Stg | Workload         | METs | HR  | SaO2 | RPE | Lactate | Symptoms     | Done |",
-      "-".repeat(58),
+      "STAGE-BY-STAGE DATA",
+      "-".repeat(60),
+      "Stg | Workload         | METs | HR  | SpO₂ | RPE | Lact  | Symptoms     | Done |",
+      "-".repeat(60),
       stageTable,
-      "-".repeat(58),
+      "-".repeat(60),
       "",
       `Early termination: ${terminatedEarly ? `Yes — ${terminationReason || "Not specified"}` : "No"}`,
       `Recovery completed: ${recoveryDone ? "Yes" : "No"}`,
       "",
+      "RECOVERY VITALS",
+      ` HR (1 min): ${recoveryVitals.hr ?? "—"} bpm`,
+      ` Lactate: ${recoveryVitals.lactate != null ? `${recoveryVitals.lactate} mmol/L` : "—"}`,
+      ` SpO₂: ${recoveryVitals.sao2 != null ? `${recoveryVitals.sao2}%` : "—"}`,
+      ` Symptoms: ${recoveryVitals.symptoms || "—"}`,
+      "",
+      "RESULTS",
+      ` Peak VO₂ (estimated): ${peakVo2.toFixed(1)} mL/kg/min`,
+      ` Peak METs: ${peakMets.toFixed(1)}`,
+      ` Predicted VO₂max: ${predictedVo2Max(patient.age, patient.sex).toFixed(1)} mL/kg/min`,
+      ` Fitness category: ${fitness || "—"}`,
+      ` Peak HR: ${peakHR || "—"} bpm  (${pctHRmax ? pctHRmax.toFixed(0) : "—"}% of predicted 220-age = ${hrMax})`,
+      ` Chronotropic index: ${chronotropicIndex ? chronotropicIndex.toFixed(2) : "—"} (${chronotropicInterp})`,
+      ` Peak RPE: ${peakRpe || "—"}`,
+      "",
+      "HOW THE ESTIMATED VO₂MAX WAS CALCULATED",
+      " Method: submaximal / peak-workload prediction (not gas-exchange measurement).",
+      " T = total time to exhaustion on the treadmill in DECIMAL MINUTES.",
+      "   Examples: 9 min 15 s → 9.25 min; 7 min 30 s → 7.50 min; 10 min 45 s → 10.75 min.",
+      " Formulas:",
+      "   Bruce (men)   : VO₂ = 14.76 − 1.379·T + 0.451·T² − 0.012·T³",
+      "   Bruce (women) : VO₂ = 4.38·T − 3.9",
+      "   Bicycle       : VO₂ = (10.8 × Watts / body-mass kg) + 7",
+      " METs conversion: METs = VO₂ / 3.5",
+      " Predicted HRmax: 220 − age",
+      "",
+      "INPUTS USED FOR THIS PATIENT",
+      ` Sex: ${patient.sex === "M" ? "Male" : "Female"}`,
+      ` Age: ${patient.age} y`,
+      ` Body mass: ${patient.weightKg} kg`,
+      ` Modality: ${modality === "treadmill" ? "Modified Bruce Treadmill" : "Bicycle Ergometer"}`,
+      modality === "treadmill"
+        ? ` T (decimal minutes): ${computedVo2?.T ?? "—"}`
+        : ` Peak workload: ${computedVo2?.watts ?? "—"} W`,
+      ` VO₂: ${peakVo2.toFixed(1)} mL/kg/min`,
+      ` METs: ${peakMets.toFixed(1)}`,
+      ` Category: ${fitness || "—"}`,
+      "",
+      " Caveat: this VO₂max is ESTIMATED (not gas-exchange measured).",
+      "",
+      "LACTATE PATTERN",
+      ` ${analyzeLactate(stages)}`,
+      "",
+      "EXERCISE TOLERANCE — CLINICAL MEANING",
+      " Exercise tolerance = how much work the body can handle before stopping.",
+      " Assessed by: total exercise time, estimated VO₂/METs, HR response, RPE,",
+      " symptoms forcing stop. In metabolic muscle disease tolerance is often",
+      " reduced due to early fatigue/pain rather than heart or lung disease.",
+      " This test therefore provides BOTH exercise-tolerance data AND a lactate",
+      " curve pointing to the type of metabolic problem.",
       "",
       "Signature (clinician): ______________________________",
-      "",
-      "-".repeat(58),
-      "This protocol sheet supports clinical reasoning only. It does not replace full diagnostic workup.",
+      "-".repeat(60),
+      "For educational reference only. Not a substitute for clinical judgment.",
     ];
+    return lines.join("\n");
+  }
 
-    const blob = new Blob([lines.join("\n")], { type: "text/plain;charset=utf-8" });
+  function downloadProtocolTxt() {
+    const text = buildProtocolText();
+    const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `ett-protocol-${patient.name.replace(/\s+/g, "-") || "unnamed"}-${dateStr.replace(/\//g, "-")}.txt`;
+    a.download = `ett-protocol-${patient.name.replace(/\s+/g, "-") || "unnamed"}.txt`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   }
 
-  /* ---- Safety check ---- */
+  function downloadProtocolPdf() {
+    const text = buildProtocolText();
+    const doc = new jsPDF({ unit: "pt", format: "letter" });
+    doc.setFont("courier", "normal");
+    doc.setFontSize(9);
+    const lineHeight = 11;
+    const margin = 36;
+    const pageHeight = doc.internal.pageSize.getHeight();
+    let y = margin;
+    text.split("\n").forEach((line) => {
+      if (y > pageHeight - margin) {
+        doc.addPage();
+        y = margin;
+      }
+      doc.text(line || " ", margin, y);
+      y += lineHeight;
+    });
+    doc.save(`ett-protocol-${patient.name.replace(/\s+/g, "-") || "unnamed"}.pdf`);
+  }
+
   const allPrepDone = Object.values(prepChecks).every(Boolean);
   const patientValid =
     patient.name.trim().length > 0 && patient.age > 0 && patient.weightKg > 0;
-
-  /* ---- Render ---- */
   const stepIndex = ["patient", "prep", "protocol", "recovery", "report"].indexOf(step);
 
   return (
     <div className="space-y-6">
-      {/* Progress */}
       <ProgressBar current={stepIndex} total={totalSteps} />
 
       {/* ========== PATIENT ========== */}
@@ -779,9 +1238,7 @@ export function ExerciseToleranceTest() {
               <input
                 type="text"
                 value={patient.name}
-                onChange={(e) =>
-                  setPatient((p) => ({ ...p, name: e.target.value }))
-                }
+                onChange={(e) => setPatient((p) => ({ ...p, name: e.target.value }))}
                 placeholder="e.g. John Doe"
                 className="rounded-lg border border-border bg-surface/40 px-3 py-2 text-sm focus:border-rose-500 focus:outline-none focus:ring-1 focus:ring-rose-500/30"
               />
@@ -789,9 +1246,7 @@ export function ExerciseToleranceTest() {
             <NumberInput
               label="Age"
               value={patient.age ? String(patient.age) : ""}
-              onChange={(v) =>
-                setPatient((p) => ({ ...p, age: parseFloat(v) || 0 }))
-              }
+              onChange={(v) => setPatient((p) => ({ ...p, age: parseFloat(v) || 0 }))}
               unit="years"
               min={0}
               max={120}
@@ -799,9 +1254,7 @@ export function ExerciseToleranceTest() {
             <SelectInput
               label="Sex"
               value={patient.sex}
-              onChange={(v) =>
-                setPatient((p) => ({ ...p, sex: v as Sex }))
-              }
+              onChange={(v) => setPatient((p) => ({ ...p, sex: v as Sex }))}
               options={[
                 { value: "M", label: "Male" },
                 { value: "F", label: "Female" },
@@ -827,14 +1280,21 @@ export function ExerciseToleranceTest() {
               min={100}
               max={250}
             />
+            <NumberInput
+              label="Resting HR"
+              value={patient.restingHr ? String(patient.restingHr) : ""}
+              onChange={(v) =>
+                setPatient((p) => ({ ...p, restingHr: parseFloat(v) || 0 }))
+              }
+              unit="bpm"
+              min={30}
+              max={140}
+            />
             <SelectInput
               label="Suspected Diagnosis"
               value={patient.suspected}
               onChange={(v) =>
-                setPatient((p) => ({
-                  ...p,
-                  suspected: v as SuspectedDiagnosis,
-                }))
+                setPatient((p) => ({ ...p, suspected: v as SuspectedDiagnosis }))
               }
               options={[
                 { value: "unspecified", label: "Unspecified / Exercise intolerance" },
@@ -876,81 +1336,151 @@ export function ExerciseToleranceTest() {
 
       {/* ========== PREP ========== */}
       {step === "prep" && (
-        <SectionCard title="Pre-test Checklist" icon={ClipboardList}>
-          <div className="space-y-1">
-            <CheckItem
-              checked={prepChecks.fasted}
-              label="Fasted ≥4 hours (no food, clear fluids allowed)"
-              onToggle={() =>
-                setPrepChecks((c) => ({ ...c, fasted: !c.fasted }))
-              }
-            />
-            <CheckItem
-              checked={prepChecks.noExercise}
-              label="No strenuous exercise in past 24 h"
-              onToggle={() =>
-                setPrepChecks((c) => ({ ...c, noExercise: !c.noExercise }))
-              }
-            />
-            <CheckItem
-              checked={prepChecks.noSubstances}
-              label="No caffeine / nicotine / alcohol ≥4 h prior"
-              onToggle={() =>
-                setPrepChecks((c) => ({ ...c, noSubstances: !c.noSubstances }))
-              }
-            />
-            <CheckItem
-              checked={prepChecks.hydrated}
-              label="Well hydrated (500 mL water 1–2 h before)"
-              onToggle={() =>
-                setPrepChecks((c) => ({ ...c, hydrated: !c.hydrated }))
-              }
-            />
-            <CheckItem
-              checked={prepChecks.consent}
-              label="Informed consent obtained"
-              onToggle={() =>
-                setPrepChecks((c) => ({ ...c, consent: !c.consent }))
-              }
-            />
-          </div>
+        <div className="space-y-4">
+          <SectionCard title="Required Equipment & Blood Tests" icon={ClipboardList}>
+            <div className="grid gap-1 sm:grid-cols-2">
+              <CheckItem
+                checked={equipment.treadmillOrBike}
+                label="Treadmill or bicycle ergometer"
+                onToggle={() =>
+                  setEquipment((e) => ({ ...e, treadmillOrBike: !e.treadmillOrBike }))
+                }
+              />
+              <CheckItem
+                checked={equipment.ecg}
+                label="12-lead ECG monitor (continuous)"
+                onToggle={() => setEquipment((e) => ({ ...e, ecg: !e.ecg }))}
+              />
+              <CheckItem
+                checked={equipment.pulseOx}
+                label="Pulse oximeter (SpO₂)"
+                onToggle={() => setEquipment((e) => ({ ...e, pulseOx: !e.pulseOx }))}
+              />
+              <CheckItem
+                checked={equipment.bpCuff}
+                label="BP cuff / sphygmomanometer"
+                onToggle={() => setEquipment((e) => ({ ...e, bpCuff: !e.bpCuff }))}
+              />
+              <CheckItem
+                checked={equipment.lactateMeter}
+                label="Point-of-care lactate meter + strips"
+                onToggle={() =>
+                  setEquipment((e) => ({ ...e, lactateMeter: !e.lactateMeter }))
+                }
+              />
+              <CheckItem
+                checked={equipment.vbgSyringes}
+                label="VBG syringes (if IV / VBG sampling)"
+                onToggle={() =>
+                  setEquipment((e) => ({ ...e, vbgSyringes: !e.vbgSyringes }))
+                }
+              />
+              <CheckItem
+                checked={equipment.cpkTubes}
+                label="CPK tubes (pre-test + 24 h post)"
+                onToggle={() => setEquipment((e) => ({ ...e, cpkTubes: !e.cpkTubes }))}
+              />
+              <CheckItem
+                checked={equipment.ammoniaTubes}
+                label="Ammonia tubes (on ice)"
+                onToggle={() =>
+                  setEquipment((e) => ({ ...e, ammoniaTubes: !e.ammoniaTubes }))
+                }
+              />
+              <CheckItem
+                checked={equipment.ivAccess}
+                label="IV access + saline flush"
+                onToggle={() => setEquipment((e) => ({ ...e, ivAccess: !e.ivAccess }))}
+              />
+              <CheckItem
+                checked={equipment.crashCart}
+                label="Crash cart / defibrillator / O₂"
+                onToggle={() =>
+                  setEquipment((e) => ({ ...e, crashCart: !e.crashCart }))
+                }
+              />
+            </div>
+          </SectionCard>
 
-          <div className="mt-4 grid gap-4 sm:grid-cols-2">
-            <NumberInput
-              label="Pre-test CPK"
-              value={preCpk !== null ? String(preCpk) : ""}
-              onChange={(v) => setPreCpk(v ? parseFloat(v) : null)}
-              unit="U/L"
-              placeholder="e.g. 120"
-              min={0}
-            />
-          </div>
+          <SectionCard title="Pre-test Patient Checklist" icon={ClipboardList}>
+            <div className="space-y-1">
+              <CheckItem
+                checked={prepChecks.fasted}
+                label="Fasted ≥4 hours (clear fluids allowed)"
+                onToggle={() =>
+                  setPrepChecks((c) => ({ ...c, fasted: !c.fasted }))
+                }
+              />
+              <CheckItem
+                checked={prepChecks.noExercise}
+                label="No strenuous exercise in past 24 h"
+                onToggle={() =>
+                  setPrepChecks((c) => ({ ...c, noExercise: !c.noExercise }))
+                }
+              />
+              <CheckItem
+                checked={prepChecks.noSubstances}
+                label="No caffeine / nicotine / alcohol ≥4 h prior"
+                onToggle={() =>
+                  setPrepChecks((c) => ({ ...c, noSubstances: !c.noSubstances }))
+                }
+              />
+              <CheckItem
+                checked={prepChecks.hydrated}
+                label="Well hydrated (500 mL water 1–2 h before)"
+                onToggle={() =>
+                  setPrepChecks((c) => ({ ...c, hydrated: !c.hydrated }))
+                }
+              />
+              <CheckItem
+                checked={prepChecks.consent}
+                label="Informed consent obtained"
+                onToggle={() =>
+                  setPrepChecks((c) => ({ ...c, consent: !c.consent }))
+                }
+              />
+            </div>
 
-          <div className="mt-6 flex items-center justify-between">
-            <button
-              type="button"
-              onClick={() => setStep("patient")}
-              className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
-            >
-              <ArrowLeft className="h-4 w-4" /> Back
-            </button>
-            <button
-              type="button"
-              onClick={() => setStep("protocol")}
-              disabled={!allPrepDone}
-              className="flex items-center gap-1.5 rounded-lg bg-rose-500 px-4 py-2 text-sm font-medium text-white hover:bg-rose-600 disabled:opacity-40"
-            >
-              Next: Protocol
-              <ArrowRight className="h-4 w-4" />
-            </button>
-          </div>
-        </SectionCard>
+            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+              <NumberInput
+                label="Pre-test CPK"
+                value={preCpk !== null ? String(preCpk) : ""}
+                onChange={(v) => setPreCpk(v ? parseFloat(v) : null)}
+                unit="U/L"
+                placeholder="e.g. 120"
+                min={0}
+              />
+              <div className="rounded-lg border border-amber-500/25 bg-amber-500/10 px-3 py-2 text-xs text-amber-400">
+                Remember to draw <strong>post-test CPK at 24 h</strong> — enter in
+                Recovery step.
+              </div>
+            </div>
+
+            <div className="mt-6 flex items-center justify-between">
+              <button
+                type="button"
+                onClick={() => setStep("patient")}
+                className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
+              >
+                <ArrowLeft className="h-4 w-4" /> Back
+              </button>
+              <button
+                type="button"
+                onClick={() => setStep("protocol")}
+                disabled={!allPrepDone}
+                className="flex items-center gap-1.5 rounded-lg bg-rose-500 px-4 py-2 text-sm font-medium text-white hover:bg-rose-600 disabled:opacity-40"
+              >
+                Next: Protocol
+                <ArrowRight className="h-4 w-4" />
+              </button>
+            </div>
+          </SectionCard>
+        </div>
       )}
 
       {/* ========== PROTOCOL ========== */}
       {step === "protocol" && (
         <div className="space-y-4">
-          {/* Protocol settings */}
           <SectionCard title="Protocol Settings" icon={Activity}>
             <div className="grid gap-4 sm:grid-cols-3">
               <SelectInput
@@ -978,158 +1508,301 @@ export function ExerciseToleranceTest() {
               />
               <div className="flex items-end">
                 <div className="flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-400">
-                  <Info className="h-3.5 w-3.5 shrink-0" />
-                  <span>
-                    Stage {currentStageIdx + 1} of {stageDefs.length}
-                  </span>
+                  <AlertTriangle className="h-4 w-4" />
+                  <span>Each stage = 3 min</span>
                 </div>
               </div>
             </div>
           </SectionCard>
 
-          {/* Current stage data entry */}
-          <SectionCard
-            title={`Stage ${currentStageIdx + 1} — ${
-              modality === "treadmill"
-                ? `${(currentStageDef as (typeof BRUCE_STAGES)[number]).speed} mph @ ${(currentStageDef as (typeof BRUCE_STAGES)[number]).grade}%`
-                : `${(currentStageDef as (typeof BIKE_STAGES)[number]).watts} W`
-            }`}
-            icon={BarChart3}
-          >
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              <NumberInput
-                label="Heart Rate"
-                value={hr}
-                onChange={setHr}
-                unit="bpm"
-                placeholder="e.g. 120"
-                min={30}
-                max={250}
-              />
-              <SelectInput
-                label="Borg RPE"
-                value={rpe}
-                onChange={setRpe}
-                options={BORG_SCALE.map((b) => ({
-                  value: String(b.value),
-                  label: b.label,
-                }))}
-              />
-              <NumberInput
-                label="Lactate"
-                value={lactate}
-                onChange={setLactate}
-                unit="mmol/L"
-                placeholder="e.g. 2.5"
-                min={0}
-                max={25}
-                step={0.1}
-              />
-              <NumberInput
-                label="SpO₂"
-                value={sao2}
-                onChange={setSao2}
-                unit="%"
-                placeholder="e.g. 98"
-                min={60}
-                max={100}
-              />
-              <label className="flex flex-col gap-1 sm:col-span-2 lg:col-span-1">
-                <span className="text-xs font-medium text-muted-foreground">
-                  Symptoms
-                </span>
-                <input
-                  type="text"
-                  value={symptoms}
-                  onChange={(e) => setSymptoms(e.target.value)}
-                  placeholder="e.g. mild leg fatigue"
-                  className="rounded-lg border border-border bg-surface/40 px-3 py-2 text-sm focus:border-rose-500 focus:outline-none focus:ring-1 focus:ring-rose-500/30"
-                />
-              </label>
-            </div>
+          {/* Treadmill MET timing table */}
+          {modality === "treadmill" && (
+            <SectionCard title="Bruce MET Timing Table" icon={LineChart}>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead>
+                    <tr className="border-b border-border text-muted-foreground">
+                      <th className="px-2 py-1.5">Stage</th>
+                      <th className="px-2 py-1.5">Speed / Grade</th>
+                      <th className="px-2 py-1.5">METs</th>
+                      <th className="px-2 py-1.5">Assessed at (min)</th>
+                      <th className="px-2 py-1.5">Cumulative T (min)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {BRUCE_STAGES.map((s) => (
+                      <tr key={s.stage} className="border-b border-border/50">
+                        <td className="px-2 py-1.5 font-medium">{s.stage}</td>
+                        <td className="px-2 py-1.5">
+                          {s.speed} mph @ {s.grade}%
+                        </td>
+                        <td className="px-2 py-1.5">{s.mets}</td>
+                        <td className="px-2 py-1.5">{s.stage * 3 - 0.5}</td>
+                        <td className="px-2 py-1.5 font-mono">
+                          {(s.stage * 3).toFixed(2)}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </SectionCard>
+          )}
 
-            {/* VBG fields (only when iv_vbg) */}
-            {samplingMethod === "iv_vbg" && (
-              <div className="mt-4 rounded-lg border border-violet-500/20 bg-violet-500/5 p-4">
-                <div className="mb-2 flex items-center gap-1.5 text-xs font-medium text-violet-400">
-                  <Droplets className="h-3.5 w-3.5" />
-                  Venous Blood Gas
+          {/* Current stage entry */}
+          {currentStageDef && (
+            <SectionCard
+              title={`Stage ${currentStageIdx + 1} — ${
+                modality === "treadmill"
+                  ? `${(currentStageDef as (typeof BRUCE_STAGES)[number]).speed} mph @ ${(currentStageDef as (typeof BRUCE_STAGES)[number]).grade}%`
+                  : `${(currentStageDef as (typeof BIKE_STAGES)[number]).watts} W`
+              }`}
+              icon={Heart}
+            >
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                <NumberInput
+                  label="Heart Rate"
+                  value={hr}
+                  onChange={setHr}
+                  unit="bpm"
+                  min={30}
+                  max={250}
+                />
+                <SelectInput
+                  label="Borg RPE (6–20)"
+                  value={rpe}
+                  onChange={setRpe}
+                  options={[{ value: "", label: "—" }, ...BORG_SCALE.map((b) => ({
+                    value: String(b.value),
+                    label: b.label,
+                  }))]}
+                />
+                <div className="flex flex-col gap-1">
+                  <span className="flex items-center text-xs font-medium text-muted-foreground">
+                    Lactate
+                    <span className="ml-1 font-mono text-[10px] text-muted-foreground/60">
+                      (mmol/L)
+                    </span>
+                    <InfoPopover title="Sampling method comparison" className="ml-1">
+                      <span className="block space-y-1">
+                        <span className="block">
+                          <strong>Capillary</strong> (fingertip/earlobe): fast,
+                          minimally invasive; ~10–15% higher than venous at rest.
+                        </span>
+                        <span className="block">
+                          <strong>IV lactate</strong>: venous sample from indwelling
+                          line; more stable, no repeated punctures.
+                        </span>
+                        <span className="block">
+                          <strong>IV VBG</strong>: venous blood gas — gives lactate
+                          plus pH, HCO₃⁻, pCO₂, pO₂ for full acid–base picture.
+                        </span>
+                      </span>
+                    </InfoPopover>
+                  </span>
+                  <input
+                    type="number"
+                    step={0.1}
+                    value={lactate}
+                    onChange={(e) => setLactate(e.target.value)}
+                    className="w-full rounded-lg border border-border bg-surface/40 px-3 py-2 text-sm focus:border-rose-500 focus:outline-none focus:ring-1 focus:ring-rose-500/30"
+                  />
                 </div>
-                <div className="grid gap-3 sm:grid-cols-4">
-                  <NumberInput
-                    label="pH"
-                    value={ph}
-                    onChange={setPh}
-                    placeholder="e.g. 7.40"
-                    min={6.5}
-                    max={7.8}
-                    step={0.01}
+                <NumberInput
+                  label="SpO₂"
+                  value={sao2}
+                  onChange={setSao2}
+                  unit="%"
+                  min={50}
+                  max={100}
+                />
+                <label className="flex flex-col gap-1 sm:col-span-2">
+                  <span className="text-xs font-medium text-muted-foreground">
+                    Symptoms
+                  </span>
+                  <input
+                    type="text"
+                    value={symptoms}
+                    onChange={(e) => setSymptoms(e.target.value)}
+                    placeholder="e.g. leg fatigue, mild dyspnoea"
+                    className="rounded-lg border border-border bg-surface/40 px-3 py-2 text-sm focus:border-rose-500 focus:outline-none focus:ring-1 focus:ring-rose-500/30"
                   />
-                  <NumberInput
-                    label="HCO₃⁻"
-                    value={hco3}
-                    onChange={setHco3}
-                    unit="mmol/L"
-                    placeholder="e.g. 24"
-                    min={5}
-                    max={50}
-                  />
-                  <NumberInput
-                    label="pCO₂"
-                    value={pco2}
-                    onChange={setPco2}
-                    unit="mmHg"
-                    placeholder="e.g. 40"
-                    min={10}
-                    max={100}
-                  />
-                  <NumberInput
-                    label="pO₂"
-                    value={po2}
-                    onChange={setPo2}
-                    unit="mmHg"
-                    placeholder="e.g. 60"
-                    min={10}
-                    max={200}
-                  />
+                </label>
+
+                {samplingMethod === "iv_vbg" && (
+                  <>
+                    <NumberInput label="pH" value={ph} onChange={setPh} step={0.01} />
+                    <NumberInput
+                      label="HCO₃⁻ / BE"
+                      value={hco3}
+                      onChange={setHco3}
+                      unit="mmol/L"
+                      step={0.1}
+                    />
+                    <NumberInput
+                      label="pCO₂"
+                      value={pco2}
+                      onChange={setPco2}
+                      unit="mmHg"
+                    />
+                    <NumberInput
+                      label="pO₂"
+                      value={po2}
+                      onChange={setPo2}
+                      unit="mmHg"
+                    />
+                  </>
+                )}
+              </div>
+
+              <div className="mt-4 flex items-center justify-between">
+                <div className="text-xs text-muted-foreground">
+                  {stages.length > 0 && (
+                    <span>
+                      {stages.length} stage{stages.length > 1 ? "s" : ""} recorded
+                    </span>
+                  )}
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setTerminatedEarly(true);
+                      finishProtocol();
+                    }}
+                    className="flex items-center gap-1.5 rounded-lg border border-red-500/30 px-3 py-2 text-sm text-red-400 hover:bg-red-500/10"
+                  >
+                    <AlertTriangle className="h-4 w-4" /> Terminate
+                  </button>
+                  <button
+                    type="button"
+                    onClick={addStage}
+                    disabled={!hr && !lactate && !rpe}
+                    className="flex items-center gap-1.5 rounded-lg bg-rose-500 px-4 py-2 text-sm font-medium text-white hover:bg-rose-600 disabled:opacity-40"
+                  >
+                    <CheckCircle2 className="h-4 w-4" /> Record Stage
+                  </button>
+                </div>
+              </div>
+            </SectionCard>
+          )}
+
+          {/* Results — shown always; before any stage shows formulas only */}
+          <SectionCard title="Results" icon={LineChart}>
+            {stages.length === 0 ? (
+              <>
+                <p className="mb-3 text-xs text-muted-foreground">
+                  Formulas and reference ranges will be applied once a stage is
+                  recorded.
+                </p>
+                <MethodExplainer />
+              </>
+            ) : (
+              <div className="space-y-4">
+                <div className="grid gap-3 text-xs sm:grid-cols-2 lg:grid-cols-4">
+                  <div className="rounded-lg bg-rose-500/10 p-3">
+                    <div className="flex items-center gap-1 text-muted-foreground">
+                      Peak VO₂
+                      <InfoPopover title="VO₂max reference ranges">
+                        <span className="block space-y-1">
+                          <span className="block">Men &lt;40 y: 42–55 mL/kg/min</span>
+                          <span className="block">Men 40–60 y: 30–42</span>
+                          <span className="block">Women &lt;40 y: 33–45</span>
+                          <span className="block">Women 40–60 y: 25–35</span>
+                          <span className="block text-amber-400">
+                            &lt;18 mL/kg/min = severely limited
+                          </span>
+                        </span>
+                      </InfoPopover>
+                    </div>
+                    <div className="mt-1 text-lg font-bold text-rose-400">
+                      {peakVo2.toFixed(1)}
+                      <span className="ml-1 text-xs font-normal text-muted-foreground">
+                        mL/kg/min
+                      </span>
+                    </div>
+                  </div>
+                  <div className="rounded-lg bg-fuchsia-500/10 p-3">
+                    <div className="text-muted-foreground">Peak METs</div>
+                    <div className="mt-1 text-lg font-bold text-fuchsia-400">
+                      {peakMets.toFixed(1)}
+                    </div>
+                  </div>
+                  <div className="rounded-lg bg-violet-500/10 p-3">
+                    <div className="text-muted-foreground">Fitness Category</div>
+                    <div className="mt-1 text-lg font-bold text-violet-400">
+                      {fitness}
+                    </div>
+                  </div>
+                  <div className="rounded-lg bg-amber-500/10 p-3">
+                    <div className="text-muted-foreground">Predicted VO₂max</div>
+                    <div className="mt-1 text-lg font-bold text-amber-400">
+                      {predictedVo2Max(patient.age, patient.sex).toFixed(1)}
+                    </div>
+                  </div>
+                </div>
+
+                {/* How-calculated note directly under result */}
+                <div className="rounded-lg border border-border bg-surface/40 p-3 text-xs leading-relaxed">
+                  <div className="mb-1 font-semibold text-rose-400">
+                    How this Estimated VO₂max was calculated
+                  </div>
+                  <div>
+                    Method:{" "}
+                    <strong>
+                      {modality === "treadmill"
+                        ? patient.sex === "M"
+                          ? "Bruce men — VO₂ = 14.76 − 1.379·T + 0.451·T² − 0.012·T³"
+                          : "Bruce women — VO₂ = 4.38·T − 3.9"
+                        : "Bicycle — VO₂ = (10.8 × Watts / kg) + 7"}
+                    </strong>
+                    . METs = VO₂ / 3.5.{" "}
+                    <span className="text-amber-400">
+                      Estimated (not gas-exchange measured).
+                    </span>
+                  </div>
+                  <table className="mt-2 w-full text-left">
+                    <tbody>
+                      <tr>
+                        <td className="pr-3 text-muted-foreground">Sex</td>
+                        <td>{patient.sex === "M" ? "Male" : "Female"}</td>
+                        <td className="pr-3 text-muted-foreground">Age</td>
+                        <td>{patient.age} y</td>
+                      </tr>
+                      <tr>
+                        <td className="pr-3 text-muted-foreground">Body mass</td>
+                        <td>{patient.weightKg} kg</td>
+                        <td className="pr-3 text-muted-foreground">Modality</td>
+                        <td>
+                          {modality === "treadmill" ? "Bruce treadmill" : "Bike"}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="pr-3 text-muted-foreground">
+                          {modality === "treadmill" ? "T (dec. min)" : "Watts"}
+                        </td>
+                        <td>
+                          {modality === "treadmill"
+                            ? `${computedVo2?.T?.toFixed(2) ?? "—"} (e.g. 9 min 15 s = 9.25)`
+                            : `${computedVo2?.watts ?? "—"} W`}
+                        </td>
+                        <td className="pr-3 text-muted-foreground">VO₂</td>
+                        <td>{peakVo2.toFixed(1)} mL/kg/min</td>
+                      </tr>
+                      <tr>
+                        <td className="pr-3 text-muted-foreground">METs</td>
+                        <td>{peakMets.toFixed(1)}</td>
+                        <td className="pr-3 text-muted-foreground">Category</td>
+                        <td>{fitness}</td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
               </div>
             )}
-
-            <div className="mt-4 flex items-center justify-between">
-              <div className="text-xs text-muted-foreground">
-                {stages.length > 0 && (
-                  <span>
-                    {stages.length} stage{stages.length > 1 ? "s" : ""} recorded
-                  </span>
-                )}
-              </div>
-              <div className="flex gap-2">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setTerminatedEarly(true);
-                    finishProtocol();
-                  }}
-                  className="flex items-center gap-1.5 rounded-lg border border-red-500/30 px-3 py-2 text-sm text-red-400 hover:bg-red-500/10"
-                >
-                  <AlertTriangle className="h-4 w-4" />
-                  Terminate
-                </button>
-                <button
-                  type="button"
-                  onClick={addStage}
-                  disabled={!hr && !lactate && !rpe}
-                  className="flex items-center gap-1.5 rounded-lg bg-rose-500 px-4 py-2 text-sm font-medium text-white hover:bg-rose-600 disabled:opacity-40"
-                >
-                  <CheckCircle2 className="h-4 w-4" />
-                  Record Stage
-                </button>
-              </div>
-            </div>
           </SectionCard>
 
-          {/* Recorded stages table */}
+          {/* Recorded stages */}
           {stages.length > 0 && (
             <SectionCard title="Recorded Stages" icon={LineChart}>
               <div className="overflow-x-auto">
@@ -1139,7 +1812,26 @@ export function ExerciseToleranceTest() {
                       <th className="px-2 py-1.5">Stage</th>
                       <th className="px-2 py-1.5">HR</th>
                       <th className="px-2 py-1.5">Borg</th>
-                      <th className="px-2 py-1.5">Lactate</th>
+                      <th className="px-2 py-1.5">
+                        <span className="inline-flex items-center gap-1">
+                          Lactate
+                          <InfoPopover title="Sampling method comparison">
+                            <span className="block space-y-1">
+                              <span className="block">
+                                <strong>Capillary</strong>: fast, ~10–15% higher
+                                than venous.
+                              </span>
+                              <span className="block">
+                                <strong>IV lactate</strong>: stable, no repeated
+                                punctures.
+                              </span>
+                              <span className="block">
+                                <strong>IV VBG</strong>: lactate + full acid-base.
+                              </span>
+                            </span>
+                          </InfoPopover>
+                        </span>
+                      </th>
                       <th className="px-2 py-1.5">SpO₂</th>
                       <th className="px-2 py-1.5">Symptoms</th>
                       {samplingMethod === "iv_vbg" && (
@@ -1157,14 +1849,10 @@ export function ExerciseToleranceTest() {
                         className="border-b border-border/50 hover:bg-surface/30"
                       >
                         <td className="px-2 py-1.5 font-medium">{s.stage}</td>
-                        <td className="px-2 py-1.5">
-                          {s.heartRate ?? "—"}
-                        </td>
+                        <td className="px-2 py-1.5">{s.heartRate ?? "—"}</td>
                         <td className="px-2 py-1.5">{s.rpe ?? "—"}</td>
                         <td className="px-2 py-1.5">
-                          {s.lactate != null
-                            ? `${s.lactate.toFixed(2)}`
-                            : "—"}
+                          {s.lactate != null ? s.lactate.toFixed(2) : "—"}
                         </td>
                         <td className="px-2 py-1.5">
                           {s.sao2 != null ? `${s.sao2}%` : "—"}
@@ -1188,7 +1876,6 @@ export function ExerciseToleranceTest() {
                 </table>
               </div>
 
-              {/* Lactate curve */}
               <div className="mt-4">
                 <h3 className="mb-2 text-xs font-medium text-muted-foreground">
                   Lactate Curve
@@ -1209,17 +1896,13 @@ export function ExerciseToleranceTest() {
             </SectionCard>
           )}
 
-          {/* Termination reason (if early) */}
           {terminatedEarly && (
             <SectionCard title="Termination Reason" icon={AlertTriangle}>
               <SelectInput
                 label="Reason for early termination"
                 value={terminationReason}
                 onChange={setTerminationReason}
-                options={TERMINATION_REASONS.map((r) => ({
-                  value: r,
-                  label: r,
-                }))}
+                options={TERMINATION_REASONS.map((r) => ({ value: r, label: r }))}
               />
             </SectionCard>
           )}
@@ -1240,14 +1923,11 @@ export function ExerciseToleranceTest() {
                 setRecoveryVitals((r) => ({ ...r, hr: v ? parseFloat(v) : null }))
               }
               unit="bpm"
-              placeholder="e.g. 110"
             />
             <NumberInput
               label="Recovery Lactate"
               value={
-                recoveryVitals.lactate !== null
-                  ? String(recoveryVitals.lactate)
-                  : ""
+                recoveryVitals.lactate !== null ? String(recoveryVitals.lactate) : ""
               }
               onChange={(v) =>
                 setRecoveryVitals((r) => ({
@@ -1256,7 +1936,6 @@ export function ExerciseToleranceTest() {
                 }))
               }
               unit="mmol/L"
-              placeholder="e.g. 4.0"
               step={0.1}
             />
             <NumberInput
@@ -1271,7 +1950,6 @@ export function ExerciseToleranceTest() {
                 }))
               }
               unit="%"
-              placeholder="e.g. 97"
             />
             <label className="flex flex-col gap-1">
               <span className="text-xs font-medium text-muted-foreground">
@@ -1283,7 +1961,6 @@ export function ExerciseToleranceTest() {
                 onChange={(e) =>
                   setRecoveryVitals((r) => ({ ...r, symptoms: e.target.value }))
                 }
-                placeholder="e.g. mild dizziness resolving"
                 className="rounded-lg border border-border bg-surface/40 px-3 py-2 text-sm focus:border-rose-500 focus:outline-none focus:ring-1 focus:ring-rose-500/30"
               />
             </label>
@@ -1291,11 +1968,10 @@ export function ExerciseToleranceTest() {
 
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
             <NumberInput
-              label="Post-test CPK"
+              label="Post-test CPK (24 h)"
               value={postCpk !== null ? String(postCpk) : ""}
               onChange={(v) => setPostCpk(v ? parseFloat(v) : null)}
               unit="U/L"
-              placeholder="e.g. 180"
               min={0}
             />
           </div>
@@ -1316,53 +1992,55 @@ export function ExerciseToleranceTest() {
       {/* ========== REPORT ========== */}
       {step === "report" && (
         <div className="space-y-4 print:space-y-6">
-          {/* Report header */}
           <div className="rounded-xl border border-border bg-card p-6 shadow-sm print:border-0 print:shadow-none">
             <div className="flex items-start justify-between">
               <div>
-                <h2 className="text-xl font-semibold">Exercise Tolerance Test Report</h2>
+                <h2 className="text-xl font-semibold">
+                  Exercise Tolerance Test Report
+                </h2>
                 <p className="mt-1 text-xs text-muted-foreground">
                   VO₂ max / Lactate stress test
                 </p>
               </div>
-              <div className="flex gap-2 print:hidden">
+              <div className="flex flex-wrap gap-2 print:hidden">
                 <button
                   type="button"
-                  onClick={downloadProtocolSheet}
+                  onClick={downloadProtocolTxt}
                   className="flex items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-sm hover:bg-surface"
                 >
-                  <Download className="h-4 w-4" />
-                  Protocol Sheet
+                  <Download className="h-4 w-4" /> Download protocol (.txt)
+                </button>
+                <button
+                  type="button"
+                  onClick={downloadProtocolPdf}
+                  className="flex items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-sm hover:bg-surface"
+                >
+                  <Download className="h-4 w-4" /> Download protocol (PDF)
                 </button>
                 <button
                   type="button"
                   onClick={handlePrint}
                   className="flex items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-sm hover:bg-surface"
                 >
-                  <Printer className="h-4 w-4" />
-                  Print
+                  <Printer className="h-4 w-4" /> Print
                 </button>
                 <button
                   type="button"
                   onClick={resetAll}
                   className="flex items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-sm hover:bg-surface"
                 >
-                  <RefreshCw className="h-4 w-4" />
-                  New Test
+                  <RefreshCw className="h-4 w-4" /> New Test
                 </button>
               </div>
             </div>
 
-            {/* Patient info */}
             <div className="mt-4 grid gap-2 text-sm sm:grid-cols-2">
               <div>
                 <span className="text-xs text-muted-foreground">Patient</span>
                 <p className="font-medium">{patient.name}</p>
               </div>
               <div>
-                <span className="text-xs text-muted-foreground">
-                  Age / Sex
-                </span>
+                <span className="text-xs text-muted-foreground">Age / Sex</span>
                 <p className="font-medium">
                   {patient.age} y / {patient.sex === "M" ? "Male" : "Female"}
                 </p>
@@ -1372,24 +2050,8 @@ export function ExerciseToleranceTest() {
                 <p className="font-medium">{patient.weightKg} kg</p>
               </div>
               <div>
-                <span className="text-xs text-muted-foreground">Height</span>
-                <p className="font-medium">{patient.heightCm} cm</p>
-              </div>
-              <div>
-                <span className="text-xs text-muted-foreground">
-                  Suspected Diagnosis
-                </span>
-                <p className="font-medium capitalize">
-                  {patient.suspected.replace(/_/g, " ")}
-                </p>
-              </div>
-              <div>
-                <span className="text-xs text-muted-foreground">
-                  Limitations
-                </span>
-                <p className="font-medium">
-                  {patient.orthoLimitations || "None"}
-                </p>
+                <span className="text-xs text-muted-foreground">Resting HR</span>
+                <p className="font-medium">{patient.restingHr} bpm</p>
               </div>
             </div>
           </div>
@@ -1407,13 +2069,13 @@ export function ExerciseToleranceTest() {
                 </p>
               </div>
               <div>
-                <span className="text-muted-foreground">Sampling</span>
-                <p className="font-medium capitalize">
+                <span className="text-muted-foreground">Sampling method</span>
+                <p className="font-medium">
                   {samplingMethod === "capillary"
-                    ? "Capillary"
+                    ? "Capillary (fingertip / earlobe)"
                     : samplingMethod === "iv_lactate"
-                      ? "IV Lactate"
-                      : "IV Lactate + VBG"}
+                      ? "IV line — Lactate only"
+                      : "IV line — Lactate + VBG"}
                 </p>
               </div>
               <div>
@@ -1422,9 +2084,7 @@ export function ExerciseToleranceTest() {
               </div>
               {terminatedEarly && (
                 <div className="sm:col-span-3">
-                  <span className="text-muted-foreground">
-                    Early termination
-                  </span>
+                  <span className="text-muted-foreground">Early termination</span>
                   <p className="font-medium text-amber-400">
                     {terminationReason || "Not specified"}
                   </p>
@@ -1438,10 +2098,23 @@ export function ExerciseToleranceTest() {
             <h3 className="mb-3 text-sm font-semibold">Results</h3>
             <div className="grid gap-3 text-xs sm:grid-cols-2 lg:grid-cols-4">
               <div className="rounded-lg bg-rose-500/10 p-3">
-                <div className="text-muted-foreground">Peak VO₂</div>
+                <div className="flex items-center gap-1 text-muted-foreground">
+                  Peak VO₂
+                  <InfoPopover title="VO₂max reference ranges">
+                    <span className="block space-y-1">
+                      <span className="block">Men &lt;40 y: 42–55 mL/kg/min</span>
+                      <span className="block">Men 40–60 y: 30–42</span>
+                      <span className="block">Women &lt;40 y: 33–45</span>
+                      <span className="block">Women 40–60 y: 25–35</span>
+                      <span className="block text-amber-400">
+                        &lt;18 mL/kg/min = severely limited
+                      </span>
+                    </span>
+                  </InfoPopover>
+                </div>
                 <div className="mt-1 text-lg font-bold text-rose-400">
-                  {peakVo2.toFixed(1)}{" "}
-                  <span className="text-xs font-normal text-muted-foreground">
+                  {peakVo2.toFixed(1)}
+                  <span className="ml-1 text-xs font-normal text-muted-foreground">
                     mL/kg/min
                   </span>
                 </div>
@@ -1461,36 +2134,141 @@ export function ExerciseToleranceTest() {
               <div className="rounded-lg bg-amber-500/10 p-3">
                 <div className="text-muted-foreground">Predicted VO₂max</div>
                 <div className="mt-1 text-lg font-bold text-amber-400">
-                  {predictedVo2Max(patient.age, patient.sex).toFixed(1)}{" "}
-                  <span className="text-xs font-normal text-muted-foreground">
-                    mL/kg/min
-                  </span>
+                  {predictedVo2Max(patient.age, patient.sex).toFixed(1)}
                 </div>
               </div>
             </div>
 
-            {/* % predicted */}
-            <div className="mt-3">
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-muted-foreground">
-                  % Age-predicted VO₂max
-                </span>
-                <span className="font-semibold">
-                  {((peakVo2 / predictedVo2Max(patient.age, patient.sex)) * 100).toFixed(1)}%
-                </span>
+            {/* Method + patient-specific inputs table */}
+            <div className="mt-4 rounded-lg border border-border bg-surface/40 p-3 text-xs leading-relaxed">
+              <div className="mb-1 font-semibold text-rose-400">
+                How this Estimated VO₂max was calculated
               </div>
-              <div className="mt-1 h-2 overflow-hidden rounded-full bg-surface">
+              <p>
+                Method:{" "}
+                <strong>
+                  {modality === "treadmill"
+                    ? patient.sex === "M"
+                      ? "Bruce men — VO₂ = 14.76 − 1.379·T + 0.451·T² − 0.012·T³"
+                      : "Bruce women — VO₂ = 4.38·T − 3.9"
+                    : "Bicycle — VO₂ = (10.8 × Watts / kg) + 7"}
+                </strong>
+                . METs = VO₂ / 3.5. T = total treadmill time in decimal minutes
+                (9 min 15 s → 9.25).{" "}
+                <span className="text-amber-400">
+                  Estimated only — not gas-exchange measured.
+                </span>
+              </p>
+              <table className="mt-2 w-full text-left">
+                <tbody>
+                  <tr>
+                    <td className="pr-3 text-muted-foreground">Sex</td>
+                    <td>{patient.sex === "M" ? "Male" : "Female"}</td>
+                    <td className="pr-3 text-muted-foreground">Age</td>
+                    <td>{patient.age} y</td>
+                  </tr>
+                  <tr>
+                    <td className="pr-3 text-muted-foreground">Body mass</td>
+                    <td>{patient.weightKg} kg</td>
+                    <td className="pr-3 text-muted-foreground">Modality</td>
+                    <td>{modality === "treadmill" ? "Bruce treadmill" : "Bike"}</td>
+                  </tr>
+                  <tr>
+                    <td className="pr-3 text-muted-foreground">
+                      {modality === "treadmill" ? "T (dec. min)" : "Watts"}
+                    </td>
+                    <td>
+                      {modality === "treadmill"
+                        ? computedVo2?.T?.toFixed(2) ?? "—"
+                        : `${computedVo2?.watts ?? "—"} W`}
+                    </td>
+                    <td className="pr-3 text-muted-foreground">VO₂</td>
+                    <td>{peakVo2.toFixed(1)} mL/kg/min</td>
+                  </tr>
+                  <tr>
+                    <td className="pr-3 text-muted-foreground">METs</td>
+                    <td>{peakMets.toFixed(1)}</td>
+                    <td className="pr-3 text-muted-foreground">Category</td>
+                    <td>{fitness}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            {/* HR peak / chronotropic */}
+            <div className="mt-4 grid gap-3 text-xs sm:grid-cols-2 lg:grid-cols-4">
+              <div className="rounded-lg border border-border bg-surface/40 p-3">
+                <div className="text-muted-foreground">Peak HR</div>
+                <div className="mt-1 text-base font-semibold">
+                  {peakHR || "—"} bpm
+                </div>
+                <div className="text-[11px] text-muted-foreground">
+                  {pctHRmax ? `${pctHRmax.toFixed(0)}% of predicted` : ""}
+                </div>
+              </div>
+              <div className="rounded-lg border border-border bg-surface/40 p-3">
+                <div className="text-muted-foreground">
+                  Predicted HRmax (220 − age)
+                </div>
+                <div className="mt-1 text-base font-semibold">{hrMax} bpm</div>
+              </div>
+              <div className="rounded-lg border border-border bg-surface/40 p-3">
+                <div className="text-muted-foreground">Chronotropic index</div>
+                <div className="mt-1 text-base font-semibold">
+                  {chronotropicIndex ? chronotropicIndex.toFixed(2) : "—"}
+                </div>
                 <div
-                  className="h-full rounded-full bg-gradient-to-r from-rose-500 via-fuchsia-500 to-violet-500 transition-all"
-                  style={{
-                    width: `${Math.min(
-                      100,
-                      (peakVo2 / predictedVo2Max(patient.age, patient.sex)) * 100,
-                    )}%`,
-                  }}
-                />
+                  className={`mt-0.5 inline-block rounded px-1.5 py-0.5 text-[10px] font-medium ${
+                    chronotropicIndex >= 0.8
+                      ? "bg-emerald-500/15 text-emerald-400"
+                      : chronotropicIndex >= 0.6
+                        ? "bg-amber-500/15 text-amber-400"
+                        : chronotropicIndex > 0
+                          ? "bg-rose-500/15 text-rose-400"
+                          : "bg-surface text-muted-foreground"
+                  }`}
+                >
+                  {chronotropicInterp}
+                </div>
+              </div>
+              <div className="rounded-lg border border-border bg-surface/40 p-3">
+                <div className="text-muted-foreground">Peak RPE (Borg)</div>
+                <div className="mt-1 text-base font-semibold">{peakRpe || "—"}</div>
               </div>
             </div>
+
+            <p className="mt-3 text-[11px] leading-relaxed text-muted-foreground">
+              <strong>HRmax explanation:</strong> Predicted HRmax = 220 − age. The
+              chronotropic index = (peak HR − resting HR) / (predicted HRmax −
+              resting HR). CI ≥ 0.8 is normal; &lt; 0.8 suggests chronotropic
+              incompetence.
+            </p>
+
+            {hrAlert && (
+              <div
+                className={`mt-2 rounded-lg border px-3 py-2 text-xs ${
+                  hrAlert.level === "high"
+                    ? "border-rose-500/30 bg-rose-500/10 text-rose-400"
+                    : "border-amber-500/30 bg-amber-500/10 text-amber-400"
+                }`}
+              >
+                {hrAlert.msg}
+              </div>
+            )}
+          </div>
+
+          {/* HR chart */}
+          <div className="rounded-xl border border-border bg-card p-5 shadow-sm print:border-0 print:shadow-none">
+            <h3 className="mb-3 text-sm font-semibold">
+              Heart Rate — with predicted HRmax overlay
+            </h3>
+            <HRChart stages={stages} modality={modality} age={patient.age} />
+          </div>
+
+          {/* RPE chart */}
+          <div className="rounded-xl border border-border bg-card p-5 shadow-sm print:border-0 print:shadow-none">
+            <h3 className="mb-3 text-sm font-semibold">RPE across stages</h3>
+            <RPEChart stages={stages} />
           </div>
 
           {/* Lactate analysis */}
@@ -1515,7 +2293,7 @@ export function ExerciseToleranceTest() {
                 )}
                 {postCpk !== null && (
                   <div>
-                    <span className="text-muted-foreground">Post-test</span>
+                    <span className="text-muted-foreground">Post-test (24 h)</span>
                     <p className="font-medium">{postCpk} U/L</p>
                   </div>
                 )}
@@ -1529,9 +2307,7 @@ export function ExerciseToleranceTest() {
             <div className="grid gap-2 text-xs sm:grid-cols-3">
               <div>
                 <span className="text-muted-foreground">HR (1 min)</span>
-                <p className="font-medium">
-                  {recoveryVitals.hr ?? "—"} bpm
-                </p>
+                <p className="font-medium">{recoveryVitals.hr ?? "—"} bpm</p>
               </div>
               <div>
                 <span className="text-muted-foreground">Lactate</span>
@@ -1544,9 +2320,7 @@ export function ExerciseToleranceTest() {
               <div>
                 <span className="text-muted-foreground">SpO₂</span>
                 <p className="font-medium">
-                  {recoveryVitals.sao2 != null
-                    ? `${recoveryVitals.sao2}%`
-                    : "—"}
+                  {recoveryVitals.sao2 != null ? `${recoveryVitals.sao2}%` : "—"}
                 </p>
               </div>
             </div>
@@ -1558,10 +2332,47 @@ export function ExerciseToleranceTest() {
             )}
           </div>
 
-          {/* Disclaimer */}
+          {/* Exercise tolerance clinical meaning */}
+          <div className="rounded-xl border border-border bg-card p-5 shadow-sm print:border-0 print:shadow-none">
+            <h3 className="mb-3 text-sm font-semibold">
+              Exercise Tolerance — what this test tells us
+            </h3>
+            <div className="space-y-2 text-xs leading-relaxed text-muted-foreground">
+              <p>
+                <strong className="text-foreground">Yes</strong> — this test
+                already measures exercise tolerance. Even though the core focus
+                is the lactate pattern (mitochondrial disease vs McArdle / GSD),
+                the same run yields how much work the body handled before
+                stopping.
+              </p>
+              <p>
+                Exercise tolerance is assessed here by:{" "}
+                <strong className="text-foreground">
+                  total exercise time
+                </strong>
+                , <strong className="text-foreground">estimated VO₂max / METs</strong>,{" "}
+                <strong className="text-foreground">HR response</strong>,{" "}
+                <strong className="text-foreground">RPE</strong>, and the{" "}
+                <strong className="text-foreground">
+                  symptoms that force the patient to stop
+                </strong>{" "}
+                (muscle pain, cramps, breathlessness, fatigue).
+              </p>
+              <p>
+                In metabolic muscle disease, tolerance is often reduced by early
+                muscle fatigue or pain rather than heart/lung limitation. The
+                test therefore delivers two things at once: exercise capacity
+                (VO₂, METs, time) and a lactate curve pointing toward the
+                metabolic problem.
+              </p>
+            </div>
+          </div>
+
+          <MethodExplainer />
+
           <div className="rounded-xl border border-warn/25 bg-warn/5 p-3 text-xs text-warn print:border-0">
-            For educational reference only. Not a substitute for clinical judgment,
-            institutional protocols, or current guidelines.
+            For educational reference only. Not a substitute for clinical
+            judgment, institutional protocols, or current guidelines.
           </div>
         </div>
       )}
