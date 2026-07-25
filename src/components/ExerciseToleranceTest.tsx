@@ -1743,9 +1743,9 @@ export function ExerciseToleranceTest() {
     return lines.join("\n");
   }
 
-  function downloadProtocolTxt() {
-    const text = buildProtocolText();
-    const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+  function downloadProtocolTxt(text?: string) {
+    const body = text ?? buildProtocolText();
+    const blob = new Blob([body], { type: "text/plain;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -1756,8 +1756,8 @@ export function ExerciseToleranceTest() {
     URL.revokeObjectURL(url);
   }
 
-  function downloadProtocolPdf() {
-    const text = buildProtocolText();
+  function downloadProtocolPdf(text?: string) {
+    const body = text ?? buildProtocolText();
     const doc = new jsPDF({ unit: "pt", format: "letter" });
     doc.setFont("courier", "normal");
     doc.setFontSize(9);
@@ -1765,7 +1765,7 @@ export function ExerciseToleranceTest() {
     const margin = 36;
     const pageHeight = doc.internal.pageSize.getHeight();
     let y = margin;
-    text.split("\n").forEach((line) => {
+    body.split("\n").forEach((line) => {
       if (y > pageHeight - margin) {
         doc.addPage();
         y = margin;
@@ -1775,6 +1775,23 @@ export function ExerciseToleranceTest() {
     });
     doc.save(`ett-protocol-${patient.name.replace(/\s+/g, "-") || "unnamed"}.pdf`);
   }
+
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewFormat, setPreviewFormat] = useState<"txt" | "pdf">("txt");
+  const [previewText, setPreviewText] = useState("");
+
+  function openPreview(format: "txt" | "pdf") {
+    setPreviewText(buildProtocolText());
+    setPreviewFormat(format);
+    setPreviewOpen(true);
+  }
+
+  function confirmPreviewDownload() {
+    if (previewFormat === "txt") downloadProtocolTxt(previewText);
+    else downloadProtocolPdf(previewText);
+    setPreviewOpen(false);
+  }
+
 
   const allPrepDone = Object.values(prepChecks).every(Boolean);
   const patientValid =
