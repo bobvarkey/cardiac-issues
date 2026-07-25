@@ -17,6 +17,8 @@ import {
   Printer,
   RefreshCw,
   User,
+  X,
+  Eye,
 } from "lucide-react";
 
 /* -------------------------------------------------------------------------- */
@@ -1741,9 +1743,9 @@ export function ExerciseToleranceTest() {
     return lines.join("\n");
   }
 
-  function downloadProtocolTxt() {
-    const text = buildProtocolText();
-    const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+  function downloadProtocolTxt(text?: string) {
+    const body = text ?? buildProtocolText();
+    const blob = new Blob([body], { type: "text/plain;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -1754,8 +1756,8 @@ export function ExerciseToleranceTest() {
     URL.revokeObjectURL(url);
   }
 
-  function downloadProtocolPdf() {
-    const text = buildProtocolText();
+  function downloadProtocolPdf(text?: string) {
+    const body = text ?? buildProtocolText();
     const doc = new jsPDF({ unit: "pt", format: "letter" });
     doc.setFont("courier", "normal");
     doc.setFontSize(9);
@@ -1763,7 +1765,7 @@ export function ExerciseToleranceTest() {
     const margin = 36;
     const pageHeight = doc.internal.pageSize.getHeight();
     let y = margin;
-    text.split("\n").forEach((line) => {
+    body.split("\n").forEach((line) => {
       if (y > pageHeight - margin) {
         doc.addPage();
         y = margin;
@@ -1773,6 +1775,23 @@ export function ExerciseToleranceTest() {
     });
     doc.save(`ett-protocol-${patient.name.replace(/\s+/g, "-") || "unnamed"}.pdf`);
   }
+
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewFormat, setPreviewFormat] = useState<"txt" | "pdf">("txt");
+  const [previewText, setPreviewText] = useState("");
+
+  function openPreview(format: "txt" | "pdf") {
+    setPreviewText(buildProtocolText());
+    setPreviewFormat(format);
+    setPreviewOpen(true);
+  }
+
+  function confirmPreviewDownload() {
+    if (previewFormat === "txt") downloadProtocolTxt(previewText);
+    else downloadProtocolPdf(previewText);
+    setPreviewOpen(false);
+  }
+
 
   const allPrepDone = Object.values(prepChecks).every(Boolean);
   const patientValid =
@@ -2824,17 +2843,17 @@ export function ExerciseToleranceTest() {
               <div className="flex flex-wrap gap-2 print:hidden">
                 <button
                   type="button"
-                  onClick={downloadProtocolTxt}
+                  onClick={() => openPreview("txt")}
                   className="flex items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-sm hover:bg-surface"
                 >
-                  <Download className="h-4 w-4" /> Download protocol (.txt)
+                  <Eye className="h-4 w-4" /> Preview & download (.txt)
                 </button>
                 <button
                   type="button"
-                  onClick={downloadProtocolPdf}
+                  onClick={() => openPreview("pdf")}
                   className="flex items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-sm hover:bg-surface"
                 >
-                  <Download className="h-4 w-4" /> Download protocol (PDF)
+                  <Eye className="h-4 w-4" /> Preview & download (PDF)
                 </button>
                 <button
                   type="button"
@@ -3192,6 +3211,63 @@ export function ExerciseToleranceTest() {
           <div className="rounded-xl border border-warn/25 bg-warn/5 p-3 text-xs text-warn print:border-0">
             For educational reference only. Not a substitute for clinical
             judgment, institutional protocols, or current guidelines.
+          </div>
+        </div>
+      )}
+
+      {previewOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 print:hidden"
+          onClick={() => setPreviewOpen(false)}
+        >
+          <div
+            className="flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-xl border border-border bg-background shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-start justify-between border-b border-border px-5 py-3">
+              <div>
+                <h3 className="text-base font-semibold">
+                  Print preview — {previewFormat.toUpperCase()}
+                </h3>
+                <p className="text-xs text-muted-foreground">
+                  Confirm the full ETT protocol renders correctly before downloading.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setPreviewOpen(false)}
+                className="rounded-md p-1 text-muted-foreground hover:bg-surface"
+                aria-label="Close preview"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-auto bg-surface/40 p-4">
+              <pre className="whitespace-pre font-mono text-[11px] leading-[1.35] text-foreground">
+{previewText}
+              </pre>
+            </div>
+            <div className="flex flex-wrap items-center justify-between gap-2 border-t border-border px-5 py-3">
+              <span className="text-xs text-muted-foreground">
+                {previewText.split("\n").length} lines · {previewText.length.toLocaleString()} chars
+              </span>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setPreviewOpen(false)}
+                  className="rounded-lg border border-border px-3 py-2 text-sm hover:bg-surface"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={confirmPreviewDownload}
+                  className="flex items-center gap-1.5 rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
+                >
+                  <Download className="h-4 w-4" /> Download {previewFormat.toUpperCase()}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}
