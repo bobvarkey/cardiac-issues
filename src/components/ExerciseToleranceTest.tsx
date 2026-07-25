@@ -1105,6 +1105,7 @@ export function ExerciseToleranceTest() {
       heartRate: hr ? parseFloat(hr) : null,
       rpe: rpe ? parseInt(rpe) : null,
       lactate: lactate ? parseFloat(lactate) : null,
+      pyruvate: pyruvate ? parseFloat(pyruvate) : null,
       sao2: sao2 ? parseFloat(sao2) : null,
       symptoms,
       ph: samplingMethod === "iv_vbg" && ph ? parseFloat(ph) : null,
