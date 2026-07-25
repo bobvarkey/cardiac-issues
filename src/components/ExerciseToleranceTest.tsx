@@ -1527,12 +1527,35 @@ export function ExerciseToleranceTest() {
         const sao2v = recorded?.sao2 ?? "";
         const rpev = recorded?.rpe ?? "";
         const lac = recorded?.lactate ?? "";
+        const pyr = recorded?.pyruvate ?? "";
+        const lp =
+          recorded?.lactate != null && recorded?.pyruvate != null && recorded.pyruvate > 0
+            ? (recorded.lactate / recorded.pyruvate).toFixed(1)
+            : "";
         const sym = recorded?.symptoms ?? "";
         const done = recorded ? "X" : "";
         const pad = (v: string | number, w: number) => String(v).padEnd(w);
-        return `| ${pad(i + 1, 2)} | ${pad(workload, 16)} | ${pad(s.mets, 4)} | ${pad(hrv, 3)} | ${pad(sao2v, 3)} | ${pad(rpev, 2)} | ${pad(lac, 5)} | ${pad(sym, 12)} | ${pad(done, 3)} |`;
+        return `| ${pad(i + 1, 2)} | ${pad(workload, 16)} | ${pad(s.mets, 4)} | ${pad(hrv, 3)} | ${pad(sao2v, 3)} | ${pad(rpev, 2)} | ${pad(lac, 5)} | ${pad(pyr, 5)} | ${pad(lp, 4)} | ${pad(sym, 12)} | ${pad(done, 3)} |`;
       })
       .join("\n");
+
+    const vbgTable = stages
+      .filter((s) => s.ph != null || s.hco3 != null || s.pco2 != null || s.po2 != null)
+      .map((s) => {
+        const pad = (v: string | number | null, w: number) =>
+          String(v ?? "").padEnd(w);
+        return `| ${pad(s.stage, 3)} | ${pad(s.ph, 5)} | ${pad(s.hco3, 5)} | ${pad(s.pco2, 5)} | ${pad(s.po2, 5)} |`;
+      })
+      .join("\n");
+    const mito = computeMitoFlags(
+      peakVo2,
+      predictedVo2Max(patient.age, patient.sex),
+      stages,
+      (modality === "treadmill" ? BRUCE_STAGES : BIKE_STAGES).length,
+      secondWind,
+    );
+
+
 
     const samplingLabel =
       samplingMethod === "capillary"
@@ -1613,12 +1636,21 @@ export function ExerciseToleranceTest() {
       ),
       "",
 
-      "STAGE-BY-STAGE DATA",
-      "-".repeat(60),
-      "Stg | Workload         | METs | HR  | SpO₂ | RPE | Lact  | Symptoms     | Done |",
-      "-".repeat(60),
+      "STAGE-BY-STAGE DATA (HR, SpO₂, RPE, Lactate, Pyruvate, L:P)",
+      "-".repeat(80),
+      "Stg | Workload         | METs | HR  | SpO₂ | RPE | Lact  | Pyr   | L:P  | Symptoms     | Done |",
+      "-".repeat(80),
       stageTable,
-      "-".repeat(60),
+      "-".repeat(80),
+      "",
+      "VBG PER STAGE (pH / HCO₃⁻ / pCO₂ / pO₂)",
+      vbgTable
+        ? ["-".repeat(40),
+           "Stg | pH    | HCO₃  | pCO₂  | pO₂   |",
+           "-".repeat(40),
+           vbgTable,
+           "-".repeat(40)].join("\n")
+        : " No VBG samples recorded.",
       "",
       `Early termination: ${terminatedEarly ? `Yes — ${terminationReason || "Not specified"}` : "No"}`,
       `Recovery completed: ${recoveryDone ? "Yes" : "No"}`,
@@ -1626,8 +1658,25 @@ export function ExerciseToleranceTest() {
       "RECOVERY VITALS",
       ` HR (1 min): ${recoveryVitals.hr ?? "—"} bpm`,
       ` Lactate: ${recoveryVitals.lactate != null ? `${recoveryVitals.lactate} mmol/L` : "—"}`,
+      ` Pyruvate: ${recoveryVitals.pyruvate != null ? `${recoveryVitals.pyruvate} mmol/L` : "—"}`,
       ` SpO₂: ${recoveryVitals.sao2 != null ? `${recoveryVitals.sao2}%` : "—"}`,
       ` Symptoms: ${recoveryVitals.symptoms || "—"}`,
+      "",
+      "SECOND-WIND CHECK-IN (McArdle / GSD-V screen)",
+      ` Tested: ${secondWind.tested ? "Yes" : "No"}`,
+      ...(secondWind.tested
+        ? [
+            ` Time re-tested: ${secondWind.minute ?? "—"} min`,
+            ` HR: ${secondWind.heartRate ?? "—"} bpm`,
+            ` RPE: ${secondWind.rpe ?? "—"}`,
+            ` Lactate: ${secondWind.lactate != null ? `${secondWind.lactate} mmol/L` : "—"}`,
+            ` Pyruvate: ${secondWind.pyruvate != null ? `${secondWind.pyruvate} mmol/L` : "—"}`,
+            ` Subjective improvement: ${secondWind.improved ? "Yes (suggests McArdle)" : "No"}`,
+            ` Notes: ${secondWind.notes || "—"}`,
+          ]
+        : [" (Not performed)"]),
+      "",
+
       "",
       "RESULTS",
       ` Peak VO₂ (estimated): ${peakVo2.toFixed(1)} mL/kg/min`,
@@ -1666,6 +1715,17 @@ export function ExerciseToleranceTest() {
       "LACTATE PATTERN",
       ` ${analyzeLactate(stages)}`,
       "",
+      "MITOCHONDRIAL / METABOLIC FLAGS",
+      ` % predicted VO₂max: ${mito.pctPredictedVo2 != null ? `${mito.pctPredictedVo2.toFixed(0)}%` : "—"}${mito.vo2Reduced ? "  [FLAG: <80% — reduced oxidative capacity]" : ""}`,
+      ` Early lactate threshold (<50% workload): ${mito.earlyLactateThreshold ? "YES — supports mitochondrial dysfunction" : "No"}`,
+      ` Excessive submaximal lactate (>8 mmol/L): ${mito.excessiveSubmaxLactate ? "YES — suggests mitochondrial disease" : "No"}`,
+      ` Peak L:P ratio: ${mito.worstLpRatio != null ? mito.worstLpRatio.toFixed(1) : "—"}${mito.elevatedLpRatio ? "  [FLAG: >20 supports mitochondrial dysfunction]" : ""}`,
+      ` Second-wind phenomenon: ${mito.secondWindPositive ? "POSITIVE — consistent with McArdle (GSD V)" : "Not demonstrated"}`,
+      "",
+      "INDICATIONS FOR THIS TEST",
+      ...ETT_INDICATIONS.map((i) => ` • ${i}`),
+      "",
+
       "EXERCISE TOLERANCE — CLINICAL MEANING",
       " Exercise tolerance = how much work the body can handle before stopping.",
       " Assessed by: total exercise time, estimated VO₂/METs, HR response, RPE,",
