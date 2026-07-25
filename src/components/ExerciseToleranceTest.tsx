@@ -2843,17 +2843,17 @@ export function ExerciseToleranceTest() {
               <div className="flex flex-wrap gap-2 print:hidden">
                 <button
                   type="button"
-                  onClick={downloadProtocolTxt}
+                  onClick={() => openPreview("txt")}
                   className="flex items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-sm hover:bg-surface"
                 >
-                  <Download className="h-4 w-4" /> Download protocol (.txt)
+                  <Eye className="h-4 w-4" /> Preview & download (.txt)
                 </button>
                 <button
                   type="button"
-                  onClick={downloadProtocolPdf}
+                  onClick={() => openPreview("pdf")}
                   className="flex items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-sm hover:bg-surface"
                 >
-                  <Download className="h-4 w-4" /> Download protocol (PDF)
+                  <Eye className="h-4 w-4" /> Preview & download (PDF)
                 </button>
                 <button
                   type="button"
