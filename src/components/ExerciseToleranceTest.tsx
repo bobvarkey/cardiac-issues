@@ -1118,6 +1118,7 @@ export function ExerciseToleranceTest() {
     setHr("");
     setRpe("");
     setLactate("");
+    setPyruvate("");
     setSao2("");
     setSymptoms("");
     setPh("");
