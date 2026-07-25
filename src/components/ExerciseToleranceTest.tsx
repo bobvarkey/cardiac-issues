@@ -2619,17 +2619,6 @@ export function ExerciseToleranceTest() {
             />
           </div>
 
-          <div className="mt-6 flex justify-end">
-            <button
-              type="button"
-              onClick={finishRecovery}
-              className="flex items-center gap-1.5 rounded-lg bg-rose-500 px-4 py-2 text-sm font-medium text-white hover:bg-rose-600"
-            >
-              Generate Report
-              <FileText className="h-4 w-4" />
-            </button>
-          </div>
-        </SectionCard>
           <div className="mt-6 rounded-xl border border-fuchsia-500/30 bg-fuchsia-500/5 p-4">
             <div className="mb-2 flex items-center justify-between">
               <div>
