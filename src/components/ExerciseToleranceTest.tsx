@@ -3214,6 +3214,63 @@ export function ExerciseToleranceTest() {
           </div>
         </div>
       )}
+
+      {previewOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 print:hidden"
+          onClick={() => setPreviewOpen(false)}
+        >
+          <div
+            className="flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-xl border border-border bg-background shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-start justify-between border-b border-border px-5 py-3">
+              <div>
+                <h3 className="text-base font-semibold">
+                  Print preview — {previewFormat.toUpperCase()}
+                </h3>
+                <p className="text-xs text-muted-foreground">
+                  Confirm the full ETT protocol renders correctly before downloading.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setPreviewOpen(false)}
+                className="rounded-md p-1 text-muted-foreground hover:bg-surface"
+                aria-label="Close preview"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-auto bg-surface/40 p-4">
+              <pre className="whitespace-pre font-mono text-[11px] leading-[1.35] text-foreground">
+{previewText}
+              </pre>
+            </div>
+            <div className="flex flex-wrap items-center justify-between gap-2 border-t border-border px-5 py-3">
+              <span className="text-xs text-muted-foreground">
+                {previewText.split("\n").length} lines · {previewText.length.toLocaleString()} chars
+              </span>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setPreviewOpen(false)}
+                  className="rounded-lg border border-border px-3 py-2 text-sm hover:bg-surface"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={confirmPreviewDownload}
+                  className="flex items-center gap-1.5 rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
+                >
+                  <Download className="h-4 w-4" /> Download {previewFormat.toUpperCase()}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
