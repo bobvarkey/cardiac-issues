@@ -2630,6 +2630,133 @@ export function ExerciseToleranceTest() {
             </button>
           </div>
         </SectionCard>
+          <div className="mt-6 rounded-xl border border-fuchsia-500/30 bg-fuchsia-500/5 p-4">
+            <div className="mb-2 flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-semibold text-fuchsia-300">
+                  Second-Wind Check-in (8–10 min)
+                </h3>
+                <p className="text-[11px] text-muted-foreground">
+                  After a brief rest, resume light exercise at 8–10 min. Improved
+                  performance, HR drop, or lactate that stops rising is classic for
+                  McArdle disease (GSD V).
+                </p>
+              </div>
+              <label className="flex items-center gap-2 text-xs">
+                <input
+                  type="checkbox"
+                  className="h-4 w-4 accent-fuchsia-500"
+                  checked={secondWind.tested}
+                  onChange={(e) =>
+                    setSecondWind((s) => ({ ...s, tested: e.target.checked }))
+                  }
+                />
+                Performed
+              </label>
+            </div>
+            {secondWind.tested && (
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                <NumberInput
+                  label="Minute of check"
+                  value={secondWind.minute !== null ? String(secondWind.minute) : ""}
+                  onChange={(v) =>
+                    setSecondWind((s) => ({ ...s, minute: v ? parseFloat(v) : null }))
+                  }
+                  unit="min"
+                  min={5}
+                  max={20}
+                />
+                <NumberInput
+                  label="HR at re-exercise"
+                  value={
+                    secondWind.heartRate !== null ? String(secondWind.heartRate) : ""
+                  }
+                  onChange={(v) =>
+                    setSecondWind((s) => ({
+                      ...s,
+                      heartRate: v ? parseFloat(v) : null,
+                    }))
+                  }
+                  unit="bpm"
+                />
+                <SelectInput
+                  label="Borg RPE"
+                  value={secondWind.rpe !== null ? String(secondWind.rpe) : ""}
+                  onChange={(v) =>
+                    setSecondWind((s) => ({ ...s, rpe: v ? parseInt(v) : null }))
+                  }
+                  options={[{ value: "", label: "—" }, ...BORG_SCALE.map((b) => ({
+                    value: String(b.value),
+                    label: b.label,
+                  }))]}
+                />
+                <NumberInput
+                  label="Lactate"
+                  value={
+                    secondWind.lactate !== null ? String(secondWind.lactate) : ""
+                  }
+                  onChange={(v) =>
+                    setSecondWind((s) => ({
+                      ...s,
+                      lactate: v ? parseFloat(v) : null,
+                    }))
+                  }
+                  unit="mmol/L"
+                  step={0.1}
+                />
+                <NumberInput
+                  label="Pyruvate"
+                  value={
+                    secondWind.pyruvate !== null ? String(secondWind.pyruvate) : ""
+                  }
+                  onChange={(v) =>
+                    setSecondWind((s) => ({
+                      ...s,
+                      pyruvate: v ? parseFloat(v) : null,
+                    }))
+                  }
+                  unit="mmol/L"
+                  step={0.01}
+                />
+                <label className="flex items-center gap-2 self-end text-xs">
+                  <input
+                    type="checkbox"
+                    className="h-4 w-4 accent-fuchsia-500"
+                    checked={secondWind.improved}
+                    onChange={(e) =>
+                      setSecondWind((s) => ({ ...s, improved: e.target.checked }))
+                    }
+                  />
+                  Clinically improved (second-wind positive)
+                </label>
+                <label className="flex flex-col gap-1 sm:col-span-2 lg:col-span-3">
+                  <span className="text-xs font-medium text-muted-foreground">
+                    Notes
+                  </span>
+                  <input
+                    type="text"
+                    value={secondWind.notes}
+                    onChange={(e) =>
+                      setSecondWind((s) => ({ ...s, notes: e.target.value }))
+                    }
+                    className="rounded-lg border border-border bg-surface/40 px-3 py-2 text-sm focus:border-fuchsia-500 focus:outline-none focus:ring-1 focus:ring-fuchsia-500/30"
+                  />
+                </label>
+              </div>
+            )}
+          </div>
+
+          <div className="mt-4 flex justify-end">
+            <button
+              type="button"
+              onClick={finishRecovery}
+              className="flex items-center gap-1.5 rounded-lg bg-rose-500 px-4 py-2 text-sm font-medium text-white hover:bg-rose-600"
+            >
+              Generate Report
+              <FileText className="h-4 w-4" />
+            </button>
+          </div>
+        </SectionCard>
       )}
 
       {/* ========== REPORT ========== */}
