@@ -72,6 +72,7 @@ interface StageData {
   heartRate: number | null;
   rpe: number | null;
   lactate: number | null;
+  pyruvate: number | null;
   sao2: number | null;
   symptoms: string;
   ph: number | null;
@@ -83,8 +84,20 @@ interface StageData {
 interface VitalsRecovery {
   hr: number | null;
   lactate: number | null;
+  pyruvate: number | null;
   sao2: number | null;
   symptoms: string;
+}
+
+interface SecondWind {
+  tested: boolean;
+  minute: number | null;
+  heartRate: number | null;
+  lactate: number | null;
+  pyruvate: number | null;
+  rpe: number | null;
+  improved: boolean;
+  notes: string;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -344,6 +357,106 @@ function analyzeLactate(stages: StageData[]): string {
       "No clear mitochondrial or glycogen-storage signature; clinical correlation required.",
     );
   return parts.join(" ");
+}
+
+/* Indications and interpretive thresholds (metabolic myopathy focus) */
+const ETT_INDICATIONS: string[] = [
+  "Exercise intolerance disproportionate to weakness",
+  "Suspected mitochondrial myopathy (CPEO, MELAS, MERRF)",
+  "Evaluation of the second-wind phenomenon in glycogen storage diseases",
+  "Unexplained exertional dyspnoea with normal cardiopulmonary work-up",
+  "Assessment of functional capacity in known metabolic myopathies",
+  "Differentiation between deconditioning and metabolic muscle disease",
+];
+
+const ETT_KEY_INTERPRETATIONS: { title: string; text: string }[] = [
+  {
+    title: "VO₂max",
+    text: "Reduced (<80% predicted) suggests impaired oxidative capacity — seen in mitochondrial myopathies.",
+  },
+  {
+    title: "Lactate threshold",
+    text: "Premature rise (<50% of predicted workload) indicates mitochondrial dysfunction.",
+  },
+  {
+    title: "Excessive lactate",
+    text: ">8–10 mmol/L at submaximal work suggests mitochondrial disease.",
+  },
+  {
+    title: "Lactate : Pyruvate ratio",
+    text: "Elevated (>20:1) supports mitochondrial dysfunction (block at complex I / respiratory chain).",
+  },
+  {
+    title: "Second-wind phenomenon",
+    text: "Improved performance after 8–10 min suggests McArdle disease (glycogenosis V).",
+  },
+  {
+    title: "Normal test",
+    text: "Does not exclude metabolic myopathy — some disorders only manifest during specific activities.",
+  },
+];
+
+interface MitoFlags {
+  pctPredictedVo2: number | null;
+  vo2Reduced: boolean;
+  earlyLactateThreshold: boolean;
+  excessiveSubmaxLactate: boolean;
+  elevatedLpRatio: boolean;
+  worstLpRatio: number | null;
+  secondWindPositive: boolean;
+}
+
+function computeMitoFlags(
+  peakVo2: number,
+  predictedVo2: number,
+  stages: StageData[],
+  totalStages: number,
+  secondWind: SecondWind,
+): MitoFlags {
+  const pctPredictedVo2 = predictedVo2 > 0 ? (peakVo2 / predictedVo2) * 100 : null;
+
+  // Lactate threshold ≈ first stage where lactate ≥ 4 mmol/L (OBLA); early if occurs before 50% of planned stages
+  const thresholdStage = stages.find((s) => s.lactate != null && s.lactate >= 4);
+  const earlyLactateThreshold =
+    !!thresholdStage &&
+    totalStages > 0 &&
+    thresholdStage.stage / totalStages < 0.5;
+
+  // Excessive submax lactate: >8 mmol/L before the last stage
+  const excessiveSubmaxLactate = stages.some(
+    (s, i) =>
+      s.lactate != null && s.lactate > 8 && i < Math.max(0, stages.length - 1),
+  );
+
+  // L:P ratio
+  const ratios = stages
+    .map((s) =>
+      s.lactate != null && s.pyruvate != null && s.pyruvate > 0
+        ? s.lactate / s.pyruvate
+        : null,
+    )
+    .filter((r): r is number => r != null);
+  const worstLpRatio = ratios.length ? Math.max(...ratios) : null;
+  const elevatedLpRatio = worstLpRatio != null && worstLpRatio > 20;
+
+  // Second wind: HR drop or lactate drop/stabilisation with continued exercise around 8–10 min
+  const secondWindPositive =
+    secondWind.tested &&
+    (secondWind.improved ||
+      (secondWind.lactate != null &&
+        stages.some(
+          (s) => s.lactate != null && secondWind.lactate! < s.lactate,
+        )));
+
+  return {
+    pctPredictedVo2,
+    vo2Reduced: pctPredictedVo2 != null && pctPredictedVo2 < 80,
+    earlyLactateThreshold,
+    excessiveSubmaxLactate,
+    elevatedLpRatio,
+    worstLpRatio,
+    secondWindPositive,
+  };
 }
 
 /* -------------------------------------------------------------------------- */
@@ -953,6 +1066,212 @@ function MethodExplainer() {
 }
 
 /* -------------------------------------------------------------------------- */
+/* Combined Lactate / Pyruvate / VBG chart across baseline → stages → recovery */
+/* -------------------------------------------------------------------------- */
+
+function MultiParamChart({
+  stages,
+  recovery,
+  secondWind,
+  totalStages,
+}: {
+  stages: StageData[];
+  recovery: VitalsRecovery;
+  secondWind: SecondWind;
+  totalStages: number;
+}) {
+  interface Pt {
+    label: string;
+    x: number;
+    lactate: number | null;
+    pyruvate: number | null;
+    ph: number | null;
+    hco3: number | null;
+    lp: number | null;
+  }
+  const points: Pt[] = [];
+  points.push({ label: "Base", x: 0, lactate: null, pyruvate: null, ph: null, hco3: null, lp: null });
+  stages.forEach((s) => {
+    const lp = s.lactate != null && s.pyruvate != null && s.pyruvate > 0
+      ? s.lactate / s.pyruvate
+      : null;
+    points.push({
+      label: `S${s.stage}`,
+      x: s.stage,
+      lactate: s.lactate,
+      pyruvate: s.pyruvate,
+      ph: s.ph,
+      hco3: s.hco3,
+      lp,
+    });
+  });
+  if (recovery.lactate != null || recovery.pyruvate != null) {
+    points.push({
+      label: "Rec",
+      x: (stages.length || 0) + 1,
+      lactate: recovery.lactate,
+      pyruvate: recovery.pyruvate,
+      ph: null,
+      hco3: null,
+      lp:
+        recovery.lactate != null && recovery.pyruvate != null && recovery.pyruvate > 0
+          ? recovery.lactate / recovery.pyruvate
+          : null,
+    });
+  }
+  if (secondWind.tested && (secondWind.lactate != null || secondWind.pyruvate != null)) {
+    points.push({
+      label: "SW",
+      x: (stages.length || 0) + 2,
+      lactate: secondWind.lactate,
+      pyruvate: secondWind.pyruvate,
+      ph: null,
+      hco3: null,
+      lp:
+        secondWind.lactate != null && secondWind.pyruvate != null && secondWind.pyruvate > 0
+          ? secondWind.lactate / secondWind.pyruvate
+          : null,
+    });
+  }
+
+  const hasData = points.some((p) => p.lactate != null || p.pyruvate != null);
+  if (!hasData) {
+    return (
+      <div className="flex items-center justify-center rounded-lg border border-dashed border-border py-8 text-xs text-muted-foreground">
+        Enter lactate and pyruvate to see the combined curve.
+      </div>
+    );
+  }
+
+  const W = 480;
+  const H = 220;
+  const pad = { top: 12, right: 46, bottom: 32, left: 40 };
+  const iw = W - pad.left - pad.right;
+  const ih = H - pad.top - pad.bottom;
+
+  const maxLac = Math.max(
+    10,
+    ...points.map((p) => p.lactate ?? 0),
+    ...points.map((p) => (p.pyruvate ?? 0) * 5),
+  );
+  const maxX = Math.max(...points.map((p) => p.x), 1);
+  const xScale = (x: number) => pad.left + (x / maxX) * iw;
+  const yScale = (v: number) => pad.top + ih - (v / maxLac) * ih;
+
+  // Detect lactate threshold (first stage lactate ≥ 4)
+  const threshold = points.find((p) => p.lactate != null && p.lactate >= 4);
+  const earlyThreshold =
+    threshold &&
+    threshold.x > 0 &&
+    totalStages > 0 &&
+    threshold.x / totalStages < 0.5;
+
+  const line = (accessor: (p: Pt) => number | null) =>
+    points
+      .filter((p) => accessor(p) != null)
+      .map((p) => `${xScale(p.x)},${yScale(accessor(p) as number)}`)
+      .join(" ");
+
+  const highLp = points.filter((p) => p.lp != null && p.lp > 20);
+
+  return (
+    <div className="space-y-2">
+      <svg viewBox={`0 0 ${W} ${H}`} className="w-full max-w-[560px]">
+        {[0, 2, 4, 6, 8, 10, 14, 18].filter((v) => v <= maxLac).map((v) => (
+          <g key={v}>
+            <line
+              x1={pad.left}
+              y1={yScale(v)}
+              x2={W - pad.right}
+              y2={yScale(v)}
+              stroke="currentColor"
+              className="text-border"
+              strokeWidth={0.5}
+            />
+            <text x={pad.left - 4} y={yScale(v) + 3} textAnchor="end" fontSize={9} className="fill-muted-foreground">{v}</text>
+          </g>
+        ))}
+        {/* threshold ref */}
+        {maxLac >= 4 && (
+          <>
+            <line x1={pad.left} y1={yScale(4)} x2={W - pad.right} y2={yScale(4)} stroke="#fbbf24" strokeDasharray="4 3" strokeWidth={1} opacity={0.7} />
+            <text x={W - pad.right - 2} y={yScale(4) - 3} textAnchor="end" fill="#fbbf24" fontSize={9}>Lactate threshold ≈ 4</text>
+          </>
+        )}
+        {/* threshold vertical marker */}
+        {threshold && (
+          <g>
+            <line x1={xScale(threshold.x)} y1={pad.top} x2={xScale(threshold.x)} y2={pad.top + ih} stroke={earlyThreshold ? "#f43f5e" : "#38bdf8"} strokeDasharray="3 3" strokeWidth={1} opacity={0.8} />
+            <text x={xScale(threshold.x) + 3} y={pad.top + 10} fontSize={9} fill={earlyThreshold ? "#f43f5e" : "#38bdf8"}>
+              LT @ {threshold.label}{earlyThreshold ? " (early)" : ""}
+            </text>
+          </g>
+        )}
+
+        {/* x-axis labels */}
+        {points.map((p) => (
+          <text key={p.label} x={xScale(p.x)} y={H - 12} textAnchor="middle" fontSize={9} className="fill-muted-foreground">{p.label}</text>
+        ))}
+
+        {/* Lactate line */}
+        <polyline points={line((p) => p.lactate)} fill="none" stroke="#f43f5e" strokeWidth={2} />
+        {points.filter((p) => p.lactate != null).map((p, i) => (
+          <circle key={`l${i}`} cx={xScale(p.x)} cy={yScale(p.lactate as number)} r={3} fill="#f43f5e" />
+        ))}
+        {/* Pyruvate line — scaled ×5 for visibility, dashed */}
+        <polyline
+          points={points.filter((p) => p.pyruvate != null).map((p) => `${xScale(p.x)},${yScale((p.pyruvate as number) * 5)}`).join(" ")}
+          fill="none"
+          stroke="#a855f7"
+          strokeWidth={2}
+          strokeDasharray="4 3"
+        />
+        {points.filter((p) => p.pyruvate != null).map((p, i) => (
+          <circle key={`p${i}`} cx={xScale(p.x)} cy={yScale((p.pyruvate as number) * 5)} r={3} fill="#a855f7" />
+        ))}
+        {/* pH line — normalise: (pH − 7.2) × 40 to overlay */}
+        <polyline
+          points={points.filter((p) => p.ph != null).map((p) => `${xScale(p.x)},${yScale(((p.ph as number) - 7.2) * 40)}`).join(" ")}
+          fill="none"
+          stroke="#38bdf8"
+          strokeWidth={1.5}
+          strokeDasharray="1 2"
+        />
+
+        {/* L:P > 20 callouts */}
+        {highLp.map((p, i) => (
+          <g key={`lp${i}`}>
+            <circle cx={xScale(p.x)} cy={yScale(p.lactate ?? 0)} r={7} fill="none" stroke="#f43f5e" strokeWidth={1.2} />
+            <text x={xScale(p.x)} y={yScale(p.lactate ?? 0) - 10} textAnchor="middle" fontSize={9} fill="#f43f5e">
+              L:P {p.lp!.toFixed(1)}
+            </text>
+          </g>
+        ))}
+
+        {/* Legend */}
+        <g transform={`translate(${pad.left}, ${pad.top - 2})`}>
+          <text x={0} y={-2} fontSize={9} fill="#f43f5e">■ Lactate</text>
+          <text x={60} y={-2} fontSize={9} fill="#a855f7">■ Pyruvate ×5</text>
+          <text x={140} y={-2} fontSize={9} fill="#38bdf8">■ pH (normalised)</text>
+        </g>
+      </svg>
+      <div className="flex flex-wrap gap-2 text-[11px]">
+        {earlyThreshold && (
+          <span className="rounded bg-rose-500/15 px-2 py-0.5 text-rose-400">
+            Early lactate threshold ({"<"}50% workload) — consider mitochondrial dysfunction
+          </span>
+        )}
+        {highLp.length > 0 && (
+          <span className="rounded bg-rose-500/15 px-2 py-0.5 text-rose-400">
+            L:P ratio {'>'} 20 detected — supports mitochondrial dysfunction
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
 /* Main */
 /* -------------------------------------------------------------------------- */
 
@@ -1004,14 +1323,27 @@ export function ExerciseToleranceTest() {
   const [recoveryVitals, setRecoveryVitals] = useState<VitalsRecovery>({
     hr: null,
     lactate: null,
+    pyruvate: null,
     sao2: null,
     symptoms: "",
   });
   const [recoveryDone, setRecoveryDone] = useState(false);
 
+  const [secondWind, setSecondWind] = useState<SecondWind>({
+    tested: false,
+    minute: null,
+    heartRate: null,
+    lactate: null,
+    pyruvate: null,
+    rpe: null,
+    improved: false,
+    notes: "",
+  });
+
   const [hr, setHr] = useState("");
   const [rpe, setRpe] = useState("");
   const [lactate, setLactate] = useState("");
+  const [pyruvate, setPyruvate] = useState("");
   const [sao2, setSao2] = useState("");
   const [symptoms, setSymptoms] = useState("");
   const [ph, setPh] = useState("");
@@ -1079,6 +1411,7 @@ export function ExerciseToleranceTest() {
       heartRate: hr ? parseFloat(hr) : null,
       rpe: rpe ? parseInt(rpe) : null,
       lactate: lactate ? parseFloat(lactate) : null,
+      pyruvate: pyruvate ? parseFloat(pyruvate) : null,
       sao2: sao2 ? parseFloat(sao2) : null,
       symptoms,
       ph: samplingMethod === "iv_vbg" && ph ? parseFloat(ph) : null,
@@ -1091,6 +1424,7 @@ export function ExerciseToleranceTest() {
     setHr("");
     setRpe("");
     setLactate("");
+    setPyruvate("");
     setSao2("");
     setSymptoms("");
     setPh("");
@@ -1148,11 +1482,22 @@ export function ExerciseToleranceTest() {
     setTerminatedEarly(false);
     setTerminationReason("");
     setPostCpk(null);
-    setRecoveryVitals({ hr: null, lactate: null, sao2: null, symptoms: "" });
+    setRecoveryVitals({ hr: null, lactate: null, pyruvate: null, sao2: null, symptoms: "" });
     setRecoveryDone(false);
+    setSecondWind({
+      tested: false,
+      minute: null,
+      heartRate: null,
+      lactate: null,
+      pyruvate: null,
+      rpe: null,
+      improved: false,
+      notes: "",
+    });
     setHr("");
     setRpe("");
     setLactate("");
+    setPyruvate("");
     setSao2("");
     setSymptoms("");
     setPh("");
@@ -1471,12 +1816,18 @@ export function ExerciseToleranceTest() {
               />
             </label>
           </div>
-          <div className="mt-6 flex justify-end">
+          <div className="mt-6 flex flex-wrap items-center justify-between gap-2">
+            <button
+              type="button"
+              onClick={() => setStep("protocol")}
+              className="text-xs text-muted-foreground underline hover:text-foreground"
+            >
+              Skip demographics — run test now
+            </button>
             <button
               type="button"
               onClick={() => setStep("prep")}
-              disabled={!patientValid}
-              className="flex items-center gap-1.5 rounded-lg bg-rose-500 px-4 py-2 text-sm font-medium text-white hover:bg-rose-600 disabled:opacity-40"
+              className="flex items-center gap-1.5 rounded-lg bg-rose-500 px-4 py-2 text-sm font-medium text-white hover:bg-rose-600"
             >
               Next: Pre-test Checks
               <ArrowRight className="h-4 w-4" />
@@ -1618,8 +1969,7 @@ export function ExerciseToleranceTest() {
               <button
                 type="button"
                 onClick={() => setStep("protocol")}
-                disabled={!allPrepDone}
-                className="flex items-center gap-1.5 rounded-lg bg-rose-500 px-4 py-2 text-sm font-medium text-white hover:bg-rose-600 disabled:opacity-40"
+                className="flex items-center gap-1.5 rounded-lg bg-rose-500 px-4 py-2 text-sm font-medium text-white hover:bg-rose-600"
               >
                 Next: Protocol
                 <ArrowRight className="h-4 w-4" />
@@ -1879,6 +2229,14 @@ export function ExerciseToleranceTest() {
                     className="w-full rounded-lg border border-border bg-surface/40 px-3 py-2 text-sm focus:border-rose-500 focus:outline-none focus:ring-1 focus:ring-rose-500/30"
                   />
                 </div>
+                <NumberInput
+                  label="Pyruvate"
+                  value={pyruvate}
+                  onChange={setPyruvate}
+                  unit="mmol/L"
+                  step={0.01}
+                  placeholder="e.g. 0.10"
+                />
                 <NumberInput
                   label="SpO₂"
                   value={sao2}
@@ -2210,6 +2568,20 @@ export function ExerciseToleranceTest() {
               step={0.1}
             />
             <NumberInput
+              label="Recovery Pyruvate"
+              value={
+                recoveryVitals.pyruvate !== null ? String(recoveryVitals.pyruvate) : ""
+              }
+              onChange={(v) =>
+                setRecoveryVitals((r) => ({
+                  ...r,
+                  pyruvate: v ? parseFloat(v) : null,
+                }))
+              }
+              unit="mmol/L"
+              step={0.01}
+            />
+            <NumberInput
               label="Recovery SpO₂"
               value={
                 recoveryVitals.sao2 !== null ? String(recoveryVitals.sao2) : ""
@@ -2247,7 +2619,123 @@ export function ExerciseToleranceTest() {
             />
           </div>
 
-          <div className="mt-6 flex justify-end">
+          <div className="mt-6 rounded-xl border border-fuchsia-500/30 bg-fuchsia-500/5 p-4">
+            <div className="mb-2 flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-semibold text-fuchsia-300">
+                  Second-Wind Check-in (8–10 min)
+                </h3>
+                <p className="text-[11px] text-muted-foreground">
+                  After a brief rest, resume light exercise at 8–10 min. Improved
+                  performance, HR drop, or lactate that stops rising is classic for
+                  McArdle disease (GSD V).
+                </p>
+              </div>
+              <label className="flex items-center gap-2 text-xs">
+                <input
+                  type="checkbox"
+                  className="h-4 w-4 accent-fuchsia-500"
+                  checked={secondWind.tested}
+                  onChange={(e) =>
+                    setSecondWind((s) => ({ ...s, tested: e.target.checked }))
+                  }
+                />
+                Performed
+              </label>
+            </div>
+            {secondWind.tested && (
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                <NumberInput
+                  label="Minute of check"
+                  value={secondWind.minute !== null ? String(secondWind.minute) : ""}
+                  onChange={(v) =>
+                    setSecondWind((s) => ({ ...s, minute: v ? parseFloat(v) : null }))
+                  }
+                  unit="min"
+                  min={5}
+                  max={20}
+                />
+                <NumberInput
+                  label="HR at re-exercise"
+                  value={
+                    secondWind.heartRate !== null ? String(secondWind.heartRate) : ""
+                  }
+                  onChange={(v) =>
+                    setSecondWind((s) => ({
+                      ...s,
+                      heartRate: v ? parseFloat(v) : null,
+                    }))
+                  }
+                  unit="bpm"
+                />
+                <SelectInput
+                  label="Borg RPE"
+                  value={secondWind.rpe !== null ? String(secondWind.rpe) : ""}
+                  onChange={(v) =>
+                    setSecondWind((s) => ({ ...s, rpe: v ? parseInt(v) : null }))
+                  }
+                  options={[{ value: "", label: "—" }, ...BORG_SCALE.map((b) => ({
+                    value: String(b.value),
+                    label: b.label,
+                  }))]}
+                />
+                <NumberInput
+                  label="Lactate"
+                  value={
+                    secondWind.lactate !== null ? String(secondWind.lactate) : ""
+                  }
+                  onChange={(v) =>
+                    setSecondWind((s) => ({
+                      ...s,
+                      lactate: v ? parseFloat(v) : null,
+                    }))
+                  }
+                  unit="mmol/L"
+                  step={0.1}
+                />
+                <NumberInput
+                  label="Pyruvate"
+                  value={
+                    secondWind.pyruvate !== null ? String(secondWind.pyruvate) : ""
+                  }
+                  onChange={(v) =>
+                    setSecondWind((s) => ({
+                      ...s,
+                      pyruvate: v ? parseFloat(v) : null,
+                    }))
+                  }
+                  unit="mmol/L"
+                  step={0.01}
+                />
+                <label className="flex items-center gap-2 self-end text-xs">
+                  <input
+                    type="checkbox"
+                    className="h-4 w-4 accent-fuchsia-500"
+                    checked={secondWind.improved}
+                    onChange={(e) =>
+                      setSecondWind((s) => ({ ...s, improved: e.target.checked }))
+                    }
+                  />
+                  Clinically improved (second-wind positive)
+                </label>
+                <label className="flex flex-col gap-1 sm:col-span-2 lg:col-span-3">
+                  <span className="text-xs font-medium text-muted-foreground">
+                    Notes
+                  </span>
+                  <input
+                    type="text"
+                    value={secondWind.notes}
+                    onChange={(e) =>
+                      setSecondWind((s) => ({ ...s, notes: e.target.value }))
+                    }
+                    className="rounded-lg border border-border bg-surface/40 px-3 py-2 text-sm focus:border-fuchsia-500 focus:outline-none focus:ring-1 focus:ring-fuchsia-500/30"
+                  />
+                </label>
+              </div>
+            )}
+          </div>
+
+          <div className="mt-4 flex justify-end">
             <button
               type="button"
               onClick={finishRecovery}
