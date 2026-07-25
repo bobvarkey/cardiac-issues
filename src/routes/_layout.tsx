@@ -1,7 +1,9 @@
 import { Outlet, createFileRoute } from "@tanstack/react-router";
 import { EcgLine } from "@/components/EcgLine";
+import { FloatingNavButtons } from "@/components/FloatingNavButtons";
 import { GlobalSearch } from "@/components/GlobalSearch";
 import { Sidebar } from "@/components/Sidebar";
+
 
 export const Route = createFileRoute("/_layout")({
   component: LayoutComponent,
@@ -32,6 +34,8 @@ function LayoutComponent() {
           </div>
         </footer>
       </div>
+      <FloatingNavButtons />
     </div>
   );
 }
+
