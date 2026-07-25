@@ -1551,9 +1551,10 @@ export function ExerciseToleranceTest() {
       peakVo2,
       predictedVo2Max(patient.age, patient.sex),
       stages,
+      (modality === "treadmill" ? BRUCE_STAGES : BIKE_STAGES).length,
       secondWind,
-      patient.weightKg,
     );
+
 
 
     const samplingLabel =
