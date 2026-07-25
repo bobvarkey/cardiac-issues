@@ -26,12 +26,13 @@ function ExerciseTolerancePage() {
           </span>
         </div>
         <h1 className="mt-2 text-3xl font-semibold tracking-tight">
-          Exercise Tolerance Test
+          Exercise Tolerance Test <span className="block text-lg font-normal text-muted-foreground">(Aerobic Capacity, VO₂ max and Lactate Threshold)</span>
         </h1>
         <p className="mt-2 max-w-2xl text-muted-foreground">
-          VO₂max / lactate stress test with Modified Bruce or bicycle ergometer
-          protocol, real-time METs calculation, lactate pattern analysis, and
-          printable report.
+          Modified Bruce or bike protocol with serial lactate + pyruvate + VBG
+          sampling, lactate-threshold and L:P callouts, mitochondrial-dysfunction
+          flags, and a Second-Wind (McArdle) check-in. Patient demographics are
+          optional — you can jump straight into the protocol.
         </p>
       </div>
       <ExerciseToleranceTest />
