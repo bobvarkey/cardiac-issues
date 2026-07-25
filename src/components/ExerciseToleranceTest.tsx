@@ -1969,8 +1969,7 @@ export function ExerciseToleranceTest() {
               <button
                 type="button"
                 onClick={() => setStep("protocol")}
-                disabled={!allPrepDone}
-                className="flex items-center gap-1.5 rounded-lg bg-rose-500 px-4 py-2 text-sm font-medium text-white hover:bg-rose-600 disabled:opacity-40"
+                className="flex items-center gap-1.5 rounded-lg bg-rose-500 px-4 py-2 text-sm font-medium text-white hover:bg-rose-600"
               >
                 Next: Protocol
                 <ArrowRight className="h-4 w-4" />
