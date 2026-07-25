@@ -1017,14 +1017,27 @@ export function ExerciseToleranceTest() {
   const [recoveryVitals, setRecoveryVitals] = useState<VitalsRecovery>({
     hr: null,
     lactate: null,
+    pyruvate: null,
     sao2: null,
     symptoms: "",
   });
   const [recoveryDone, setRecoveryDone] = useState(false);
 
+  const [secondWind, setSecondWind] = useState<SecondWind>({
+    tested: false,
+    minute: null,
+    heartRate: null,
+    lactate: null,
+    pyruvate: null,
+    rpe: null,
+    improved: false,
+    notes: "",
+  });
+
   const [hr, setHr] = useState("");
   const [rpe, setRpe] = useState("");
   const [lactate, setLactate] = useState("");
+  const [pyruvate, setPyruvate] = useState("");
   const [sao2, setSao2] = useState("");
   const [symptoms, setSymptoms] = useState("");
   const [ph, setPh] = useState("");
