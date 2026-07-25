@@ -1624,8 +1624,128 @@ export function ExerciseToleranceTest() {
               </button>
             </div>
           </SectionCard>
+
+          <SectionCard title="Blood-sampling Timeline" icon={Droplets}>
+            <div className="space-y-2 text-xs">
+              {SAMPLING_TIMELINE.map((row) => (
+                <div
+                  key={row.when}
+                  className="rounded-lg border border-border bg-surface/40 p-3"
+                >
+                  <div className="font-semibold text-rose-400">{row.when}</div>
+                  <div className="mt-0.5">
+                    <span className="text-muted-foreground">Samples: </span>
+                    {row.samples.join(", ")}
+                  </div>
+                  <div className="mt-0.5 text-muted-foreground">{row.notes}</div>
+                </div>
+              ))}
+            </div>
+          </SectionCard>
+
+          <SectionCard title="Stopping Criteria" icon={AlertTriangle}>
+            <div className="grid gap-3 md:grid-cols-2">
+              <div className="rounded-lg border border-rose-500/30 bg-rose-500/5 p-3">
+                <div className="mb-2 text-xs font-semibold text-rose-400">
+                  Absolute — stop immediately
+                </div>
+                <ul className="ml-4 list-disc space-y-1 text-xs">
+                  {STOPPING_CRITERIA_ABSOLUTE.map((c) => (
+                    <li key={c}>{c}</li>
+                  ))}
+                </ul>
+              </div>
+              <div className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-3">
+                <div className="mb-2 text-xs font-semibold text-amber-400">
+                  Relative — stop if concerning trend
+                </div>
+                <ul className="ml-4 list-disc space-y-1 text-xs">
+                  {STOPPING_CRITERIA_RELATIVE.map((c) => (
+                    <li key={c}>{c}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </SectionCard>
+
+          <SectionCard
+            title="Modality-specific Setup & Execution"
+            icon={Activity}
+          >
+            <div className="mb-3">
+              <SelectInput
+                label="Choose modality (pre-configures the protocol step)"
+                value={modality}
+                onChange={(v) => setModality(v as Modality)}
+                options={[
+                  { value: "treadmill", label: "Treadmill (Modified Bruce)" },
+                  { value: "bike", label: "Bicycle Ergometer" },
+                ]}
+              />
+            </div>
+            {(["treadmill", "bike"] as const).map((m) => {
+              const spec = m === "treadmill" ? TREADMILL_SPEC : BIKE_SPEC;
+              const active = modality === m;
+              return (
+                <div
+                  key={m}
+                  className={`mt-3 rounded-lg border p-3 text-xs ${
+                    active
+                      ? "border-rose-500/40 bg-rose-500/5"
+                      : "border-border bg-surface/30 opacity-70"
+                  }`}
+                >
+                  <div className="mb-2 flex items-center justify-between">
+                    <div className="text-sm font-semibold">
+                      {m === "treadmill"
+                        ? "Treadmill — Modified Bruce"
+                        : "Bicycle Ergometer"}
+                    </div>
+                    {active && (
+                      <span className="rounded bg-rose-500/15 px-2 py-0.5 text-[10px] font-medium text-rose-400">
+                        Selected
+                      </span>
+                    )}
+                  </div>
+                  <div className="grid gap-3 md:grid-cols-3">
+                    <div>
+                      <div className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                        Required equipment
+                      </div>
+                      <ul className="ml-4 list-disc space-y-0.5">
+                        {spec.equipment.map((e) => (
+                          <li key={e}>{e}</li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div>
+                      <div className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                        Setup
+                      </div>
+                      <ol className="ml-4 list-decimal space-y-0.5">
+                        {spec.setup.map((s) => (
+                          <li key={s}>{s}</li>
+                        ))}
+                      </ol>
+                    </div>
+                    <div>
+                      <div className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                        Step-by-step execution
+                      </div>
+                      <ol className="ml-4 list-decimal space-y-0.5">
+                        {spec.execution.map((s) => (
+                          <li key={s}>{s}</li>
+                        ))}
+                      </ol>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </SectionCard>
         </div>
       )}
+
 
       {/* ========== PROTOCOL ========== */}
       {step === "protocol" && (
