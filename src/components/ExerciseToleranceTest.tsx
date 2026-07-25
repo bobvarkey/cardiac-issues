@@ -2568,6 +2568,20 @@ export function ExerciseToleranceTest() {
               step={0.1}
             />
             <NumberInput
+              label="Recovery Pyruvate"
+              value={
+                recoveryVitals.pyruvate !== null ? String(recoveryVitals.pyruvate) : ""
+              }
+              onChange={(v) =>
+                setRecoveryVitals((r) => ({
+                  ...r,
+                  pyruvate: v ? parseFloat(v) : null,
+                }))
+              }
+              unit="mmol/L"
+              step={0.01}
+            />
+            <NumberInput
               label="Recovery SpO₂"
               value={
                 recoveryVitals.sao2 !== null ? String(recoveryVitals.sao2) : ""
