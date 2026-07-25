@@ -4,11 +4,11 @@ import { ExerciseToleranceTest } from "@/components/ExerciseToleranceTest";
 export const Route = createFileRoute("/_layout/exercise-tolerance")({
   head: () => ({
     meta: [
-      { title: "Exercise Tolerance Test — VO₂max / Lactate Stress Test" },
+      { title: "Exercise Tolerance Test (Aerobic Capacity, VO₂max & Lactate Threshold)" },
       {
         name: "description",
         content:
-          "Exercise tolerance test mini-app with Modified Bruce / bike protocol, lactate curve analysis, VO₂max estimation, and printable report.",
+          "Exercise tolerance test for aerobic capacity, VO₂max and lactate threshold. Modified Bruce / bike protocol with lactate, pyruvate & VBG sampling, L:P ratio, second-wind McArdle check and mitochondrial dysfunction flags.",
       },
     ],
   }),
