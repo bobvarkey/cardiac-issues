@@ -1527,12 +1527,34 @@ export function ExerciseToleranceTest() {
         const sao2v = recorded?.sao2 ?? "";
         const rpev = recorded?.rpe ?? "";
         const lac = recorded?.lactate ?? "";
+        const pyr = recorded?.pyruvate ?? "";
+        const lp =
+          recorded?.lactate != null && recorded?.pyruvate != null && recorded.pyruvate > 0
+            ? (recorded.lactate / recorded.pyruvate).toFixed(1)
+            : "";
         const sym = recorded?.symptoms ?? "";
         const done = recorded ? "X" : "";
         const pad = (v: string | number, w: number) => String(v).padEnd(w);
-        return `| ${pad(i + 1, 2)} | ${pad(workload, 16)} | ${pad(s.mets, 4)} | ${pad(hrv, 3)} | ${pad(sao2v, 3)} | ${pad(rpev, 2)} | ${pad(lac, 5)} | ${pad(sym, 12)} | ${pad(done, 3)} |`;
+        return `| ${pad(i + 1, 2)} | ${pad(workload, 16)} | ${pad(s.mets, 4)} | ${pad(hrv, 3)} | ${pad(sao2v, 3)} | ${pad(rpev, 2)} | ${pad(lac, 5)} | ${pad(pyr, 5)} | ${pad(lp, 4)} | ${pad(sym, 12)} | ${pad(done, 3)} |`;
       })
       .join("\n");
+
+    const vbgTable = stages
+      .filter((s) => s.ph != null || s.hco3 != null || s.pco2 != null || s.po2 != null)
+      .map((s) => {
+        const pad = (v: string | number | null, w: number) =>
+          String(v ?? "").padEnd(w);
+        return `| ${pad(s.stage, 3)} | ${pad(s.ph, 5)} | ${pad(s.hco3, 5)} | ${pad(s.pco2, 5)} | ${pad(s.po2, 5)} |`;
+      })
+      .join("\n");
+    const mito = computeMitoFlags(
+      peakVo2,
+      predictedVo2Max(patient.age, patient.sex),
+      stages,
+      secondWind,
+      patient.weightKg,
+    );
+
 
     const samplingLabel =
       samplingMethod === "capillary"
