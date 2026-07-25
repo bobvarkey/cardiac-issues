@@ -1176,11 +1176,22 @@ export function ExerciseToleranceTest() {
     setTerminatedEarly(false);
     setTerminationReason("");
     setPostCpk(null);
-    setRecoveryVitals({ hr: null, lactate: null, sao2: null, symptoms: "" });
+    setRecoveryVitals({ hr: null, lactate: null, pyruvate: null, sao2: null, symptoms: "" });
     setRecoveryDone(false);
+    setSecondWind({
+      tested: false,
+      minute: null,
+      heartRate: null,
+      lactate: null,
+      pyruvate: null,
+      rpe: null,
+      improved: false,
+      notes: "",
+    });
     setHr("");
     setRpe("");
     setLactate("");
+    setPyruvate("");
     setSao2("");
     setSymptoms("");
     setPh("");
