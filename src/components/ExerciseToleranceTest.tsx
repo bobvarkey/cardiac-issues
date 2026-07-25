@@ -1816,12 +1816,18 @@ export function ExerciseToleranceTest() {
               />
             </label>
           </div>
-          <div className="mt-6 flex justify-end">
+          <div className="mt-6 flex flex-wrap items-center justify-between gap-2">
+            <button
+              type="button"
+              onClick={() => setStep("protocol")}
+              className="text-xs text-muted-foreground underline hover:text-foreground"
+            >
+              Skip demographics — run test now
+            </button>
             <button
               type="button"
               onClick={() => setStep("prep")}
-              disabled={!patientValid}
-              className="flex items-center gap-1.5 rounded-lg bg-rose-500 px-4 py-2 text-sm font-medium text-white hover:bg-rose-600 disabled:opacity-40"
+              className="flex items-center gap-1.5 rounded-lg bg-rose-500 px-4 py-2 text-sm font-medium text-white hover:bg-rose-600"
             >
               Next: Pre-test Checks
               <ArrowRight className="h-4 w-4" />
