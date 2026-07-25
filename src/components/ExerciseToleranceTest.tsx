@@ -72,6 +72,7 @@ interface StageData {
   heartRate: number | null;
   rpe: number | null;
   lactate: number | null;
+  pyruvate: number | null;
   sao2: number | null;
   symptoms: string;
   ph: number | null;
@@ -83,8 +84,20 @@ interface StageData {
 interface VitalsRecovery {
   hr: number | null;
   lactate: number | null;
+  pyruvate: number | null;
   sao2: number | null;
   symptoms: string;
+}
+
+interface SecondWind {
+  tested: boolean;
+  minute: number | null;
+  heartRate: number | null;
+  lactate: number | null;
+  pyruvate: number | null;
+  rpe: number | null;
+  improved: boolean;
+  notes: string;
 }
 
 /* -------------------------------------------------------------------------- */
