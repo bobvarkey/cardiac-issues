@@ -1,5 +1,25 @@
 import React, { useMemo, useState } from "react";
-import { ChevronRight, Pill, AlertTriangle, Info, Clock, Heart, Brain, Droplets, Image as ImageIcon } from "lucide-react";
+import { ChevronRight, Pill, AlertTriangle, Info, Clock, Heart, Brain, Droplets, Image as ImageIcon, Scissors } from "lucide-react";
+
+import periopImage from "@/assets/periop-blood-thinners.jpeg.asset.json";
+
+const periopStopTimes = [
+  { drug: "Aspirin", stop: "5–7 days", note: "May be continued in selected high cardiovascular risk patients", color: "text-rose-400" },
+  { drug: "Clopidogrel", stop: "5 days", note: "", color: "text-teal-300" },
+  { drug: "Prasugrel", stop: "7 days", note: "", color: "text-orange-400" },
+  { drug: "Ticagrelor", stop: "5 days", note: "", color: "text-purple-400" },
+  { drug: "Warfarin", stop: "5 days", note: "Check INR before surgery; target INR <1.5", color: "text-sky-400" },
+  { drug: "Rivaroxaban / Apixaban / Edoxaban", stop: "2 days (48 h)", note: "Longer (3–4 days) if renal impairment", color: "text-emerald-400" },
+  { drug: "Dabigatran", stop: "2–4 days", note: "Up to 5 days with significant renal impairment", color: "text-pink-400" },
+];
+
+const periopCautions = [
+  "Recent coronary stent",
+  "Recent heart attack",
+  "Mechanical heart valve",
+  "Atrial fibrillation with high stroke risk",
+];
+
 
 const imageFiles = [
   { src: "/images/anticoagulation/stroke-timing.jpg", title: "Stroke Prevention - DOAC Timing", desc: "Early DOAC initiation (≤4 days) after AF-related ischemic stroke" },
@@ -234,7 +254,7 @@ function getRecommendation(sc: string, form: Record<string, string>) {
 }
 
 export function AnticoagulationMiniApp() {
-  const [activeTab, setActiveTab] = useState<"calculator" | "images">("calculator");
+  const [activeTab, setActiveTab] = useState<"calculator" | "periop" | "images">("calculator");
   const [step, setStep] = useState(0);
   const [scenario, setScenario] = useState("vte");
   const [form, setForm] = useState({
@@ -276,6 +296,17 @@ export function AnticoagulationMiniApp() {
           >
             <Pill className="inline h-4 w-4 mr-1" />
             Calculator
+          </button>
+          <button
+            onClick={() => setActiveTab("periop")}
+            className={`rounded-full px-4 py-2 border text-sm font-medium transition ${
+              activeTab === "periop"
+                ? "bg-cyan-400 text-slate-950 border-cyan-300"
+                : "bg-slate-900 border-slate-700 text-slate-300 hover:border-slate-500"
+            }`}
+          >
+            <Scissors className="inline h-4 w-4 mr-1" />
+            Preoperative
           </button>
           <button
             onClick={() => setActiveTab("images")}
@@ -638,6 +669,88 @@ export function AnticoagulationMiniApp() {
           </div>
         </section>
         </>
+        )}
+
+        {/* Preoperative Tab */}
+        {activeTab === "periop" && (
+          <section className="space-y-5">
+            <div className="rounded-2xl border border-cyan-400/30 bg-slate-900 p-5">
+              <h2 className="text-2xl font-bold">Preoperative Blood Thinner Protocol</h2>
+              <p className="mt-1 text-slate-400">
+                When to stop antiplatelets and anticoagulants before major surgery — general guide
+                for high bleeding risk procedures.
+              </p>
+            </div>
+
+            <div className="overflow-x-auto rounded-xl border border-slate-700 bg-slate-950/50">
+              <table className="w-full text-sm">
+                <thead className="bg-slate-900 text-slate-300">
+                  <tr>
+                    <th className="p-3 text-left font-semibold">Blood thinner</th>
+                    <th className="p-3 text-left font-semibold">Stop before surgery</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {periopStopTimes.map((row) => (
+                    <tr key={row.drug} className="border-t border-slate-800 align-top">
+                      <td className="p-3 font-medium text-slate-100">{row.drug}</td>
+                      <td className="p-3">
+                        <span className={`text-base font-bold ${row.color}`}>{row.stop}</span>
+                        {row.note && <p className="mt-1 text-xs text-slate-400">{row.note}</p>}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-3">
+              <div className="rounded-xl border border-rose-500/40 bg-rose-500/10 p-4">
+                <h3 className="flex items-center gap-2 font-semibold text-rose-300">
+                  <AlertTriangle className="h-4 w-4" /> Important
+                </h3>
+                <p className="mt-2 text-sm text-slate-300">
+                  Do not stop blood thinners without consulting cardiology or the surgeon,
+                  especially with:
+                </p>
+                <ul className="mt-2 space-y-1 text-sm text-slate-300">
+                  {periopCautions.map((c) => (
+                    <li key={c} className="flex gap-2">
+                      <Heart className="mt-0.5 h-3.5 w-3.5 shrink-0 text-rose-400" />
+                      <span>{c}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="rounded-xl border border-slate-700 bg-slate-950/50 p-4">
+                <h3 className="flex items-center gap-2 font-semibold text-cyan-300">
+                  <Clock className="h-4 w-4" /> Bridging
+                </h3>
+                <p className="mt-2 text-sm text-slate-300">
+                  Heparin bridging is required only in selected high-risk patients (mainly on
+                  warfarin) — not routinely for DOACs.
+                </p>
+              </div>
+              <div className="rounded-xl border border-emerald-500/40 bg-emerald-500/10 p-4">
+                <h3 className="flex items-center gap-2 font-semibold text-emerald-300">
+                  <Info className="h-4 w-4" /> Restarting
+                </h3>
+                <p className="mt-2 text-sm text-slate-300">
+                  Blood thinners are usually restarted 48–72 hours after major surgery once bleeding
+                  is controlled.
+                </p>
+              </div>
+            </div>
+
+            <figure className="overflow-hidden rounded-xl border border-slate-700 bg-white">
+              <img
+                src={periopImage.url}
+                alt="Infographic: when blood thinners should be stopped before major surgery"
+                className="h-auto w-full"
+                loading="lazy"
+              />
+            </figure>
+          </section>
         )}
 
         {/* Images Tab */}
