@@ -298,6 +298,17 @@ export function AnticoagulationMiniApp() {
             Calculator
           </button>
           <button
+            onClick={() => setActiveTab("periop")}
+            className={`rounded-full px-4 py-2 border text-sm font-medium transition ${
+              activeTab === "periop"
+                ? "bg-cyan-400 text-slate-950 border-cyan-300"
+                : "bg-slate-900 border-slate-700 text-slate-300 hover:border-slate-500"
+            }`}
+          >
+            <Scissors className="inline h-4 w-4 mr-1" />
+            Preoperative
+          </button>
+          <button
             onClick={() => setActiveTab("images")}
             className={`rounded-full px-4 py-2 border text-sm font-medium transition ${
               activeTab === "images"
