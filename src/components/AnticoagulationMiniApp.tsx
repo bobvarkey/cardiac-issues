@@ -1,5 +1,25 @@
 import React, { useMemo, useState } from "react";
-import { ChevronRight, Pill, AlertTriangle, Info, Clock, Heart, Brain, Droplets, Image as ImageIcon } from "lucide-react";
+import { ChevronRight, Pill, AlertTriangle, Info, Clock, Heart, Brain, Droplets, Image as ImageIcon, Scissors } from "lucide-react";
+
+import periopImage from "@/assets/periop-blood-thinners.jpeg.asset.json";
+
+const periopStopTimes = [
+  { drug: "Aspirin", stop: "5–7 days", note: "May be continued in selected high cardiovascular risk patients", color: "text-rose-400" },
+  { drug: "Clopidogrel", stop: "5 days", note: "", color: "text-teal-300" },
+  { drug: "Prasugrel", stop: "7 days", note: "", color: "text-orange-400" },
+  { drug: "Ticagrelor", stop: "5 days", note: "", color: "text-purple-400" },
+  { drug: "Warfarin", stop: "5 days", note: "Check INR before surgery; target INR <1.5", color: "text-sky-400" },
+  { drug: "Rivaroxaban / Apixaban / Edoxaban", stop: "2 days (48 h)", note: "Longer (3–4 days) if renal impairment", color: "text-emerald-400" },
+  { drug: "Dabigatran", stop: "2–4 days", note: "Up to 5 days with significant renal impairment", color: "text-pink-400" },
+];
+
+const periopCautions = [
+  "Recent coronary stent",
+  "Recent heart attack",
+  "Mechanical heart valve",
+  "Atrial fibrillation with high stroke risk",
+];
+
 
 const imageFiles = [
   { src: "/images/anticoagulation/stroke-timing.jpg", title: "Stroke Prevention - DOAC Timing", desc: "Early DOAC initiation (≤4 days) after AF-related ischemic stroke" },
