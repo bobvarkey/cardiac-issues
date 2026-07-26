@@ -254,7 +254,7 @@ function getRecommendation(sc: string, form: Record<string, string>) {
 }
 
 export function AnticoagulationMiniApp() {
-  const [activeTab, setActiveTab] = useState<"calculator" | "images">("calculator");
+  const [activeTab, setActiveTab] = useState<"calculator" | "periop" | "images">("calculator");
   const [step, setStep] = useState(0);
   const [scenario, setScenario] = useState("vte");
   const [form, setForm] = useState({
