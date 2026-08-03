@@ -9,6 +9,7 @@ import {
   FlaskConical,
   ClipboardCheck,
 } from "lucide-react";
+import ctCalciumScore from "@/assets/ct-calcium-score.jpeg.asset.json";
 
 type Step = {
   n: number;
