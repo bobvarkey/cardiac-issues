@@ -362,6 +362,144 @@ export function CCADMiniApp() {
         </p>
       </section>
 
+      {/* CT calcium score */}
+      <section className="space-y-4">
+        <div className="flex items-center gap-2.5 text-xs text-primary">
+          <span className="pulse-dot" />
+          <span className="font-mono uppercase tracking-wider">Risk stratification · Imaging</span>
+        </div>
+        <h2 className="text-2xl font-semibold tracking-tight">
+          CT calcium score (CAC · Agatston)
+        </h2>
+        <p className="max-w-3xl text-sm text-muted-foreground">
+          Non-contrast, ECG-gated CT that quantifies calcified coronary plaque. It detects
+          subclinical coronary atherosclerosis before symptoms and refines risk when the decision
+          to start preventive therapy — especially statins — is uncertain.
+        </p>
+
+        <div className="surface-panel overflow-hidden p-0">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-border bg-surface-elevated/40 text-left font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+                <th className="px-4 py-2.5">Agatston score</th>
+                <th className="px-4 py-2.5">Calcification</th>
+                <th className="px-4 py-2.5">Interpretation</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                {
+                  score: "0",
+                  calc: "No detectable coronary calcium",
+                  risk: "Very low risk of coronary events in the near term",
+                },
+                {
+                  score: "1–99",
+                  calc: "Mild calcification",
+                  risk: "Mild atherosclerotic burden",
+                },
+                {
+                  score: "100–399",
+                  calc: "Moderate calcification",
+                  risk: "Increased cardiovascular risk",
+                },
+                {
+                  score: "≥ 400",
+                  calc: "Extensive calcification",
+                  risk: "High risk; further evaluation needed",
+                },
+              ].map((r) => (
+                <tr key={r.score} className="border-b border-border/60 last:border-0">
+                  <td className="px-4 py-3 font-mono font-semibold text-primary">{r.score}</td>
+                  <td className="px-4 py-3">{r.calc}</td>
+                  <td className="px-4 py-3 text-muted-foreground">{r.risk}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="grid gap-3 md:grid-cols-2">
+          <div className="surface-panel space-y-2 p-4">
+            <div className="flex items-center gap-2 font-semibold">
+              <Stethoscope className="h-4 w-4 text-primary" /> Who benefits most
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Mainly asymptomatic adults 40–75 years with intermediate cardiovascular risk when the
+              need for statin therapy is unclear.
+            </p>
+            <ul className="list-disc space-y-1 pl-5 text-sm text-muted-foreground">
+              <li>Borderline cholesterol levels</li>
+              <li>Family history of premature coronary artery disease</li>
+              <li>Multiple risk factors but unclear need for statin therapy</li>
+            </ul>
+          </div>
+
+          <div className="surface-panel space-y-2 p-4">
+            <div className="flex items-center gap-2 font-semibold">
+              <Activity className="h-4 w-4 text-primary" /> Clinical importance
+            </div>
+            <ul className="list-disc space-y-1 pl-5 text-sm text-muted-foreground">
+              <li>Detects hidden coronary atherosclerosis</li>
+              <li>Improves risk prediction beyond traditional risk factors</li>
+              <li>Guides statin therapy decisions</li>
+              <li>Motivates lifestyle modification</li>
+            </ul>
+          </div>
+
+          <div className="surface-panel space-y-2 border-destructive/25 p-4">
+            <div className="flex items-center gap-2 font-semibold">
+              <ShieldAlert className="h-4 w-4 text-destructive" /> Limitations
+            </div>
+            <ul className="list-disc space-y-1 pl-5 text-sm text-muted-foreground">
+              <li>Does not detect soft (non-calcified) plaque</li>
+              <li>Does not directly show severity of artery narrowing</li>
+              <li>Not a test for acute chest pain or suspected myocardial infarction</li>
+              <li>Not routinely recommended for low-risk young individuals</li>
+            </ul>
+          </div>
+
+          <div className="surface-panel space-y-2 p-4">
+            <div className="flex items-center gap-2 font-semibold">
+              <FlaskConical className="h-4 w-4 text-primary" /> CAC score vs CT coronary angiography
+            </div>
+            <ul className="space-y-2 text-sm">
+              {[
+                ["Detects calcium burden only", "Shows coronary artery anatomy"],
+                ["No contrast required", "Requires contrast injection"],
+                ["Risk assessment tool", "Detects stenosis / plaque characteristics"],
+                ["Mainly for asymptomatic risk assessment", "Evaluation of suspected CAD"],
+              ].map(([cac, cta]) => (
+                <li key={cac} className="grid gap-1 border-b border-border/50 pb-2 last:border-0 last:pb-0 sm:grid-cols-2">
+                  <span className="text-primary">{cac}</span>
+                  <span className="text-muted-foreground">{cta}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        <div className="rounded-lg border border-primary/20 bg-primary/5 p-3 text-sm">
+          <span className="font-semibold">Key point:</span> A calcium score of zero does not mean
+          zero risk, but it indicates a very low likelihood of significant calcified coronary
+          plaque. A high CAC score indicates higher future cardiovascular risk and the need for
+          aggressive risk-factor management.
+        </div>
+
+        <figure className="surface-panel space-y-2 p-3">
+          <img
+            src={ctCalciumScore.url}
+            alt="CT calcium score infographic: Agatston score interpretation, who benefits from CAC scoring, clinical importance, limitations, and CAC versus CT coronary angiography"
+            loading="lazy"
+            className="w-full rounded-lg"
+          />
+          <figcaption className="text-[11px] text-muted-foreground">
+            CT calcium score — Agatston interpretation and clinical use summary.
+          </figcaption>
+        </figure>
+      </section>
+
+
       {/* Sources & citations */}
       <section className="space-y-4">
         <div className="flex items-center gap-2.5 text-xs text-primary">
