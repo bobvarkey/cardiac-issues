@@ -21,6 +21,7 @@ import { Route as LayoutStellateRouteImport } from './routes/_layout.stellate'
 import { Route as LayoutScoresRouteImport } from './routes/_layout.scores'
 import { Route as LayoutRhythmsRouteImport } from './routes/_layout.rhythms'
 import { Route as LayoutMedcalcRouteImport } from './routes/_layout.medcalc'
+import { Route as LayoutLongQtRouteImport } from './routes/_layout.long-qt'
 import { Route as LayoutImagesRouteImport } from './routes/_layout.images'
 import { Route as LayoutHuttRouteImport } from './routes/_layout.hutt'
 import { Route as LayoutGoldmanRouteImport } from './routes/_layout.goldman'
@@ -89,6 +90,11 @@ const LayoutMedcalcRoute = LayoutMedcalcRouteImport.update({
   path: '/medcalc',
   getParentRoute: () => LayoutRoute,
 } as any)
+const LayoutLongQtRoute = LayoutLongQtRouteImport.update({
+  id: '/long-qt',
+  path: '/long-qt',
+  getParentRoute: () => LayoutRoute,
+} as any)
 const LayoutImagesRoute = LayoutImagesRouteImport.update({
   id: '/images',
   path: '/images',
@@ -140,6 +146,7 @@ export interface FileRoutesByFullPath {
   '/hutt': typeof LayoutHuttRoute
   '/images': typeof LayoutImagesRoute
   '/index': typeof LayoutChar91indexChar93Route
+  '/long-qt': typeof LayoutLongQtRoute
   '/medcalc': typeof LayoutMedcalcRoute
   '/rhythms': typeof LayoutRhythmsRoute
   '/scores': typeof LayoutScoresRoute
@@ -160,6 +167,7 @@ export interface FileRoutesByTo {
   '/hutt': typeof LayoutHuttRoute
   '/images': typeof LayoutImagesRoute
   '/index': typeof LayoutChar91indexChar93Route
+  '/long-qt': typeof LayoutLongQtRoute
   '/medcalc': typeof LayoutMedcalcRoute
   '/rhythms': typeof LayoutRhythmsRoute
   '/scores': typeof LayoutScoresRoute
@@ -183,6 +191,7 @@ export interface FileRoutesById {
   '/_layout/hutt': typeof LayoutHuttRoute
   '/_layout/images': typeof LayoutImagesRoute
   '/_layout/index': typeof LayoutChar91indexChar93Route
+  '/_layout/long-qt': typeof LayoutLongQtRoute
   '/_layout/medcalc': typeof LayoutMedcalcRoute
   '/_layout/rhythms': typeof LayoutRhythmsRoute
   '/_layout/scores': typeof LayoutScoresRoute
@@ -207,6 +216,7 @@ export interface FileRouteTypes {
     | '/hutt'
     | '/images'
     | '/index'
+    | '/long-qt'
     | '/medcalc'
     | '/rhythms'
     | '/scores'
@@ -227,6 +237,7 @@ export interface FileRouteTypes {
     | '/hutt'
     | '/images'
     | '/index'
+    | '/long-qt'
     | '/medcalc'
     | '/rhythms'
     | '/scores'
@@ -249,6 +260,7 @@ export interface FileRouteTypes {
     | '/_layout/hutt'
     | '/_layout/images'
     | '/_layout/index'
+    | '/_layout/long-qt'
     | '/_layout/medcalc'
     | '/_layout/rhythms'
     | '/_layout/scores'
@@ -352,6 +364,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutMedcalcRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/_layout/long-qt': {
+      id: '/_layout/long-qt'
+      path: '/long-qt'
+      fullPath: '/long-qt'
+      preLoaderRoute: typeof LayoutLongQtRouteImport
+      parentRoute: typeof LayoutRoute
+    }
     '/_layout/images': {
       id: '/_layout/images'
       path: '/images'
@@ -420,6 +439,7 @@ interface LayoutRouteChildren {
   LayoutHuttRoute: typeof LayoutHuttRoute
   LayoutImagesRoute: typeof LayoutImagesRoute
   LayoutChar91indexChar93Route: typeof LayoutChar91indexChar93Route
+  LayoutLongQtRoute: typeof LayoutLongQtRoute
   LayoutMedcalcRoute: typeof LayoutMedcalcRoute
   LayoutRhythmsRoute: typeof LayoutRhythmsRoute
   LayoutScoresRoute: typeof LayoutScoresRoute
@@ -442,6 +462,7 @@ const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutHuttRoute: LayoutHuttRoute,
   LayoutImagesRoute: LayoutImagesRoute,
   LayoutChar91indexChar93Route: LayoutChar91indexChar93Route,
+  LayoutLongQtRoute: LayoutLongQtRoute,
   LayoutMedcalcRoute: LayoutMedcalcRoute,
   LayoutRhythmsRoute: LayoutRhythmsRoute,
   LayoutScoresRoute: LayoutScoresRoute,
@@ -464,13 +485,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

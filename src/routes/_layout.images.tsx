@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { LightboxImage } from "@/components/ImageLightbox";
 import coronaryAnatomy from "@/assets/coronary-anatomy.jpeg.asset.json";
 import ctCalciumScore from "@/assets/ct-calcium-score.jpeg.asset.json";
+import longQtMorphology from "@/assets/long-qt-morphology.png.asset.json";
 import periopBloodThinners from "@/assets/periop-blood-thinners.jpeg.asset.json";
 import stellateSono from "@/assets/stellate-ganglion-sonoanatomy.jpeg.asset.json";
 import stellateUs from "@/assets/stellate-ganglion-ultrasound.jpeg.asset.json";
@@ -55,6 +56,16 @@ const GROUPS = [
         src: ctCalciumScore.url,
         alt: "CT calcium score infographic with Agatston interpretation and limitations",
         caption: "CT calcium score — Agatston interpretation and clinical use.",
+      },
+    ],
+  },
+  {
+    title: "Long QT syndrome",
+    images: [
+      {
+        src: longQtMorphology.url,
+        alt: "Long QT syndrome morphology infographic: LQT1 Mount Fuji broad-base T wave, LQT2 Bactrian camel double hump, LQT3 teepee long ST narrow-base T wave",
+        caption: "LQTS morphology — Mount Fuji (LQT1), Bactrian camel (LQT2), teepee (LQT3).",
       },
     ],
   },
