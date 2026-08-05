@@ -11,6 +11,7 @@ import {
   Heart,
   HeartPulse,
   Home,
+  Image as ImageIcon,
   Pill,
   Search,
   Shield,
@@ -96,6 +97,14 @@ const SECTIONS: Section[] = [
     bg: "bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-500",
     featured: true,
     items: [{ label: "Run test", to: "/exercise-tolerance" }],
+  },
+  {
+    id: "images",
+    label: "Images",
+    icon: ImageIcon,
+    color: "text-sky-400",
+    bg: "bg-sky-500/15",
+    items: [{ label: "Image library", to: "/images" }],
   },
   {
     id: "tools",
