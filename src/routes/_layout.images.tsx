@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { LightboxImage } from "@/components/ImageLightbox";
 import coronaryAnatomy from "@/assets/coronary-anatomy.jpeg.asset.json";
 import ctCalciumScore from "@/assets/ct-calcium-score.jpeg.asset.json";
+import longQtMorphology from "@/assets/long-qt-morphology.png.asset.json";
 import periopBloodThinners from "@/assets/periop-blood-thinners.jpeg.asset.json";
 import stellateSono from "@/assets/stellate-ganglion-sonoanatomy.jpeg.asset.json";
 import stellateUs from "@/assets/stellate-ganglion-ultrasound.jpeg.asset.json";
