@@ -9,7 +9,9 @@ import {
   FlaskConical,
   ClipboardCheck,
 } from "lucide-react";
+import coronaryAnatomy from "@/assets/coronary-anatomy.jpeg.asset.json";
 import ctCalciumScore from "@/assets/ct-calcium-score.jpeg.asset.json";
+import wallLeadsArtery from "@/assets/wall-leads-artery.jpeg.asset.json";
 
 type Step = {
   n: number;
