@@ -84,6 +84,7 @@ const SECTIONS: Section[] = [
     items: [
       { label: "Rhythms", to: "/rhythms" },
       { label: "SVT", to: "/svt" },
+      { label: "Long QT", to: "/long-qt" },
       { label: "Syncope", to: "/syncope" },
       { label: "Syncope Triage", to: "/syncope-triage" },
       { label: "Goldman Index", to: "/goldman" },
