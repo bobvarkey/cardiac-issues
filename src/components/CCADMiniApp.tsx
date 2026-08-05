@@ -9,6 +9,7 @@ import {
   FlaskConical,
   ClipboardCheck,
 } from "lucide-react";
+import { LightboxImage } from "@/components/ImageLightbox";
 import coronaryAnatomy from "@/assets/coronary-anatomy.jpeg.asset.json";
 import ctCalciumScore from "@/assets/ct-calcium-score.jpeg.asset.json";
 import wallLeadsArtery from "@/assets/wall-leads-artery.jpeg.asset.json";
@@ -517,29 +518,17 @@ export function CCADMiniApp() {
         </p>
 
         <div className="grid gap-4 lg:grid-cols-2">
-          <figure className="surface-panel space-y-2 p-3">
-            <img
-              src={coronaryAnatomy.url}
-              alt="Coronary artery anatomy diagram showing LMCA, LAD with septal perforators and diagonals, circumflex with OM1 and OM2, ramus intermedius, LIMA, and RCA with AV nodal, RV, acute marginal, PDA and posterolateral branches"
-              loading="lazy"
-              className="w-full rounded-lg"
-            />
-            <figcaption className="text-[11px] text-muted-foreground">
-              Coronary tree — LMCA (LAD, circumflex, ramus) and RCA branches, plus LIMA graft target.
-            </figcaption>
-          </figure>
+          <LightboxImage
+            src={coronaryAnatomy.url}
+            alt="Coronary artery anatomy diagram showing LMCA, LAD with septal perforators and diagonals, circumflex with OM1 and OM2, ramus intermedius, LIMA, and RCA with AV nodal, RV, acute marginal, PDA and posterolateral branches"
+            caption="Coronary tree — LMCA (LAD, circumflex, ramus) and RCA branches, plus LIMA graft target."
+          />
 
-          <figure className="surface-panel space-y-2 p-3">
-            <img
-              src={wallLeadsArtery.url}
-              alt="Wall, leads and artery table: inferior II III aVF RCA; anterior V1 to V4 LAD; lateral I aVL V5 V6 LCX; posterior V7 to V9 or V1 to V2 ST depression RCA or LCX"
-              loading="lazy"
-              className="w-full rounded-lg"
-            />
-            <figcaption className="text-[11px] text-muted-foreground">
-              Wall · Leads · Artery — territory mapping for ECG infarct localisation.
-            </figcaption>
-          </figure>
+          <LightboxImage
+            src={wallLeadsArtery.url}
+            alt="Wall, leads and artery table: inferior II III aVF RCA; anterior V1 to V4 LAD; lateral I aVL V5 V6 LCX; posterior V7 to V9 or V1 to V2 ST depression RCA or LCX"
+            caption="Wall · Leads · Artery — territory mapping for ECG infarct localisation."
+          />
         </div>
 
         <div className="surface-panel overflow-x-auto p-0">

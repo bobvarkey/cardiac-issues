@@ -21,6 +21,7 @@ import { Route as LayoutStellateRouteImport } from './routes/_layout.stellate'
 import { Route as LayoutScoresRouteImport } from './routes/_layout.scores'
 import { Route as LayoutRhythmsRouteImport } from './routes/_layout.rhythms'
 import { Route as LayoutMedcalcRouteImport } from './routes/_layout.medcalc'
+import { Route as LayoutImagesRouteImport } from './routes/_layout.images'
 import { Route as LayoutHuttRouteImport } from './routes/_layout.hutt'
 import { Route as LayoutGoldmanRouteImport } from './routes/_layout.goldman'
 import { Route as LayoutExerciseToleranceRouteImport } from './routes/_layout.exercise-tolerance'
@@ -88,6 +89,11 @@ const LayoutMedcalcRoute = LayoutMedcalcRouteImport.update({
   path: '/medcalc',
   getParentRoute: () => LayoutRoute,
 } as any)
+const LayoutImagesRoute = LayoutImagesRouteImport.update({
+  id: '/images',
+  path: '/images',
+  getParentRoute: () => LayoutRoute,
+} as any)
 const LayoutHuttRoute = LayoutHuttRouteImport.update({
   id: '/hutt',
   path: '/hutt',
@@ -132,6 +138,7 @@ export interface FileRoutesByFullPath {
   '/exercise-tolerance': typeof LayoutExerciseToleranceRoute
   '/goldman': typeof LayoutGoldmanRoute
   '/hutt': typeof LayoutHuttRoute
+  '/images': typeof LayoutImagesRoute
   '/index': typeof LayoutChar91indexChar93Route
   '/medcalc': typeof LayoutMedcalcRoute
   '/rhythms': typeof LayoutRhythmsRoute
@@ -151,6 +158,7 @@ export interface FileRoutesByTo {
   '/exercise-tolerance': typeof LayoutExerciseToleranceRoute
   '/goldman': typeof LayoutGoldmanRoute
   '/hutt': typeof LayoutHuttRoute
+  '/images': typeof LayoutImagesRoute
   '/index': typeof LayoutChar91indexChar93Route
   '/medcalc': typeof LayoutMedcalcRoute
   '/rhythms': typeof LayoutRhythmsRoute
@@ -173,6 +181,7 @@ export interface FileRoutesById {
   '/_layout/exercise-tolerance': typeof LayoutExerciseToleranceRoute
   '/_layout/goldman': typeof LayoutGoldmanRoute
   '/_layout/hutt': typeof LayoutHuttRoute
+  '/_layout/images': typeof LayoutImagesRoute
   '/_layout/index': typeof LayoutChar91indexChar93Route
   '/_layout/medcalc': typeof LayoutMedcalcRoute
   '/_layout/rhythms': typeof LayoutRhythmsRoute
@@ -196,6 +205,7 @@ export interface FileRouteTypes {
     | '/exercise-tolerance'
     | '/goldman'
     | '/hutt'
+    | '/images'
     | '/index'
     | '/medcalc'
     | '/rhythms'
@@ -215,6 +225,7 @@ export interface FileRouteTypes {
     | '/exercise-tolerance'
     | '/goldman'
     | '/hutt'
+    | '/images'
     | '/index'
     | '/medcalc'
     | '/rhythms'
@@ -236,6 +247,7 @@ export interface FileRouteTypes {
     | '/_layout/exercise-tolerance'
     | '/_layout/goldman'
     | '/_layout/hutt'
+    | '/_layout/images'
     | '/_layout/index'
     | '/_layout/medcalc'
     | '/_layout/rhythms'
@@ -340,6 +352,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutMedcalcRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/_layout/images': {
+      id: '/_layout/images'
+      path: '/images'
+      fullPath: '/images'
+      preLoaderRoute: typeof LayoutImagesRouteImport
+      parentRoute: typeof LayoutRoute
+    }
     '/_layout/hutt': {
       id: '/_layout/hutt'
       path: '/hutt'
@@ -399,6 +418,7 @@ interface LayoutRouteChildren {
   LayoutExerciseToleranceRoute: typeof LayoutExerciseToleranceRoute
   LayoutGoldmanRoute: typeof LayoutGoldmanRoute
   LayoutHuttRoute: typeof LayoutHuttRoute
+  LayoutImagesRoute: typeof LayoutImagesRoute
   LayoutChar91indexChar93Route: typeof LayoutChar91indexChar93Route
   LayoutMedcalcRoute: typeof LayoutMedcalcRoute
   LayoutRhythmsRoute: typeof LayoutRhythmsRoute
@@ -420,6 +440,7 @@ const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutExerciseToleranceRoute: LayoutExerciseToleranceRoute,
   LayoutGoldmanRoute: LayoutGoldmanRoute,
   LayoutHuttRoute: LayoutHuttRoute,
+  LayoutImagesRoute: LayoutImagesRoute,
   LayoutChar91indexChar93Route: LayoutChar91indexChar93Route,
   LayoutMedcalcRoute: LayoutMedcalcRoute,
   LayoutRhythmsRoute: LayoutRhythmsRoute,
@@ -443,3 +464,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
