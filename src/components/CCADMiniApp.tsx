@@ -500,6 +500,75 @@ export function CCADMiniApp() {
         </figure>
       </section>
 
+      {/* Coronary anatomy & infarct localisation */}
+      <section className="space-y-4">
+        <div className="flex items-center gap-2.5 text-xs text-primary">
+          <span className="pulse-dot" />
+          <span className="font-mono uppercase tracking-wider">Coronary anatomy</span>
+        </div>
+        <h2 className="text-2xl font-semibold tracking-tight">
+          Coronary tree & ECG infarct localisation
+        </h2>
+        <p className="max-w-3xl text-sm text-muted-foreground">
+          Anatomy of the left and right coronary systems with named branches, and the standard
+          wall–leads–artery mapping used to localise ischaemia or infarction on the 12-lead ECG.
+        </p>
+
+        <div className="grid gap-4 lg:grid-cols-2">
+          <figure className="surface-panel space-y-2 p-3">
+            <img
+              src={coronaryAnatomy.url}
+              alt="Coronary artery anatomy diagram showing LMCA, LAD with septal perforators and diagonals, circumflex with OM1 and OM2, ramus intermedius, LIMA, and RCA with AV nodal, RV, acute marginal, PDA and posterolateral branches"
+              loading="lazy"
+              className="w-full rounded-lg"
+            />
+            <figcaption className="text-[11px] text-muted-foreground">
+              Coronary tree — LMCA (LAD, circumflex, ramus) and RCA branches, plus LIMA graft target.
+            </figcaption>
+          </figure>
+
+          <figure className="surface-panel space-y-2 p-3">
+            <img
+              src={wallLeadsArtery.url}
+              alt="Wall, leads and artery table: inferior II III aVF RCA; anterior V1 to V4 LAD; lateral I aVL V5 V6 LCX; posterior V7 to V9 or V1 to V2 ST depression RCA or LCX"
+              loading="lazy"
+              className="w-full rounded-lg"
+            />
+            <figcaption className="text-[11px] text-muted-foreground">
+              Wall · Leads · Artery — territory mapping for ECG infarct localisation.
+            </figcaption>
+          </figure>
+        </div>
+
+        <div className="surface-panel overflow-x-auto p-0">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-border text-left text-xs uppercase tracking-wider text-muted-foreground">
+                <th className="px-3 py-2 font-medium">Wall</th>
+                <th className="px-3 py-2 font-medium">Leads</th>
+                <th className="px-3 py-2 font-medium">Culprit artery</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                ["Inferior", "II, III, aVF", "RCA (or LCX in left-dominant)"],
+                ["Anterior / anteroseptal", "V1–V4", "LAD"],
+                ["Lateral", "I, aVL, V5, V6", "LCX (or diagonal)"],
+                ["Posterior", "V7–V9, or ST depression in V1–V2", "RCA or LCX"],
+              ].map(([wall, leads, artery]) => (
+                <tr key={wall} className="border-b border-border/50 last:border-0">
+                  <td className="px-3 py-2 font-medium">{wall}</td>
+                  <td className="px-3 py-2 font-mono text-primary">{leads}</td>
+                  <td className="px-3 py-2 text-muted-foreground">{artery}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+
+
 
       {/* Sources & citations */}
       <section className="space-y-4">
