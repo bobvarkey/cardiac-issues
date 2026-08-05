@@ -60,6 +60,16 @@ const GROUPS = [
     ],
   },
   {
+    title: "Long QT syndrome",
+    images: [
+      {
+        src: longQtMorphology.url,
+        alt: "Long QT syndrome morphology infographic: LQT1 Mount Fuji broad-base T wave, LQT2 Bactrian camel double hump, LQT3 teepee long ST narrow-base T wave",
+        caption: "LQTS morphology — Mount Fuji (LQT1), Bactrian camel (LQT2), teepee (LQT3).",
+      },
+    ],
+  },
+  {
     title: "SVT & adenosine",
     images: [
       {
