@@ -127,6 +127,77 @@ function LongQtPage() {
         />
       </section>
 
+      <section className="space-y-4">
+        <h2 className="text-xl font-semibold tracking-tight">QT-prolonging drugs & safer alternatives</h2>
+        <p className="max-w-3xl text-sm text-muted-foreground">
+          Curated by class. Risk tiers follow CredibleMeds: <strong>Known risk</strong> of torsades,
+          <strong> possible risk</strong>, or <strong>conditional risk</strong> (only with overdose,
+          hypokalaemia, or interacting inhibitors). Always check the combination, not just the drug.
+        </p>
+
+        <div className="grid gap-4 lg:grid-cols-2">
+          {QT_DRUGS.map((g) => (
+            <article key={g.group} className="surface-panel space-y-3 p-4">
+              <h3 className="text-base font-semibold tracking-tight">{g.group}</h3>
+              <ul className="space-y-2 text-sm">
+                {g.drugs.map((d) => (
+                  <li key={d.name} className="space-y-1 border-b border-border/60 pb-2 last:border-0 last:pb-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="font-medium">{d.name}</span>
+                      <span
+                        className={`rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
+                          d.risk === "Known"
+                            ? "bg-destructive/15 text-destructive"
+                            : d.risk === "Possible"
+                              ? "bg-amber-500/15 text-amber-500"
+                              : "bg-muted text-muted-foreground"
+                        }`}
+                      >
+                        {d.risk} risk
+                      </span>
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      <span className="font-medium text-foreground">Safer alternative: </span>
+                      {d.alt}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      <span className="font-medium text-foreground">Caution: </span>
+                      {d.note}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            </article>
+          ))}
+        </div>
+
+        <div className="surface-panel space-y-2 p-4">
+          <h3 className="text-base font-semibold tracking-tight">Common contraindications & red flags</h3>
+          <ul className="list-disc space-y-1 pl-5 text-sm text-muted-foreground">
+            <li>Congenital LQTS, prior torsades, or unexplained syncope on a QT-prolonging agent.</li>
+            <li>Baseline QTc ≥500 ms, or an increase of ≥60 ms from baseline after starting a drug.</li>
+            <li>Uncorrected hypokalaemia, hypomagnesaemia or hypocalcaemia — correct before dosing.</li>
+            <li>
+              Two or more QT-prolonging drugs together, or one plus a CYP3A4/2D6 inhibitor
+              (azoles, macrolides, ritonavir, grapefruit) that raises drug levels.
+            </li>
+            <li>Bradycardia, high-grade AV block, or pause-dependent arrhythmia (pause-triggered TdP).</li>
+            <li>Hepatic or renal impairment reducing clearance; also female sex, age &gt;65, HFrEF, recent cardioversion from AF.</li>
+            <li>Diuretic-induced electrolyte loss combined with any listed agent.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section className="space-y-3">
+        <h2 className="text-xl font-semibold tracking-tight">ECG approach to syncope syndromes</h2>
+        <LightboxImage
+          src={ecgSyncope.url}
+          alt="Approach to ECGs in syncope syndromes: BE WHAT QT PiE mnemonic covering Brugada, electrolytes, WPW, HOCM, ARVD, trifascicular block, long/short QT and PE"
+          caption="BE WHAT QT PiE — the eight syncope syndromes to exclude on ECG."
+          className="mx-auto max-w-3xl"
+        />
+      </section>
+
       <section className="surface-panel space-y-2 p-4">
         <h2 className="text-lg font-semibold tracking-tight">Practical notes</h2>
         <ul className="list-disc space-y-1 pl-5 text-sm text-muted-foreground">
