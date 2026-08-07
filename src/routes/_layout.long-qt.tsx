@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { LightboxImage } from "@/components/ImageLightbox";
 import longQtMorphology from "@/assets/long-qt-morphology.png.asset.json";
+import ecgSyncope from "@/assets/ecg-syncope-syndromes.jpeg.asset.json";
 
 export const Route = createFileRoute("/_layout/long-qt")({
   head: () => ({
