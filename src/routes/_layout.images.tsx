@@ -1,7 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 import { LightboxImage } from "@/components/ImageLightbox";
+import aorticDimensions from "@/assets/aortic-dimensions.jpeg.asset.json";
 import coronaryAnatomy from "@/assets/coronary-anatomy.jpeg.asset.json";
+import ecgSyncope from "@/assets/ecg-syncope-syndromes.jpeg.asset.json";
 import ctCalciumScore from "@/assets/ct-calcium-score.jpeg.asset.json";
 import longQtMorphology from "@/assets/long-qt-morphology.png.asset.json";
 import periopBloodThinners from "@/assets/periop-blood-thinners.jpeg.asset.json";
@@ -67,8 +69,24 @@ const GROUPS = [
         alt: "Long QT syndrome morphology infographic: LQT1 Mount Fuji broad-base T wave, LQT2 Bactrian camel double hump, LQT3 teepee long ST narrow-base T wave",
         caption: "LQTS morphology — Mount Fuji (LQT1), Bactrian camel (LQT2), teepee (LQT3).",
       },
+      {
+        src: ecgSyncope.url,
+        alt: "Approach to ECGs in syncope syndromes: BE WHAT QT PiE mnemonic covering Brugada, electrolytes, WPW, HOCM, ARVD, trifascicular block, long and short QT, and pulmonary embolism",
+        caption: "BE WHAT QT PiE — eight syncope syndromes to exclude on ECG.",
+      },
     ],
   },
+  {
+    title: "Aortic anatomy",
+    images: [
+      {
+        src: aorticDimensions.url,
+        alt: "Aortic anatomy diagram with normal dimensions: annulus 20-31 mm, sinuses of Valsalva 29-45 mm, sinotubular junction and ascending aorta 22-36 mm, arch 22-36 mm, descending aorta 20-30 mm",
+        caption: "Normal aortic dimensions — annulus to descending aorta.",
+      },
+    ],
+  },
+
   {
     title: "SVT & adenosine",
     images: [
