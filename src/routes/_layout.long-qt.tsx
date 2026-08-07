@@ -62,6 +62,147 @@ const SUBTYPES = [
   },
 ];
 
+type QtDrug = { name: string; risk: "Known" | "Possible" | "Conditional"; alt: string; note: string };
+
+const QT_DRUGS: { group: string; drugs: QtDrug[] }[] = [
+  {
+    group: "Antiarrhythmics",
+    drugs: [
+      {
+        name: "Sotalol",
+        risk: "Known",
+        alt: "Beta-blocker (bisoprolol/metoprolol) ± rate control; amiodarone if rhythm control essential",
+        note: "Dose-dependent QT; contraindicated if QTc >450 ms (baseline) or CrCl <40 mL/min. In-hospital initiation with ECG each dose.",
+      },
+      {
+        name: "Dofetilide / Ibutilide",
+        risk: "Known",
+        alt: "Flecainide or propafenone in structurally normal hearts",
+        note: "Mandatory inpatient loading, renal dose adjustment; avoid with any other QT-prolonging drug.",
+      },
+      {
+        name: "Amiodarone",
+        risk: "Possible",
+        alt: "Preferred when QT risk matters — usually safest of the Class III agents",
+        note: "Prolongs QT markedly but torsades is rare; risk rises with hypokalaemia or added agents.",
+      },
+      {
+        name: "Procainamide / Quinidine / Disopyramide",
+        risk: "Known",
+        alt: "Class Ic agents (no structural disease) or beta-blocker",
+        note: "Quinidine syncope is classic; avoid entirely in congenital LQTS.",
+      },
+    ],
+  },
+  {
+    group: "Antimicrobials",
+    drugs: [
+      {
+        name: "Azithromycin / Clarithromycin / Erythromycin",
+        risk: "Known",
+        alt: "Doxycycline, amoxicillin, or cefuroxime",
+        note: "Clarithromycin/erythromycin also inhibit CYP3A4, raising levels of co-prescribed QT drugs.",
+      },
+      {
+        name: "Moxifloxacin / Levofloxacin / Ciprofloxacin",
+        risk: "Known (moxi) / Possible",
+        alt: "Co-amoxiclav, doxycycline, or nitrofurantoin for UTI",
+        note: "Moxifloxacin has the largest effect of the class; ciprofloxacin the least.",
+      },
+      {
+        name: "Fluconazole / Voriconazole",
+        risk: "Known",
+        alt: "Topical azole, nystatin, or echinocandin (caspofungin) systemically",
+        note: "Also CYP3A4 inhibitors — double hit with macrolides, methadone or antipsychotics.",
+      },
+      {
+        name: "Hydroxychloroquine / Chloroquine",
+        risk: "Known",
+        alt: "Methotrexate or sulfasalazine for rheumatology indications",
+        note: "Long half-life; risk persists for weeks after stopping.",
+      },
+      {
+        name: "Pentamidine",
+        risk: "Known",
+        alt: "Co-trimoxazole for PJP",
+        note: "Also causes hypoglycaemia and hypomagnesaemia, compounding risk.",
+      },
+    ],
+  },
+  {
+    group: "Psychotropics",
+    drugs: [
+      {
+        name: "Haloperidol (esp. IV)",
+        risk: "Known",
+        alt: "Oral olanzapine or aripiprazole; lorazepam for agitation",
+        note: "IV route carries the highest torsades risk — continuous ECG if used.",
+      },
+      {
+        name: "Citalopram / Escitalopram",
+        risk: "Known",
+        alt: "Sertraline (minimal QT effect)",
+        note: "Cap citalopram at 20 mg if >60 y, hepatic impairment, or on a CYP2C19 inhibitor.",
+      },
+      {
+        name: "Quetiapine / Ziprasidone",
+        risk: "Possible / Known",
+        alt: "Aripiprazole or lurasidone",
+        note: "Ziprasidone contraindicated with known QT prolongation or recent MI.",
+      },
+      {
+        name: "Amitriptyline & other TCAs",
+        risk: "Conditional",
+        alt: "SNRI (duloxetine) or gabapentinoid for neuropathic pain",
+        note: "Risk mostly in overdose (Na⁺ channel blockade + QT); avoid in LQTS.",
+      },
+      {
+        name: "Methadone",
+        risk: "Known",
+        alt: "Buprenorphine",
+        note: "Dose-dependent above ~100 mg/day; ECG at baseline, 30 days, then annually.",
+      },
+    ],
+  },
+  {
+    group: "Antiemetics, oncology & other",
+    drugs: [
+      {
+        name: "Ondansetron (esp. IV)",
+        risk: "Known",
+        alt: "Metoclopramide (short course), cyclizine, or aprepitant",
+        note: "Single IV dose limited to 16 mg; avoid 32 mg IV entirely.",
+      },
+      {
+        name: "Domperidone",
+        risk: "Known",
+        alt: "Metoclopramide short course",
+        note: "Contraindicated with QTc >470 ms (men) / >450 ms (women) or CYP3A4 inhibitors.",
+      },
+      {
+        name: "Droperidol",
+        risk: "Known",
+        alt: "Prochlorperazine or ondansetron at low dose",
+        note: "Black-box warning; ECG before and after dosing.",
+      },
+      {
+        name: "Arsenic trioxide / Vandetanib / Nilotinib",
+        risk: "Known",
+        alt: "Discuss regimen substitution with oncology",
+        note: "Correct K⁺ >4.0 and Mg²⁺ >0.9 before each cycle; serial ECGs.",
+      },
+      {
+        name: "Loop & thiazide diuretics",
+        risk: "Conditional",
+        alt: "Spironolactone or careful K⁺/Mg²⁺ supplementation",
+        note: "No direct channel effect — risk is entirely via hypokalaemia/hypomagnesaemia.",
+      },
+    ],
+  },
+];
+
+
+
 function LongQtPage() {
   return (
     <div className="space-y-8">
