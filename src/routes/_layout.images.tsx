@@ -1,7 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 import { LightboxImage } from "@/components/ImageLightbox";
+import aorticDimensions from "@/assets/aortic-dimensions.jpeg.asset.json";
 import coronaryAnatomy from "@/assets/coronary-anatomy.jpeg.asset.json";
+import ecgSyncope from "@/assets/ecg-syncope-syndromes.jpeg.asset.json";
 import ctCalciumScore from "@/assets/ct-calcium-score.jpeg.asset.json";
 import longQtMorphology from "@/assets/long-qt-morphology.png.asset.json";
 import periopBloodThinners from "@/assets/periop-blood-thinners.jpeg.asset.json";
