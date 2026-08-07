@@ -105,7 +105,7 @@ const QT_DRUGS: { group: string; drugs: QtDrug[] }[] = [
       },
       {
         name: "Moxifloxacin / Levofloxacin / Ciprofloxacin",
-        risk: "Known (moxi) / Possible",
+        risk: "Known",
         alt: "Co-amoxiclav, doxycycline, or nitrofurantoin for UTI",
         note: "Moxifloxacin has the largest effect of the class; ciprofloxacin the least.",
       },
@@ -146,7 +146,7 @@ const QT_DRUGS: { group: string; drugs: QtDrug[] }[] = [
       },
       {
         name: "Quetiapine / Ziprasidone",
-        risk: "Possible / Known",
+        risk: "Known",
         alt: "Aripiprazole or lurasidone",
         note: "Ziprasidone contraindicated with known QT prolongation or recent MI.",
       },
