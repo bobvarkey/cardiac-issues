@@ -232,7 +232,7 @@ export function SyncopeAlgorithm() {
                       <tr>
                         <td className="py-1 px-2">2D</td>
                         <td className="py-1 px-2">LOC + No red flags + No drop + No trigger</td>
-                        <td className="py-1 px-2">Neurological / Unexplained</td>
+                        <td className="py-1 px-2">Unexplained / possible reflex — consider carotid sinus massage</td>
                       </tr>
                     </tbody>
                   </table>
