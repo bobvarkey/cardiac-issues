@@ -405,6 +405,10 @@ export function SyncopeAlgorithm() {
                   <span className="text-muted-foreground">Measure supine, then after 3 minutes standing; ≥20 mmHg SBP drop is diagnostic</span>
                 </div>
                 <div className="text-xs">
+                  <strong className="text-primary">• Carotid sinus massage:</strong>{" "}
+                  <span className="text-muted-foreground">Evaluate in older patients with reflex syncope; contraindicated with carotid bruit or recent TIA/stroke. Positive if asystole ≥3 s or SBP drop ≥50 mmHg.</span>
+                </div>
+                <div className="text-xs">
                   <strong className="text-primary">• Vasovagal:</strong>{" "}
                   <span className="text-muted-foreground">Prodrome (nausea, sweating, warmth) + trigger = classic presentation</span>
                 </div>
