@@ -14,6 +14,7 @@ export function SyncopeAlgorithm() {
   const [showRedFlags, setShowRedFlags] = useState(true);
   const [showECGFindings, setShowECGFindings] = useState(true);
   const [showClinicalPearls, setShowClinicalPearls] = useState(true);
+  const [showCSM, setShowCSM] = useState(true);
 
   return (
     <div className="space-y-4">
