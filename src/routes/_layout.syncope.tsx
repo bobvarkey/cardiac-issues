@@ -3,6 +3,24 @@ import { SyncopeAlgorithm } from "@/components/SyncopeAlgorithm";
 import { Stethoscope } from "lucide-react";
 
 export const Route = createFileRoute("/_layout/syncope")({
+  head: () => ({
+    meta: [
+      { title: "Syncope Diagnostic Algorithm — Carotid Sinus Massage & Reflex Syncope Evaluation" },
+      {
+        name: "description",
+        content:
+          "Systematic approach to syncope: red flags, ECG findings, orthostatic BP, vasovagal and reflex pathways, carotid sinus massage technique, and risk stratification.",
+      },
+      { property: "og:title", content: "Syncope Diagnostic Algorithm" },
+      {
+        property: "og:description",
+        content:
+          "Evaluate syncope with red flags, ECG patterns, orthostatic BP, carotid sinus massage, and reflex syncope workup.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
   component: SyncopePage,
 });
 

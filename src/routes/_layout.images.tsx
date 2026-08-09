@@ -12,6 +12,7 @@ import stellateUs from "@/assets/stellate-ganglion-ultrasound.jpeg.asset.json";
 import svtHero from "@/assets/svt-adenosine-12mg-hero.jpeg.asset.json";
 import svtStudy from "@/assets/svt-adenosine-12mg-study.jpeg.asset.json";
 import wallLeadsArtery from "@/assets/wall-leads-artery.jpeg.asset.json";
+import syncopeEvaluation from "@/assets/syncope-evaluation.jpeg.asset.json";
 
 export const Route = createFileRoute("/_layout/images")({
   head: () => ({
@@ -83,6 +84,17 @@ const GROUPS = [
         src: aorticDimensions.url,
         alt: "Aortic anatomy diagram with normal dimensions: annulus 20-31 mm, sinuses of Valsalva 29-45 mm, sinotubular junction and ascending aorta 22-36 mm, arch 22-36 mm, descending aorta 20-30 mm",
         caption: "Normal aortic dimensions — annulus to descending aorta.",
+      },
+    ],
+  },
+
+  {
+    title: "Syncope evaluation",
+    images: [
+      {
+        src: syncopeEvaluation.url,
+        alt: "ACC-AHA-HRS additional syncope evaluation and diagnosis algorithm showing carotid sinus massage and head-up tilt-table testing in reflex syncope",
+        caption: "Syncope evaluation algorithm — carotid sinus massage and tilt-table testing.",
       },
     ],
   },

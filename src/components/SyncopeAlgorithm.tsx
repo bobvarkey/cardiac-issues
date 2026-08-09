@@ -1,5 +1,7 @@
 import { useState } from "react";
-import { Brain, ChevronDown, ChevronUp, AlertTriangle, Activity, Heart } from "lucide-react";
+import { Brain, ChevronDown, ChevronUp, AlertTriangle, Activity, Heart, Hand } from "lucide-react";
+import { LightboxImage } from "@/components/ImageLightbox";
+import syncopeEvaluation from "@/assets/syncope-evaluation.jpeg.asset.json";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Collapsible,
@@ -12,6 +14,7 @@ export function SyncopeAlgorithm() {
   const [showRedFlags, setShowRedFlags] = useState(true);
   const [showECGFindings, setShowECGFindings] = useState(true);
   const [showClinicalPearls, setShowClinicalPearls] = useState(true);
+  const [showCSM, setShowCSM] = useState(true);
 
   return (
     <div className="space-y-4">
@@ -179,12 +182,12 @@ export function SyncopeAlgorithm() {
 
                         <div className="p-2 rounded bg-muted/30 border border-border/30">
                           <div className="text-xs font-medium text-muted-foreground mb-1">No Trigger</div>
-                          <div className="text-xs font-bold text-foreground mt-1">NEUROLOGICAL / UNEXPLAINED</div>
+                          <div className="text-xs font-bold text-foreground mt-1">UNEXPLAINED / POSSIBLE REFLEX</div>
                           <ul className="text-xs text-muted-foreground mt-1 space-y-0.5">
-                            <li>• Consider neurological causes</li>
-                            <li>• Further workup needed</li>
+                            <li>• If age ≥40 or reflex features: carotid sinus massage</li>
                             <li>• Holter, event monitor</li>
-                            <li>• Tilt table test</li>
+                            <li>• Head-up tilt-table test if CSM negative</li>
+                            <li>• Consider neurological causes</li>
                           </ul>
                         </div>
                       </div>
@@ -229,7 +232,7 @@ export function SyncopeAlgorithm() {
                       <tr>
                         <td className="py-1 px-2">2D</td>
                         <td className="py-1 px-2">LOC + No red flags + No drop + No trigger</td>
-                        <td className="py-1 px-2">Neurological / Unexplained</td>
+                        <td className="py-1 px-2">Unexplained / possible reflex — consider carotid sinus massage</td>
                       </tr>
                     </tbody>
                   </table>
@@ -362,6 +365,92 @@ export function SyncopeAlgorithm() {
         </Collapsible>
       </Card>
 
+      {/* Carotid Sinus Massage in Reflex Syncope */}
+      <Card className="border-border/40">
+        <Collapsible open={showCSM} onOpenChange={setShowCSM}>
+          <CollapsibleTrigger asChild>
+            <button className="w-full">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base flex items-center justify-between">
+                  <span className="flex items-center gap-2">
+                    <Hand className="w-4 h-4 text-muted-foreground" />
+                    Carotid Sinus Massage in Reflex Syncope
+                  </span>
+                  {showCSM ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
+                </CardTitle>
+              </CardHeader>
+            </button>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <CardContent className="pt-2 space-y-3">
+              <p className="text-xs text-muted-foreground">
+                Bedside evaluation for carotid sinus hypersensitivity when reflex syncope is suspected, especially in patients ≥40 years.
+              </p>
+
+              <LightboxImage
+                src={syncopeEvaluation.url}
+                alt="ACC-AHA-HRS additional syncope evaluation and diagnosis algorithm: carotid sinus massage and head-up tilt-table testing in reflex syncope"
+                caption="Additional evaluation and diagnosis of syncope — ACC/AHA/HRS guidelines."
+                className="surface-elevated"
+              />
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="p-3 rounded-lg bg-primary/5 border border-primary/20">
+                  <div className="text-sm font-medium text-primary mb-2">Indications</div>
+                  <ul className="text-xs space-y-1">
+                    <li>• Unexplained syncope in patient ≥40 years</li>
+                    <li>• History suggests reflex / neurocardiogenic syncope</li>
+                    <li>• Situational or recurrent syncope without cardiac red flags</li>
+                    <li>• Suspected carotid sinus syndrome (e.g., tight collar, shaving, head turning)</li>
+                  </ul>
+                </div>
+                <div className="p-3 rounded-lg bg-destructive/5 border border-destructive/20">
+                  <div className="text-sm font-medium text-destructive mb-2">Contraindications & Safety</div>
+                  <ul className="text-xs space-y-1">
+                    <li>• Carotid bruit or known significant carotid stenosis</li>
+                    <li>• TIA / stroke in the past 3 months</li>
+                    <li>• Recent MI (&lt;3 months) or unstable cardiovascular disease</li>
+                    <li>• History of significant ventricular arrhythmia</li>
+                    <li>• Previous CSM-induced serious arrhythmia</li>
+                  </ul>
+                </div>
+              </div>
+              <div className="p-3 rounded-lg bg-muted/30 border border-border/30">
+                <div className="text-sm font-medium text-foreground mb-2">Step-by-Step Technique</div>
+                <ol className="text-xs space-y-1">
+                  <li>1. Obtain consent; continuous ECG and non-invasive BP monitoring.</li>
+                  <li>2. Place patient supine; turn head slightly away from the tested side.</li>
+                  <li>3. Locate carotid sinus at the level of the thyroid cartilage, anterior border of sternocleidomastoid.</li>
+                  <li>4. Apply firm pressure with 2–3 fingers for 5–10 seconds, then release.</li>
+                  <li>5. If negative, repeat with patient upright (tilt table) if available.</li>
+                  <li>6. Have resuscitation equipment, atropine, and IV access available.</li>
+                </ol>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="p-3 rounded-lg bg-success/5 border border-success/20">
+                  <div className="text-sm font-medium text-success mb-2">Positive Criteria</div>
+                  <ul className="text-xs space-y-1">
+                    <li>• Asystole ≥3 seconds (cardioinhibitory)</li>
+                    <li>• Systolic BP drop ≥50 mmHg (vasodepressor)</li>
+                    <li>• Mixed response with both bradycardia and hypotension</li>
+                    <li>• Reproduction of syncope symptoms</li>
+                  </ul>
+                </div>
+                <div className="p-3 rounded-lg bg-muted/30 border border-border/30">
+                  <div className="text-sm font-medium text-foreground mb-2">Interpretation & Next Steps</div>
+                  <ul className="text-xs space-y-1">
+                    <li>• Positive + symptoms: carotid sinus syndrome confirmed</li>
+                    <li>• Cardioinhibitory / mixed: consider permanent pacing</li>
+                    <li>• Vasodepressor: counselling, avoid triggers, consider compression stockings</li>
+                    <li>• Negative but reflex syncope still suspected: proceed to head-up tilt-table testing</li>
+                  </ul>
+                </div>
+              </div>
+            </CardContent>
+          </CollapsibleContent>
+        </Collapsible>
+      </Card>
+
       {/* Clinical Pearls */}
       <Card className="border-border/40">
         <Collapsible open={showClinicalPearls} onOpenChange={setShowClinicalPearls}>
@@ -400,6 +489,10 @@ export function SyncopeAlgorithm() {
                 <div className="text-xs">
                   <strong className="text-primary">• Orthostatic BP:</strong>{" "}
                   <span className="text-muted-foreground">Measure supine, then after 3 minutes standing; ≥20 mmHg SBP drop is diagnostic</span>
+                </div>
+                <div className="text-xs">
+                  <strong className="text-primary">• Carotid sinus massage:</strong>{" "}
+                  <span className="text-muted-foreground">Evaluate in older patients with reflex syncope; contraindicated with carotid bruit or recent TIA/stroke. Positive if asystole ≥3 s or SBP drop ≥50 mmHg.</span>
                 </div>
                 <div className="text-xs">
                   <strong className="text-primary">• Vasovagal:</strong>{" "}
