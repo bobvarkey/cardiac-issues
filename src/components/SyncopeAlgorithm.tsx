@@ -1,5 +1,7 @@
 import { useState } from "react";
-import { Brain, ChevronDown, ChevronUp, AlertTriangle, Activity, Heart } from "lucide-react";
+import { Brain, ChevronDown, ChevronUp, AlertTriangle, Activity, Heart, Hand } from "lucide-react";
+import { LightboxImage } from "@/components/ImageLightbox";
+import syncopeEvaluation from "@/assets/syncope-evaluation.jpeg.asset.json";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Collapsible,
