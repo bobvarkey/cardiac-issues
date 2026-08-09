@@ -89,6 +89,17 @@ const GROUPS = [
   },
 
   {
+    title: "Syncope evaluation",
+    images: [
+      {
+        src: syncopeEvaluation.url,
+        alt: "ACC-AHA-HRS additional syncope evaluation and diagnosis algorithm showing carotid sinus massage and head-up tilt-table testing in reflex syncope",
+        caption: "Syncope evaluation algorithm — carotid sinus massage and tilt-table testing.",
+      },
+    ],
+  },
+
+  {
     title: "SVT & adenosine",
     images: [
       {
