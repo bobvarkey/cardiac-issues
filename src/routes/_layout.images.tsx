@@ -12,6 +12,7 @@ import stellateUs from "@/assets/stellate-ganglion-ultrasound.jpeg.asset.json";
 import svtHero from "@/assets/svt-adenosine-12mg-hero.jpeg.asset.json";
 import svtStudy from "@/assets/svt-adenosine-12mg-study.jpeg.asset.json";
 import wallLeadsArtery from "@/assets/wall-leads-artery.jpeg.asset.json";
+import syncopeEvaluation from "@/assets/syncope-evaluation.jpeg.asset.json";
 
 export const Route = createFileRoute("/_layout/images")({
   head: () => ({
