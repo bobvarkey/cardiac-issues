@@ -182,12 +182,12 @@ export function SyncopeAlgorithm() {
 
                         <div className="p-2 rounded bg-muted/30 border border-border/30">
                           <div className="text-xs font-medium text-muted-foreground mb-1">No Trigger</div>
-                          <div className="text-xs font-bold text-foreground mt-1">NEUROLOGICAL / UNEXPLAINED</div>
+                          <div className="text-xs font-bold text-foreground mt-1">UNEXPLAINED / POSSIBLE REFLEX</div>
                           <ul className="text-xs text-muted-foreground mt-1 space-y-0.5">
-                            <li>• Consider neurological causes</li>
-                            <li>• Further workup needed</li>
+                            <li>• If age ≥40 or reflex features: carotid sinus massage</li>
                             <li>• Holter, event monitor</li>
-                            <li>• Tilt table test</li>
+                            <li>• Head-up tilt-table test if CSM negative</li>
+                            <li>• Consider neurological causes</li>
                           </ul>
                         </div>
                       </div>
