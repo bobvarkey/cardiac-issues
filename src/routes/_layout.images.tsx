@@ -13,6 +13,9 @@ import svtHero from "@/assets/svt-adenosine-12mg-hero.jpeg.asset.json";
 import svtStudy from "@/assets/svt-adenosine-12mg-study.jpeg.asset.json";
 import wallLeadsArtery from "@/assets/wall-leads-artery.jpeg.asset.json";
 import syncopeEvaluation from "@/assets/syncope-evaluation.jpeg.asset.json";
+import wobblerEcg from "@/assets/wobbler-ecg-syncope.png.asset.json";
+import wellensEcg from "@/assets/wellens-syndrome-ecg.png.asset.json";
+
 
 export const Route = createFileRoute("/_layout/images")({
   head: () => ({
@@ -96,8 +99,19 @@ const GROUPS = [
         alt: "ACC-AHA-HRS additional syncope evaluation and diagnosis algorithm showing carotid sinus massage and head-up tilt-table testing in reflex syncope",
         caption: "Syncope evaluation algorithm — carotid sinus massage and tilt-table testing.",
       },
+      {
+        src: wobblerEcg.url,
+        alt: "WOBBLER mnemonic table for ECG assessment in syncope covering Wolff-Parkinson-White, Wellens syndrome, obstructed AV pathway, bifascicular block, Brugada, LVH, epsilon wave and repolarisation abnormality",
+        caption: "WOBBLER — systematic ECG assessment in syncope.",
+      },
+      {
+        src: wellensEcg.url,
+        alt: "Wellens syndrome ECG patterns: Pattern A biphasic T waves in V2-V3 and Pattern B deeply inverted T waves in V2-V3 with critical proximal LAD lesion",
+        caption: "Wellens' syndrome — Pattern A biphasic and Pattern B inverted T waves in V2–V3.",
+      },
     ],
   },
+
 
   {
     title: "SVT & adenosine",
