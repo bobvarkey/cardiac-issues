@@ -314,6 +314,21 @@ export function ECGRuleEngine() {
                     <span className="text-destructive font-medium">Bradycardia/pauses</span>
                   </label>
                 </div>
+
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2 text-xs">
+                    <input
+                      type="checkbox"
+                      checked={input.wellens_pattern}
+                      onChange={(e) => handleInputChange("wellens_pattern", e.target.checked)}
+                      className="rounded border-border"
+                    />
+                    <span className="text-destructive font-medium">
+                      Wellens' pattern (biphasic/deep inverted T in V2–V3, pain-free)
+                    </span>
+                  </label>
+                </div>
+
               </div>
             </div>
 

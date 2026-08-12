@@ -20,7 +20,9 @@ export type ECGInput = {
   svt_or_vt_present: boolean;
   high_grade_av_block: boolean;
   bradycardia_pauses: boolean;
+  wellens_pattern: boolean;
 };
+
 
 export type ECGOutputTag =
   | "life_threatening_arrhythmia"
