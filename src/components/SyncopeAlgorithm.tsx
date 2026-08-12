@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Brain, ChevronDown, ChevronUp, AlertTriangle, Activity, Heart, Hand } from "lucide-react";
 import { LightboxImage } from "@/components/ImageLightbox";
 import syncopeEvaluation from "@/assets/syncope-evaluation.jpeg.asset.json";
+import wobblerEcg from "@/assets/wobbler-ecg-syncope.png.asset.json";
+import wellensEcg from "@/assets/wellens-syndrome-ecg.png.asset.json";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Collapsible,
@@ -283,6 +285,7 @@ export function SyncopeAlgorithm() {
                     <li>• <strong>Pre-excitation (delta wave)</strong> — WPW</li>
                     <li>• <strong>High-grade AV block</strong> — conduction disease</li>
                     <li>• <strong>Pathologic Q waves</strong> — prior MI</li>
+                    <li>• <strong>Wellens' pattern</strong> — biphasic (Type A) or deep inverted (Type B) T waves in V2–V3 when pain-free — critical proximal LAD stenosis</li>
                   </ul>
                 </div>
               </div>
@@ -359,6 +362,52 @@ export function SyncopeAlgorithm() {
                     <li><strong>Concealed pathway:</strong> Normal resting ECG</li>
                   </ul>
                 </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="p-3 rounded-lg bg-destructive/5 border border-destructive/20">
+                  <div className="text-sm font-medium text-destructive mb-2">
+                    Wellens' syndrome (critical LAD stenosis)
+                  </div>
+                  <ul className="text-xs space-y-1">
+                    <li><strong>Pattern A:</strong> biphasic T waves in V2–V3 (~25%)</li>
+                    <li><strong>Pattern B:</strong> deep symmetrically inverted T waves in V2–V3 (~75%)</li>
+                    <li><strong>Context:</strong> recent chest pain, now pain-free; preserved R waves, no Q waves, little/no ST elevation, normal or minimally raised troponin</li>
+                    <li><strong>Syncope link:</strong> usually presents with chest pain or angina equivalents, but severe transient LAD ischaemia can cause a sudden drop in cardiac output, arrhythmia or haemodynamic instability leading to fainting</li>
+                    <li><strong>Action:</strong> do <em>not</em> stress test — urgent cardiology referral for angiography; high risk of extensive anterior MI</li>
+                  </ul>
+                </div>
+                <div className="p-3 rounded-lg bg-muted/30 border border-border/30">
+                  <div className="text-sm font-medium text-primary mb-2">WOBBLER mnemonic</div>
+                  <ul className="text-xs space-y-1">
+                    <li><strong>W</strong> — Wolff-Parkinson-White (P, PR)</li>
+                    <li><strong>W</strong> — Wellens' syndrome/pattern (ST-T)</li>
+                    <li><strong>O</strong> — Obstructed AV pathway (PR)</li>
+                    <li><strong>B</strong> — Bifascicular block (QRS)</li>
+                    <li><strong>B</strong> — Brugada (ST)</li>
+                    <li><strong>L</strong> — LVH (consider AS, HOCM) (QRST)</li>
+                    <li><strong>E</strong> — Epsilon wave (ST)</li>
+                    <li><strong>R</strong> — Repolarisation abnormality (long/short QT)</li>
+                  </ul>
+                  <p className="text-[11px] text-muted-foreground mt-2">
+                    Exclude obvious ischaemia or dysrhythmia first; apply to well-looking patients without immediately obvious ECG abnormalities.
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <LightboxImage
+                  src={wobblerEcg.url}
+                  alt="WOBBLER mnemonic table for ECG assessment in syncope: Wolff-Parkinson-White, Wellens syndrome, obstructed AV pathway, bifascicular block, Brugada, left ventricular hypertrophy, epsilon wave, repolarisation abnormality"
+                  caption="WOBBLER — systematic ECG assessment in syncope."
+                  className="surface-elevated"
+                />
+                <LightboxImage
+                  src={wellensEcg.url}
+                  alt="Wellens syndrome ECG patterns: Pattern A biphasic T waves in V2-V3 and Pattern B deeply inverted T waves in V2-V3, with critical proximal left anterior descending artery lesion"
+                  caption="Wellens' syndrome — Pattern A (biphasic) and Pattern B (inverted T) in V2–V3."
+                  className="surface-elevated"
+                />
               </div>
             </CardContent>
           </CollapsibleContent>

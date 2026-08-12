@@ -20,7 +20,9 @@ export type ECGInput = {
   svt_or_vt_present: boolean;
   high_grade_av_block: boolean;
   bradycardia_pauses: boolean;
+  wellens_pattern: boolean;
 };
+
 
 export type ECGOutputTag =
   | "life_threatening_arrhythmia"
@@ -36,7 +38,9 @@ export type ECGOutputTag =
   | "suspected_arvc_high"
   | "wpw_pattern"
   | "pre_excitation"
-  | "early_repolarization_pattern";
+  | "early_repolarization_pattern"
+  | "wellens_pattern"
+  | "critical_lad_stenosis";
 
 export type ECGResult = {
   output_tags: ECGOutputTag[];
@@ -103,6 +107,11 @@ export const ecgRules: ECGRule[] = [
     output_tags: ["wpw_pattern", "pre_excitation"],
   },
   {
+    id: "wellens",
+    condition: "wellens_pattern == true",
+    output_tags: ["wellens_pattern", "critical_lad_stenosis", "ecg_high_risk_syncope"],
+  },
+  {
     id: "early_repolarization",
     condition: "early_repol_inferolateral == true",
     output_tags: ["early_repolarization_pattern"],
@@ -124,6 +133,7 @@ function evaluateCondition(condition: string, input: ECGInput): boolean {
     .replace(/q_waves_infarct_pattern/g, String(input.q_waves_infarct_pattern))
     .replace(/epsilon_wave_v1_v3/g, String(input.epsilon_wave_v1_v3))
     .replace(/delta_wave/g, String(input.delta_wave))
+    .replace(/wellens_pattern/g, String(input.wellens_pattern))
     .replace(/early_repol_inferolateral/g, String(input.early_repol_inferolateral))
     .replace(/st_pattern_v1_v3 == 'coved'/g, String(input.st_pattern_v1_v3 === "coved"))
     .replace(/st_pattern_v1_v3 == 'saddleback'/g, String(input.st_pattern_v1_v3 === "saddleback"))
@@ -234,6 +244,11 @@ export function evaluateECG(input: ECGInput): ECGResult {
   if (triggered_rules.includes("structural_hcm")) {
     interpretation.push("LVH with Q waves - consider HCM, cardiac MRI recommended");
   }
+  if (triggered_rules.includes("wellens")) {
+    interpretation.push(
+      "⚠️ Wellens' syndrome pattern — critical proximal LAD stenosis; do NOT stress test, urgent cardiology/angiography. Usually chest pain, but transient LAD ischaemia can cause syncope via low output or arrhythmia.",
+    );
+  }
   if (triggered_rules.includes("early_repolarization")) {
     interpretation.push(
       "Early repolarization pattern - benign in most cases, but associated with VF risk in some studies",
@@ -282,5 +297,6 @@ export function getDefaultECGInput(): ECGInput {
     svt_or_vt_present: false,
     high_grade_av_block: false,
     bradycardia_pauses: false,
+    wellens_pattern: false,
   };
 }
