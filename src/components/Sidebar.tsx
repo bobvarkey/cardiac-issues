@@ -207,7 +207,7 @@ export function Sidebar() {
       )}
 
       <aside
-        className={`sticky top-0 z-40 h-screen shrink-0 border-r border-border bg-background/95 transition-all duration-200 ${
+        className={`sidebar-container sticky top-0 z-40 h-screen shrink-0 border-r border-border bg-background/95 transition-all duration-200 ${
           collapsed ? "w-14" : "w-64"
         }`}
       >
