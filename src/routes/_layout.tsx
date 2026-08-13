@@ -3,6 +3,7 @@ import { EcgLine } from "@/components/EcgLine";
 import { FloatingNavButtons } from "@/components/FloatingNavButtons";
 import { GlobalSearch } from "@/components/GlobalSearch";
 import { Sidebar } from "@/components/Sidebar";
+import { ViewportToggle } from "@/components/ViewportToggle";
 
 
 export const Route = createFileRoute("/_layout")({
@@ -15,8 +16,11 @@ function LayoutComponent() {
       <Sidebar />
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="sticky top-0 z-20 border-b border-border bg-background/80 backdrop-blur">
-          <div className="mx-auto max-w-5xl px-5 py-3">
-            <GlobalSearch />
+          <div className="mx-auto flex max-w-5xl items-center gap-4 px-5 py-3">
+            <div className="flex-1">
+              <GlobalSearch />
+            </div>
+            <ViewportToggle />
           </div>
           <div className="pointer-events-none h-3 text-primary/30">
             <EcgLine className="h-full w-full" />
