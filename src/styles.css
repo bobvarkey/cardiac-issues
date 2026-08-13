@@ -352,3 +352,27 @@
     transform: translateY(-8px) rotate(2deg);
   }
 }
+
+/* Viewport Preview Overrides */
+[data-preview-viewport="mobile"] {
+  max-width: 480px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  border-left: 1px solid var(--color-border) !important;
+  border-right: 1px solid var(--color-border) !important;
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.5) !important;
+}
+
+[data-preview-viewport="tablet"] {
+  max-width: 820px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  border-left: 1px solid var(--color-border) !important;
+  border-right: 1px solid var(--color-border) !important;
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.5) !important;
+}
+
+[data-preview-viewport="mobile"] .sidebar-container,
+[data-preview-viewport="tablet"] .sidebar-container {
+  display: none !important;
+}
