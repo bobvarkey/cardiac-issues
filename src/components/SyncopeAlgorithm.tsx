@@ -394,20 +394,12 @@ export function SyncopeAlgorithm() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <LightboxImage
-                  src={wobblerEcg.url}
-                  alt="WOBBLER mnemonic table for ECG assessment in syncope: Wolff-Parkinson-White, Wellens syndrome, obstructed AV pathway, bifascicular block, Brugada, left ventricular hypertrophy, epsilon wave, repolarisation abnormality"
-                  caption="WOBBLER — systematic ECG assessment in syncope."
-                  className="surface-elevated"
-                />
-                <LightboxImage
-                  src={wellensEcg.url}
-                  alt="Wellens syndrome ECG patterns: Pattern A biphasic T waves in V2-V3 and Pattern B deeply inverted T waves in V2-V3, with critical proximal left anterior descending artery lesion"
-                  caption="Wellens' syndrome — Pattern A (biphasic) and Pattern B (inverted T) in V2–V3."
-                  className="surface-elevated"
-                />
-              </div>
+              <LightboxImage
+                src={wobblerWellensCombined.url}
+                alt="WOBBLER mnemonic for ECG assessment in syncope and Wellens syndrome patterns (Type A biphasic T waves, Type B deeply inverted T waves), WPW, Fascicular Block, HOCM, Brugada, and ARVD epsilon waves."
+                caption="WOBBLER & Wellens' — systematic ECG assessment in syncope and high-risk patterns."
+                className="surface-elevated"
+              />
             </CardContent>
           </CollapsibleContent>
         </Collapsible>
