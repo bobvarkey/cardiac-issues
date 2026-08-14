@@ -73,6 +73,43 @@ export function ECGRuleEngine() {
               guidelines.
             </p>
 
+            {/* Reference test cases */}
+            <div className="rounded-lg border border-border/60 p-3">
+              <div className="flex items-center gap-2 mb-2">
+                <FlaskConical className="w-4 h-4 text-muted-foreground" />
+                <span className="text-xs font-medium text-foreground">
+                  Reference ECG cases (low → borderline → high)
+                </span>
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {ecgTestCases.map((tc) => (
+                  <button
+                    key={tc.id}
+                    onClick={() => loadCase(tc.id)}
+                    title={`${tc.vignette} — expected ${tc.expected.total} pts, ${tc.expected.riskLevel} risk`}
+                    className={`text-xs px-2 py-1 rounded-md border transition-colors ${
+                      activeCase === tc.id
+                        ? "bg-primary text-primary-foreground border-primary"
+                        : tc.band === "high"
+                          ? "border-destructive/40 text-destructive hover:bg-destructive/10"
+                          : tc.band === "low"
+                            ? "border-success/40 text-success hover:bg-success/10"
+                            : "border-warning/40 text-warning hover:bg-warning/10"
+                    }`}
+                  >
+                    {tc.name} · {tc.expected.total} pts
+                  </button>
+                ))}
+              </div>
+              {activeCase && (
+                <p className="mt-2 text-xs text-muted-foreground">
+                  {ecgTestCases.find((c) => c.id === activeCase)?.vignette}
+                </p>
+              )}
+            </div>
+
+
+
             {/* Input Form */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {/* Basic Parameters */}
