@@ -466,6 +466,91 @@ export function ECGRuleEngine() {
               </div>
             )}
 
+            {/* WOBBLER scoring breakdown */}
+            {score && (
+              <div className="rounded-lg border border-border/60 p-4 space-y-3">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div className="text-xs font-medium text-foreground">
+                    WOBBLER scoring breakdown
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-muted-foreground">
+                      {score.total} / {score.maxPossible} pts
+                    </span>
+                    <span
+                      className={`text-xs px-2 py-0.5 rounded font-medium ${
+                        score.riskLevel === "high"
+                          ? "bg-destructive/15 text-destructive"
+                          : score.riskLevel === "intermediate"
+                            ? "bg-warning/15 text-warning"
+                            : "bg-success/15 text-success"
+                      }`}
+                    >
+                      {score.riskLevel} risk · {score.disposition}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  {score.checks.map((c) => (
+                    <div
+                      key={c.key}
+                      className={`flex items-start gap-2 rounded-md px-2 py-1.5 text-xs ${
+                        c.triggered ? "bg-muted/60" : "opacity-50"
+                      }`}
+                    >
+                      <span className="mt-0.5 w-5 shrink-0 text-center font-mono font-semibold text-muted-foreground">
+                        {c.letter}
+                      </span>
+                      <div className="flex-1">
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          <span
+                            className={`font-medium ${c.triggered ? "text-foreground" : "text-muted-foreground"}`}
+                          >
+                            {c.label}
+                          </span>
+                          <span className="text-[10px] uppercase tracking-wide text-muted-foreground">
+                            {c.severity}
+                          </span>
+                        </div>
+                        <div className="text-muted-foreground">{c.detail}</div>
+                        {c.triggered && (
+                          <div className="text-muted-foreground italic">{c.rationale}</div>
+                        )}
+                      </div>
+                      <span
+                        className={`shrink-0 font-mono ${c.triggered ? "text-destructive font-semibold" : "text-muted-foreground"}`}
+                      >
+                        {c.triggered ? `+${c.points}` : "0"}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="rounded-md bg-muted/50 p-3 text-xs">
+                  <div className="font-medium text-foreground mb-1">
+                    How this drove the recommendation
+                  </div>
+                  <p className="text-muted-foreground">
+                    {score.triggered.length === 0
+                      ? "No red-flag checks were triggered, so the score stays at 0."
+                      : `${score.triggered.length} check${score.triggered.length > 1 ? "s" : ""} triggered (${score.triggered
+                          .map((c) => `${c.label} +${c.points}`)
+                          .join(", ")}) for a total of ${score.total} points.${
+                          score.hasMajor
+                            ? " At least one major finding is present, which sets high risk on its own."
+                            : score.total >= 4
+                              ? " No single major finding, but stacked moderate/minor flags reach the high-risk threshold of 4."
+                              : " No major finding and under the high-risk threshold of 4 points."
+                        }`}
+                  </p>
+                  <p className="mt-2 text-foreground">{score.recommendation}</p>
+                </div>
+              </div>
+            )}
+
+
+
             {/* Clinical Context */}
             <div className="p-3 rounded-lg bg-info/5 border border-info/20">
               <div className="flex items-start gap-2">
