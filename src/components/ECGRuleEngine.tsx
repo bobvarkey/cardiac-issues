@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Activity, AlertTriangle, CheckCircle2, Info } from "lucide-react";
+import { Activity, AlertTriangle, CheckCircle2, Info, FlaskConical } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { ChevronDown, ChevronUp } from "lucide-react";
@@ -9,25 +9,42 @@ import {
   type ECGInput,
   type ECGResult,
 } from "@/lib/ecg-rule-engine";
+import { scoreWobbler, type WobblerScore } from "@/lib/wobbler-scoring";
+import { ecgTestCases } from "@/lib/ecg-test-cases";
 
 export function ECGRuleEngine() {
   const [showForm, setShowForm] = useState(true);
   const [input, setInput] = useState<ECGInput>(getDefaultECGInput());
   const [result, setResult] = useState<ECGResult | null>(null);
+  const [score, setScore] = useState<WobblerScore | null>(null);
+  const [activeCase, setActiveCase] = useState<string | null>(null);
 
   const handleInputChange = (field: keyof ECGInput, value: string | number | boolean) => {
     setInput((prev) => ({ ...prev, [field]: value }));
+    setActiveCase(null);
   };
 
   const handleEvaluate = () => {
-    const ecgResult = evaluateECG(input);
-    setResult(ecgResult);
+    setResult(evaluateECG(input));
+    setScore(scoreWobbler(input));
+  };
+
+  const loadCase = (id: string) => {
+    const tc = ecgTestCases.find((c) => c.id === id);
+    if (!tc) return;
+    setInput(tc.input);
+    setResult(evaluateECG(tc.input));
+    setScore(scoreWobbler(tc.input));
+    setActiveCase(id);
   };
 
   const handleReset = () => {
     setInput(getDefaultECGInput());
     setResult(null);
+    setScore(null);
+    setActiveCase(null);
   };
+
 
   return (
     <Card className="border-border/40">
