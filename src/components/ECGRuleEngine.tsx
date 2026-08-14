@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Activity, AlertTriangle, CheckCircle2, Info } from "lucide-react";
+import { Activity, AlertTriangle, CheckCircle2, Info, FlaskConical } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { ChevronDown, ChevronUp } from "lucide-react";
@@ -9,25 +9,42 @@ import {
   type ECGInput,
   type ECGResult,
 } from "@/lib/ecg-rule-engine";
+import { scoreWobbler, type WobblerScore } from "@/lib/wobbler-scoring";
+import { ecgTestCases } from "@/lib/ecg-test-cases";
 
 export function ECGRuleEngine() {
   const [showForm, setShowForm] = useState(true);
   const [input, setInput] = useState<ECGInput>(getDefaultECGInput());
   const [result, setResult] = useState<ECGResult | null>(null);
+  const [score, setScore] = useState<WobblerScore | null>(null);
+  const [activeCase, setActiveCase] = useState<string | null>(null);
 
   const handleInputChange = (field: keyof ECGInput, value: string | number | boolean) => {
     setInput((prev) => ({ ...prev, [field]: value }));
+    setActiveCase(null);
   };
 
   const handleEvaluate = () => {
-    const ecgResult = evaluateECG(input);
-    setResult(ecgResult);
+    setResult(evaluateECG(input));
+    setScore(scoreWobbler(input));
+  };
+
+  const loadCase = (id: string) => {
+    const tc = ecgTestCases.find((c) => c.id === id);
+    if (!tc) return;
+    setInput(tc.input);
+    setResult(evaluateECG(tc.input));
+    setScore(scoreWobbler(tc.input));
+    setActiveCase(id);
   };
 
   const handleReset = () => {
     setInput(getDefaultECGInput());
     setResult(null);
+    setScore(null);
+    setActiveCase(null);
   };
+
 
   return (
     <Card className="border-border/40">
@@ -55,6 +72,43 @@ export function ECGRuleEngine() {
               Enter ECG parameters to evaluate for high-risk features in syncope. Based on ESC/AHA
               guidelines.
             </p>
+
+            {/* Reference test cases */}
+            <div className="rounded-lg border border-border/60 p-3">
+              <div className="flex items-center gap-2 mb-2">
+                <FlaskConical className="w-4 h-4 text-muted-foreground" />
+                <span className="text-xs font-medium text-foreground">
+                  Reference ECG cases (low → borderline → high)
+                </span>
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {ecgTestCases.map((tc) => (
+                  <button
+                    key={tc.id}
+                    onClick={() => loadCase(tc.id)}
+                    title={`${tc.vignette} — expected ${tc.expected.total} pts, ${tc.expected.riskLevel} risk`}
+                    className={`text-xs px-2 py-1 rounded-md border transition-colors ${
+                      activeCase === tc.id
+                        ? "bg-primary text-primary-foreground border-primary"
+                        : tc.band === "high"
+                          ? "border-destructive/40 text-destructive hover:bg-destructive/10"
+                          : tc.band === "low"
+                            ? "border-success/40 text-success hover:bg-success/10"
+                            : "border-warning/40 text-warning hover:bg-warning/10"
+                    }`}
+                  >
+                    {tc.name} · {tc.expected.total} pts
+                  </button>
+                ))}
+              </div>
+              {activeCase && (
+                <p className="mt-2 text-xs text-muted-foreground">
+                  {ecgTestCases.find((c) => c.id === activeCase)?.vignette}
+                </p>
+              )}
+            </div>
+
+
 
             {/* Input Form */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -411,6 +465,91 @@ export function ECGRuleEngine() {
                 </div>
               </div>
             )}
+
+            {/* WOBBLER scoring breakdown */}
+            {score && (
+              <div className="rounded-lg border border-border/60 p-4 space-y-3">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div className="text-xs font-medium text-foreground">
+                    WOBBLER scoring breakdown
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-muted-foreground">
+                      {score.total} / {score.maxPossible} pts
+                    </span>
+                    <span
+                      className={`text-xs px-2 py-0.5 rounded font-medium ${
+                        score.riskLevel === "high"
+                          ? "bg-destructive/15 text-destructive"
+                          : score.riskLevel === "intermediate"
+                            ? "bg-warning/15 text-warning"
+                            : "bg-success/15 text-success"
+                      }`}
+                    >
+                      {score.riskLevel} risk · {score.disposition}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  {score.checks.map((c) => (
+                    <div
+                      key={c.key}
+                      className={`flex items-start gap-2 rounded-md px-2 py-1.5 text-xs ${
+                        c.triggered ? "bg-muted/60" : "opacity-50"
+                      }`}
+                    >
+                      <span className="mt-0.5 w-5 shrink-0 text-center font-mono font-semibold text-muted-foreground">
+                        {c.letter}
+                      </span>
+                      <div className="flex-1">
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          <span
+                            className={`font-medium ${c.triggered ? "text-foreground" : "text-muted-foreground"}`}
+                          >
+                            {c.label}
+                          </span>
+                          <span className="text-[10px] uppercase tracking-wide text-muted-foreground">
+                            {c.severity}
+                          </span>
+                        </div>
+                        <div className="text-muted-foreground">{c.detail}</div>
+                        {c.triggered && (
+                          <div className="text-muted-foreground italic">{c.rationale}</div>
+                        )}
+                      </div>
+                      <span
+                        className={`shrink-0 font-mono ${c.triggered ? "text-destructive font-semibold" : "text-muted-foreground"}`}
+                      >
+                        {c.triggered ? `+${c.points}` : "0"}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="rounded-md bg-muted/50 p-3 text-xs">
+                  <div className="font-medium text-foreground mb-1">
+                    How this drove the recommendation
+                  </div>
+                  <p className="text-muted-foreground">
+                    {score.triggered.length === 0
+                      ? "No red-flag checks were triggered, so the score stays at 0."
+                      : `${score.triggered.length} check${score.triggered.length > 1 ? "s" : ""} triggered (${score.triggered
+                          .map((c) => `${c.label} +${c.points}`)
+                          .join(", ")}) for a total of ${score.total} points.${
+                          score.hasMajor
+                            ? " At least one major finding is present, which sets high risk on its own."
+                            : score.total >= 4
+                              ? " No single major finding, but stacked moderate/minor flags reach the high-risk threshold of 4."
+                              : " No major finding and under the high-risk threshold of 4 points."
+                        }`}
+                  </p>
+                  <p className="mt-2 text-foreground">{score.recommendation}</p>
+                </div>
+              </div>
+            )}
+
+
 
             {/* Clinical Context */}
             <div className="p-3 rounded-lg bg-info/5 border border-info/20">
