@@ -3,22 +3,23 @@ import {
   ClipboardCheck, 
   AlertTriangle, 
   ShieldAlert, 
-  ShieldCheck, 
   Activity, 
   ChevronDown, 
   ChevronUp,
   Info,
+  Printer,
   CheckCircle2
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { 
   SYNCOPE_ECG_CHECKLIST_DATA, 
   calculateChecklistResult 
 } from "@/lib/syncope-checklist";
+import { buildChecklistReportHtml } from "@/lib/syncope-checklist-report";
 
 export function SyncopeECGChecklist() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
@@ -51,6 +52,18 @@ export function SyncopeECGChecklist() {
     setSelectedIds([]);
     setGlobalTriggers([]);
   };
+
+  const exportReport = () => {
+    const html = buildChecklistReportHtml(selectedIds, globalTriggers, result);
+    const win = window.open("", "_blank", "width=900,height=1000");
+    if (!win) return;
+    win.document.open();
+    win.document.write(html);
+    win.document.close();
+    win.focus();
+    setTimeout(() => win.print(), 350);
+  };
+
 
   return (
     <Card className="border-border/40 shadow-lg">
