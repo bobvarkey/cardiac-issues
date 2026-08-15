@@ -216,12 +216,22 @@ export function SyncopeECGChecklist() {
             <div className="pt-6 border-t border-border/40">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-sm font-bold">ASSESSMENT RESULT</h3>
-                <button 
-                  onClick={reset}
-                  className="text-[10px] font-medium text-muted-foreground hover:text-destructive underline decoration-dotted"
-                >
-                  Clear Checklist
-                </button>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={exportReport}
+                    className="flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1.5 rounded-md border border-primary/40 bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+                  >
+                    <Printer className="w-3.5 h-3.5" />
+                    Export / Print
+                  </button>
+                  <button 
+                    onClick={reset}
+                    className="text-[10px] font-medium text-muted-foreground hover:text-destructive underline decoration-dotted"
+                  >
+                    Clear Checklist
+                  </button>
+                </div>
+
               </div>
 
               <div className={`p-5 rounded-xl border-2 transition-all ${
