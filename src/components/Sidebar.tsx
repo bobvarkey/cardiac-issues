@@ -180,7 +180,8 @@ export function Sidebar() {
 
   useEffect(() => {
     if (isMobileOpen) {
-      closeBtnRef.current?.focus();
+      // Focus the close button when the sidebar opens
+      setTimeout(() => closeBtnRef.current?.focus(), 50);
       
       const handleEscape = (e: KeyboardEvent) => {
         if (e.key === "Escape") setIsMobileOpen(false);
@@ -192,6 +193,8 @@ export function Sidebar() {
         const focusables = sidebarRef.current.querySelectorAll(
           'button, [href], input, [tabindex]:not([tabindex="-1"])'
         );
+        if (focusables.length === 0) return;
+
         const first = focusables[0] as HTMLElement;
         const last = focusables[focusables.length - 1] as HTMLElement;
 
@@ -212,9 +215,9 @@ export function Sidebar() {
         document.removeEventListener("keydown", handleEscape);
         document.removeEventListener("keydown", handleTab);
         document.body.style.overflow = "";
+        // Ensure focus returns to the trigger when closing
+        triggerRef.current?.focus();
       };
-    } else {
-      triggerRef.current?.focus();
     }
   }, [isMobileOpen]);
 
