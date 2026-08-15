@@ -21,7 +21,7 @@ function LayoutComponent() {
       </a>
       <Sidebar />
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-20 border-b border-border bg-background/80 backdrop-blur">
+        <header role="banner" className="sticky top-0 z-20 border-b border-border bg-background/80 backdrop-blur">
           <div className="mx-auto flex max-w-5xl items-center gap-4 px-5 py-3">
             <div className="flex-1">
               <GlobalSearch />
