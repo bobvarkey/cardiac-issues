@@ -152,6 +152,7 @@ function Highlight({ text, query }: { text: string; query: string }) {
 
 export function Sidebar() {
   const [collapsed, setCollapsed] = useState<boolean>(false);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [openMap, setOpenMap] = useState<Record<string, boolean>>({});
   const [query, setQuery] = useState("");
   const [hydrated, setHydrated] = useState(false);
@@ -172,6 +173,10 @@ export function Sidebar() {
     if (!hydrated) return;
     window.localStorage.setItem(STORAGE_KEYS.open, JSON.stringify(openMap));
   }, [openMap, hydrated]);
+
+  useEffect(() => {
+    setIsMobileOpen(false);
+  }, [pathname]);
 
   const q = query.trim().toLowerCase();
   const searching = q.length > 0;
@@ -196,20 +201,34 @@ export function Sidebar() {
 
   return (
     <>
-      {/* Blur overlay when searching */}
-      {searching && (
+      {/* Mobile Toggle Button */}
+      <button
+        type="button"
+        onClick={() => setIsMobileOpen(true)}
+        className="fixed left-4 bottom-4 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg md:hidden"
+        aria-label="Open sidebar"
+      >
+        <Activity className="h-6 w-6" />
+      </button>
+
+      {/* Overlays */}
+      {(searching || isMobileOpen) && (
         <button
           type="button"
-          aria-label="Close search"
-          onClick={() => setQuery("")}
-          className="fixed inset-0 z-30 bg-background/40 backdrop-blur-md transition"
+          aria-label="Close"
+          onClick={() => {
+            setQuery("");
+            setIsMobileOpen(false);
+          }}
+          className="fixed inset-0 z-40 bg-background/60 backdrop-blur-md transition-opacity"
         />
       )}
 
       <aside
-        className={`sidebar-container sticky top-0 z-40 h-screen shrink-0 border-r border-border bg-background/95 transition-all duration-200 ${
-          collapsed ? "w-14" : "w-64"
-        }`}
+        className={`sidebar-container fixed top-0 bottom-0 left-0 z-50 flex flex-col border-r border-border bg-background/95 transition-all duration-300 md:sticky md:h-screen md:shrink-0 ${
+          collapsed ? "md:w-14" : "md:w-64"
+        } ${isMobileOpen ? "translate-x-0 w-72" : "-translate-x-full md:translate-x-0"}
+        `}
       >
         <div className="flex h-full flex-col">
           {/* Header */}
@@ -244,6 +263,16 @@ export function Sidebar() {
                 <ChevronLeft className="h-4 w-4" />
               )}
             </button>
+            {isMobileOpen && (
+              <button
+                type="button"
+                onClick={() => setIsMobileOpen(false)}
+                className="rounded-md p-1 text-muted-foreground hover:bg-surface md:hidden"
+                aria-label="Close sidebar"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            )}
           </div>
 
           {/* Search */}
