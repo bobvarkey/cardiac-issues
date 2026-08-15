@@ -3,22 +3,23 @@ import {
   ClipboardCheck, 
   AlertTriangle, 
   ShieldAlert, 
-  ShieldCheck, 
   Activity, 
   ChevronDown, 
   ChevronUp,
   Info,
+  Printer,
   CheckCircle2
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { 
   SYNCOPE_ECG_CHECKLIST_DATA, 
   calculateChecklistResult 
 } from "@/lib/syncope-checklist";
+import { buildChecklistReportHtml } from "@/lib/syncope-checklist-report";
 
 export function SyncopeECGChecklist() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
@@ -51,6 +52,18 @@ export function SyncopeECGChecklist() {
     setSelectedIds([]);
     setGlobalTriggers([]);
   };
+
+  const exportReport = () => {
+    const html = buildChecklistReportHtml(selectedIds, globalTriggers, result);
+    const win = window.open("", "_blank", "width=900,height=1000");
+    if (!win) return;
+    win.document.open();
+    win.document.write(html);
+    win.document.close();
+    win.focus();
+    setTimeout(() => win.print(), 350);
+  };
+
 
   return (
     <Card className="border-border/40 shadow-lg">
@@ -203,12 +216,22 @@ export function SyncopeECGChecklist() {
             <div className="pt-6 border-t border-border/40">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-sm font-bold">ASSESSMENT RESULT</h3>
-                <button 
-                  onClick={reset}
-                  className="text-[10px] font-medium text-muted-foreground hover:text-destructive underline decoration-dotted"
-                >
-                  Clear Checklist
-                </button>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={exportReport}
+                    className="flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1.5 rounded-md border border-primary/40 bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+                  >
+                    <Printer className="w-3.5 h-3.5" />
+                    Export / Print
+                  </button>
+                  <button 
+                    onClick={reset}
+                    className="text-[10px] font-medium text-muted-foreground hover:text-destructive underline decoration-dotted"
+                  >
+                    Clear Checklist
+                  </button>
+                </div>
+
               </div>
 
               <div className={`p-5 rounded-xl border-2 transition-all ${
