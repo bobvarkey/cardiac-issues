@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Brain, ChevronDown, ChevronUp, AlertTriangle, Activity, Heart, Hand } from "lucide-react";
+import { Brain, ChevronDown, ChevronUp, AlertTriangle, Activity, Heart, Hand, ClipboardCheck } from "lucide-react";
+import { SyncopeECGChecklist } from "@/components/SyncopeECGChecklist";
 import { LightboxImage } from "@/components/ImageLightbox";
 import syncopeEvaluation from "@/assets/syncope-evaluation.jpeg.asset.json";
 import wobblerWellensCombined from "@/assets/wobbler-wellens-combined.jpeg.asset.json";
@@ -19,6 +20,9 @@ export function SyncopeAlgorithm() {
 
   return (
     <div className="space-y-4">
+      {/* High-Risk ECG Checklist */}
+      <SyncopeECGChecklist />
+
       {/* Main Algorithm Flowchart */}
       <Card className="border-border/40">
         <Collapsible open={showAlgorithm} onOpenChange={setShowAlgorithm}>

@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Activity, AlertTriangle, CheckCircle2, Info, FlaskConical } from "lucide-react";
+import { Activity, AlertTriangle, CheckCircle2, Info, FlaskConical, ClipboardCheck } from "lucide-react";
+import { SyncopeECGChecklist } from "@/components/SyncopeECGChecklist";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { ChevronDown, ChevronUp } from "lucide-react";
@@ -47,7 +48,10 @@ export function ECGRuleEngine() {
 
 
   return (
-    <Card className="border-border/40">
+    <div className="space-y-4">
+      <SyncopeECGChecklist />
+      
+      <Card className="border-border/40">
       <Collapsible open={showForm} onOpenChange={setShowForm}>
         <CollapsibleTrigger asChild>
           <button className="w-full">
@@ -569,5 +573,6 @@ export function ECGRuleEngine() {
         </CollapsibleContent>
       </Collapsible>
     </Card>
+    </div>
   );
 }
