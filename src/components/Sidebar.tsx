@@ -415,6 +415,7 @@ export function Sidebar() {
                     {!collapsed && (
                       <>
                         <span
+                          id={`heading-${section.id}`}
                           className={`min-w-0 flex-1 truncate ${
                             section.featured ? "font-semibold text-foreground" : ""
                           }`}
