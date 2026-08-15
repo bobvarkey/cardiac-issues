@@ -167,7 +167,7 @@ export function SyncopeECGChecklist() {
                     value={measurements.pr || ""}
                     onChange={(e) => setMeasurements(prev => ({ ...prev, pr: e.target.value ? parseInt(e.target.value) : null }))}
                   />
-                  <div className="text-[9px] text-muted-foreground italic">>200 First-degree AV Block</div>
+                  <div className="text-[9px] text-muted-foreground italic">{" > "}200 First-degree AV Block</div>
                 </div>
                 
                 <div className="space-y-1.5">
@@ -179,7 +179,7 @@ export function SyncopeECGChecklist() {
                     value={measurements.qrs || ""}
                     onChange={(e) => setMeasurements(prev => ({ ...prev, qrs: e.target.value ? parseInt(e.target.value) : null }))}
                   />
-                  <div className="text-[9px] text-muted-foreground italic">>120 High conduction risk</div>
+                  <div className="text-[9px] text-muted-foreground italic">{" > "}120 High conduction risk</div>
                 </div>
               </div>
 
