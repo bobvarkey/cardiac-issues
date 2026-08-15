@@ -19,3 +19,11 @@ export interface ChecklistResult {
   action: string;
   triggeredOverrides: string[];
 }
+
+export interface ECGMeasurements {
+  qtc: number | null;
+  pr: number | null;
+  qrs: number | null;
+  leadAbnormalities: string[];
+}
+
