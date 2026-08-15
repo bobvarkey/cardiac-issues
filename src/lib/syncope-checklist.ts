@@ -1,4 +1,4 @@
-import { ChecklistItem, ChecklistResult } from "./syncope-checklist-types";
+import { ChecklistItem, ChecklistResult, ECGMeasurements } from "./syncope-checklist-types";
 
 export const SYNCOPE_ECG_CHECKLIST_DATA = {
   toolName: "Syncope ECG High-Risk Checklist",
@@ -244,17 +244,84 @@ export const SYNCOPE_ECG_CHECKLIST_DATA = {
   }
 };
 
-export function calculateChecklistResult(selectedIds: string[], overrideTriggers: string[]): ChecklistResult {
-  const selectedItems = SYNCOPE_ECG_CHECKLIST_DATA.items.filter(item => selectedIds.includes(item.id));
+export function calculateChecklistResult(
+  selectedIds: string[], 
+  overrideTriggers: string[],
+  measurements?: ECGMeasurements
+): ChecklistResult {
+  const autoSelectedIds = new Set(selectedIds);
+  const autoGlobalTriggers = new Set(overrideTriggers);
+
+  if (measurements) {
+    // QTc Logic
+    if (measurements.qtc) {
+      if (measurements.qtc >= 500) {
+        autoGlobalTriggers.add("QTc at least 500 ms with syncope or ventricular arrhythmia");
+        autoSelectedIds.add("long_qtc");
+      } else if (measurements.qtc >= 480) {
+        autoSelectedIds.add("long_qtc");
+      } else if (measurements.qtc <= 330) {
+        autoSelectedIds.add("short_qtc");
+      }
+    }
+
+    // PR Interval Logic
+    if (measurements.pr) {
+      if (measurements.pr > 200) {
+        autoSelectedIds.add("first_degree_av_block");
+      }
+    }
+
+    // QRS Duration Logic
+    if (measurements.qrs) {
+      // WPW or Conduction disease triggers
+      if (measurements.qrs > 120) {
+        // Broadly high risk for bifascicular/LBBB if QRS > 120
+        autoSelectedIds.add("bifascicular_block");
+      }
+    }
+
+    // Lead Abnormalities Logic
+    measurements.leadAbnormalities.forEach(abnormality => {
+      const lower = abnormality.toLowerCase();
+      if (lower.includes('wellens') || (lower.includes('t-wave') && (lower.includes('v2') || lower.includes('v3')))) {
+        autoSelectedIds.add("wellens_pattern");
+        autoGlobalTriggers.add("Definite acute ischemic/STEMI pattern or suspected Wellens syndrome");
+      }
+      if (lower.includes('brugada')) {
+        autoSelectedIds.add("brugada_type_1");
+        autoGlobalTriggers.add("Type 1 Brugada pattern with unexplained syncope");
+      }
+      if (lower.includes('delta') || lower.includes('wpw')) {
+        autoSelectedIds.add("wpw_preexcitation");
+      }
+      if (lower.includes('epsilon') || lower.includes('arvc')) {
+        autoSelectedIds.add("epsilon_wave_arvc");
+      }
+      if (lower.includes('s1q3t3') || lower.includes('rv strain')) {
+        autoSelectedIds.add("pulmonary_embolism_rv_strain");
+      }
+      if (lower.includes('lvh') || lower.includes('sokolow')) {
+        autoSelectedIds.add("lvh_pressure_overload");
+      }
+    });
+  }
+
+  const effectiveSelectedIds = Array.from(autoSelectedIds);
+  const effectiveGlobalTriggers = Array.from(autoGlobalTriggers);
+
+  const selectedItems = SYNCOPE_ECG_CHECKLIST_DATA.items.filter(item => effectiveSelectedIds.includes(item.id));
   const score = selectedItems.reduce((sum, item) => sum + item.score, 0);
 
-  let isUrgent = overrideTriggers.length > 0;
-  const triggeredOverrides: string[] = [...overrideTriggers];
+  let isUrgent = effectiveGlobalTriggers.length > 0;
+  const triggeredOverrides: string[] = [...effectiveGlobalTriggers];
 
   selectedItems.forEach(item => {
     if (item.urgentOverride) {
       isUrgent = true;
-      triggeredOverrides.push(`Urgent Override: ${item.label}`);
+      if (!triggeredOverrides.includes(`Urgent Override: ${item.label}`)) {
+        triggeredOverrides.push(`Urgent Override: ${item.label}`);
+      }
     }
   });
 
@@ -270,3 +337,4 @@ export function calculateChecklistResult(selectedIds: string[], overrideTriggers
     triggeredOverrides
   };
 }
+

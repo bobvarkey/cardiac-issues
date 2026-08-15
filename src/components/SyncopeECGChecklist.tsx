@@ -8,29 +8,44 @@ import {
   ChevronUp,
   Info,
   Printer,
-  CheckCircle2
+  CheckCircle2,
+  Zap,
+  Trash2
 } from "lucide-react";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+
 import { 
   SYNCOPE_ECG_CHECKLIST_DATA, 
   calculateChecklistResult 
 } from "@/lib/syncope-checklist";
+import { ECGMeasurements } from "@/lib/syncope-checklist-types";
 import { buildChecklistReportHtml } from "@/lib/syncope-checklist-report";
+
 
 export function SyncopeECGChecklist() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [globalTriggers, setGlobalTriggers] = useState<string[]>([]);
   const [openItems, setOpenItems] = useState<Record<string, boolean>>({});
   const [showChecklist, setShowChecklist] = useState(true);
+  const [measurements, setMeasurements] = useState<ECGMeasurements>({
+    qtc: null,
+    pr: null,
+    qrs: null,
+    leadAbnormalities: []
+  });
+  const [newAbnormality, setNewAbnormality] = useState("");
 
   const result = useMemo(() => 
-    calculateChecklistResult(selectedIds, globalTriggers), 
-    [selectedIds, globalTriggers]
+    calculateChecklistResult(selectedIds, globalTriggers, measurements), 
+    [selectedIds, globalTriggers, measurements]
   );
+
 
   const toggleItem = (id: string) => {
     setSelectedIds(prev => 
@@ -51,7 +66,30 @@ export function SyncopeECGChecklist() {
   const reset = () => {
     setSelectedIds([]);
     setGlobalTriggers([]);
+    setMeasurements({
+      qtc: null,
+      pr: null,
+      qrs: null,
+      leadAbnormalities: []
+    });
   };
+
+  const addAbnormality = () => {
+    if (!newAbnormality.trim()) return;
+    setMeasurements(prev => ({
+      ...prev,
+      leadAbnormalities: [...prev.leadAbnormalities, newAbnormality.trim()]
+    }));
+    setNewAbnormality("");
+  };
+
+  const removeAbnormality = (index: number) => {
+    setMeasurements(prev => ({
+      ...prev,
+      leadAbnormalities: prev.leadAbnormalities.filter((_, i) => i !== index)
+    }));
+  };
+
 
   const exportReport = () => {
     const html = buildChecklistReportHtml(selectedIds, globalTriggers, result);
@@ -99,6 +137,93 @@ export function SyncopeECGChecklist() {
                 <p>{SYNCOPE_ECG_CHECKLIST_DATA.purpose}</p>
               </div>
             </div>
+            
+            {/* ECG Measurements Input Form */}
+            <div className="space-y-4 p-4 rounded-lg bg-primary/5 border border-primary/20">
+              <h3 className="text-sm font-bold flex items-center gap-2 text-primary">
+                <Zap className="w-4 h-4" />
+                ECG MEASUREMENTS & AUTOMATION
+              </h3>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold uppercase text-muted-foreground">QTc Interval (ms)</label>
+                  <Input 
+                    type="number" 
+                    placeholder="e.g. 450"
+                    className="h-9 text-sm"
+                    value={measurements.qtc || ""}
+                    onChange={(e) => setMeasurements(prev => ({ ...prev, qtc: e.target.value ? parseInt(e.target.value) : null }))}
+                  />
+                  <div className="text-[9px] text-muted-foreground italic">≥480 Abnormal, ≥500 High Risk</div>
+                </div>
+                
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold uppercase text-muted-foreground">PR Interval (ms)</label>
+                  <Input 
+                    type="number" 
+                    placeholder="e.g. 160"
+                    className="h-9 text-sm"
+                    value={measurements.pr || ""}
+                    onChange={(e) => setMeasurements(prev => ({ ...prev, pr: e.target.value ? parseInt(e.target.value) : null }))}
+                  />
+                  <div className="text-[9px] text-muted-foreground italic">>200 First-degree AV Block</div>
+                </div>
+                
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold uppercase text-muted-foreground">QRS Duration (ms)</label>
+                  <Input 
+                    type="number" 
+                    placeholder="e.g. 90"
+                    className="h-9 text-sm"
+                    value={measurements.qrs || ""}
+                    onChange={(e) => setMeasurements(prev => ({ ...prev, qrs: e.target.value ? parseInt(e.target.value) : null }))}
+                  />
+                  <div className="text-[9px] text-muted-foreground italic">>120 High conduction risk</div>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold uppercase text-muted-foreground">Lead-Specific Abnormalities / Patterns</label>
+                <div className="flex gap-2">
+                  <Input 
+                    placeholder="e.g. Brugada, Wellens, Delta wave, Epsilon, S1Q3T3..."
+                    className="h-9 text-sm"
+                    value={newAbnormality}
+                    onChange={(e) => setNewAbnormality(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && addAbnormality()}
+                  />
+                  <button 
+                    onClick={addAbnormality}
+                    className="h-9 px-4 bg-primary text-primary-foreground rounded-md text-xs font-bold hover:bg-primary/90 transition-colors"
+                  >
+                    ADD
+                  </button>
+                </div>
+                
+                {measurements.leadAbnormalities.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {measurements.leadAbnormalities.map((item, idx) => (
+                      <Badge 
+                        key={idx} 
+                        variant="outline" 
+                        className="pl-2 pr-1 py-0.5 flex items-center gap-1 border-primary/30 bg-primary/10 text-primary"
+                      >
+                        <span className="text-[10px] font-bold">{item}</span>
+                        <button 
+                          onClick={() => removeAbnormality(idx)}
+                          className="p-0.5 hover:text-destructive transition-colors"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </button>
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+                <p className="text-[9px] text-muted-foreground italic">Keywords like 'Wellens', 'Brugada', 'Delta', 'ARVC' will trigger specific checklist items.</p>
+              </div>
+            </div>
+
 
             {/* Global Urgent Triggers */}
             <div className="space-y-3">
