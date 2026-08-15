@@ -20,7 +20,7 @@ import {
   X,
   type LucideIcon,
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 type SubItem = { label: string; to: string };
 type Section = {
@@ -156,6 +156,10 @@ export function Sidebar() {
   const [openMap, setOpenMap] = useState<Record<string, boolean>>({});
   const [query, setQuery] = useState("");
   const [hydrated, setHydrated] = useState(false);
+  
+  const sidebarRef = useRef<HTMLElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const closeBtnRef = useRef<HTMLButtonElement>(null);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   useEffect(() => {
@@ -173,6 +177,46 @@ export function Sidebar() {
     if (!hydrated) return;
     window.localStorage.setItem(STORAGE_KEYS.open, JSON.stringify(openMap));
   }, [openMap, hydrated]);
+
+  useEffect(() => {
+    if (isMobileOpen) {
+      closeBtnRef.current?.focus();
+      
+      const handleEscape = (e: KeyboardEvent) => {
+        if (e.key === "Escape") setIsMobileOpen(false);
+      };
+      
+      const handleTab = (e: KeyboardEvent) => {
+        if (e.key !== "Tab" || !sidebarRef.current) return;
+        
+        const focusables = sidebarRef.current.querySelectorAll(
+          'button, [href], input, [tabindex]:not([tabindex="-1"])'
+        );
+        const first = focusables[0] as HTMLElement;
+        const last = focusables[focusables.length - 1] as HTMLElement;
+
+        if (e.shiftKey && document.activeElement === first) {
+          last.focus();
+          e.preventDefault();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          first.focus();
+          e.preventDefault();
+        }
+      };
+
+      document.addEventListener("keydown", handleEscape);
+      document.addEventListener("keydown", handleTab);
+      document.body.style.overflow = "hidden";
+      
+      return () => {
+        document.removeEventListener("keydown", handleEscape);
+        document.removeEventListener("keydown", handleTab);
+        document.body.style.overflow = "";
+      };
+    } else {
+      triggerRef.current?.focus();
+    }
+  }, [isMobileOpen]);
 
   useEffect(() => {
     setIsMobileOpen(false);
@@ -203,10 +247,13 @@ export function Sidebar() {
     <>
       {/* Mobile Toggle Button */}
       <button
+        ref={triggerRef}
         type="button"
         onClick={() => setIsMobileOpen(true)}
         className="fixed left-4 bottom-4 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg md:hidden"
         aria-label="Open sidebar"
+        aria-expanded={isMobileOpen}
+        aria-controls="main-sidebar"
       >
         <Activity className="h-6 w-6" />
       </button>
@@ -225,6 +272,10 @@ export function Sidebar() {
       )}
 
       <aside
+        ref={sidebarRef}
+        id="main-sidebar"
+        role="complementary"
+        aria-label="Main Navigation"
         className={`sidebar-container fixed top-0 bottom-0 left-0 z-50 flex flex-col border-r border-border bg-background/95 transition-all duration-300 md:sticky md:h-screen md:shrink-0 ${
           collapsed ? "md:w-14" : "md:w-64"
         } ${isMobileOpen ? "translate-x-0 w-72" : "-translate-x-full md:translate-x-0"}
@@ -265,6 +316,7 @@ export function Sidebar() {
             </button>
             {isMobileOpen && (
               <button
+                ref={closeBtnRef}
                 type="button"
                 onClick={() => setIsMobileOpen(false)}
                 className="rounded-md p-1 text-muted-foreground hover:bg-surface md:hidden"
@@ -342,6 +394,8 @@ export function Sidebar() {
                   <button
                     type="button"
                     onClick={() => (collapsed ? setCollapsed(false) : toggleSection(section.id))}
+                    aria-expanded={open}
+                    aria-controls={`section-${section.id}`}
                     className={`group flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-sm hover:bg-surface ${
                       section.featured
                         ? "my-1 border border-fuchsia-500/30 bg-gradient-to-r from-rose-500/10 via-fuchsia-500/10 to-violet-500/10 shadow-[0_0_0_1px_rgba(217,70,239,0.15)]"
@@ -382,6 +436,9 @@ export function Sidebar() {
                   </button>
                   {!collapsed && (
                     <div
+                      id={`section-${section.id}`}
+                      role="region"
+                      aria-labelledby={`heading-${section.id}`}
                       className={`grid transition-all duration-300 ease-out ${
                         open ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
                       }`}
