@@ -277,8 +277,8 @@ export function Sidebar() {
       <aside
         ref={sidebarRef}
         id="main-sidebar"
-        role="complementary"
-        aria-label="Main Navigation"
+        role="navigation"
+        aria-label="Sidebar navigation"
         className={`sidebar-container fixed top-0 bottom-0 left-0 z-50 flex flex-col border-r border-border bg-background/95 transition-all duration-300 md:sticky md:h-screen md:shrink-0 ${
           collapsed ? "md:w-14" : "md:w-64"
         } ${isMobileOpen ? "translate-x-0 w-72" : "-translate-x-full md:translate-x-0"}
