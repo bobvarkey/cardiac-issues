@@ -87,6 +87,16 @@ export function HomeProtocols() {
         badge: "Protocol",
       },
       {
+        key: "autonomic",
+        title: "mCASS Autonomic Testing",
+        to: "/autonomic",
+        description:
+          "Cardiovagal, adrenergic, and sudomotor scoring with orthostatic physiology, POTS screening, CAN staging, and report-ready output.",
+        keywords: "autonomic mcass cardiac autonomic neuropathy can pots hrv deep breathing valsalva",
+        icon: Brain,
+        badge: "CAN · mCASS",
+      },
+      {
         key: "syncope",
         title: "Syncope Triage",
         to: "/syncope",

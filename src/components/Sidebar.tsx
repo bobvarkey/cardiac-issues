@@ -85,6 +85,7 @@ const SECTIONS: Section[] = [
       { label: "Rhythms", to: "/rhythms" },
       { label: "SVT", to: "/svt" },
       { label: "Long QT", to: "/long-qt" },
+      { label: "mCASS Autonomic", to: "/autonomic" },
       { label: "Syncope", to: "/syncope" },
       { label: "Syncope Triage", to: "/syncope-triage" },
       { label: "Goldman Index", to: "/goldman" },
