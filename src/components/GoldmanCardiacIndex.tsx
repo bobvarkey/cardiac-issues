@@ -2342,6 +2342,23 @@ const GoldmanCardiacIndex = () => {
                           ))}
                         </div>
                       </div>
+
+                      {/* Reference image (e.g. conduction-system schematic) */}
+                      {treatment.image && (
+                        <div className="rounded-lg overflow-hidden border border-border/40 bg-background/40">
+                          <img
+                            src={treatment.image.src}
+                            alt={treatment.image.alt}
+                            className="w-full h-auto"
+                            loading="lazy"
+                          />
+                          {treatment.image.caption && (
+                            <p className="px-2 py-1.5 text-[10px] text-muted-foreground italic leading-relaxed">
+                              {treatment.image.caption}
+                            </p>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </CollapsibleContent>
                 </Collapsible>

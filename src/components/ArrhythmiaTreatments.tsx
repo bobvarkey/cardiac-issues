@@ -20,6 +20,12 @@ export interface ArrhythmiaTreatment {
     correct: string[];
   };
   monitoring: string[];
+  /** Optional reference image (e.g. conduction-system schematic) shown with the card */
+  image?: {
+    src: string;
+    alt: string;
+    caption?: string;
+  };
 }
 
 export const ARRHYTHMIA_TREATMENTS: ArrhythmiaTreatment[] = [
@@ -606,6 +612,11 @@ export const ARRHYTHMIA_TREATMENTS: ArrhythmiaTreatment[] = [
       ],
     },
     monitoring: ["Continuous ECG", "Blood pressure", "Heart rate", "Symptom diary"],
+    image: {
+      src: "/images/ecg/electrical-conduction-system.jpg",
+      alt: "Electrical Conduction System of the Heart — SA node to AV node, bundle of His, bundle branches, fascicles, and Purkinje fibers",
+      caption: "Bifascicular block involves the right bundle branch plus one fascicle of the left bundle. ECG guides the diagnosis.",
+    },
   },
 ];
 
