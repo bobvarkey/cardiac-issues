@@ -604,7 +604,8 @@ export function SyncopeECGChecklist() {
                         </Alert>
                       </div>
                     </div>
-                  </section>
+                  </div>
+                </section>
               </div>
             </div>
           </CardContent>

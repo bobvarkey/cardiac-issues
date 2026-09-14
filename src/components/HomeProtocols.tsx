@@ -105,6 +105,17 @@ export function HomeProtocols() {
         icon: Stethoscope,
       },
       {
+        key: "baroreflex",
+        title: "Baroreflex Failure",
+        to: "/baroreflex",
+        description:
+          "Document the four baroreflex failure phenotypes, a BP/HR diary, and generate an educational report based on Ketch et al., Circulation 2002.",
+        keywords: "baroreflex failure autonomic hypertension orthostatic vagotonia ketch circulation",
+        icon: Activity,
+        badge: "Autonomic · Phenotypes",
+      },
+
+      {
         key: "svt",
         title: "SVT — Adenosine Evidence",
         to: "/svt",

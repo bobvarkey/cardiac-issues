@@ -12,24 +12,25 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as LayoutChar91indexChar93RouteImport } from './routes/_layout.[index]'
 import { Route as LayoutIndexRouteImport } from './routes/_layout.index'
-import { Route as LayoutAntiarrhythmicsRouteImport } from './routes/_layout.antiarrhythmics'
-import { Route as LayoutAnticoagulationRouteImport } from './routes/_layout.anticoagulation'
-import { Route as LayoutAutonomicRouteImport } from './routes/_layout.autonomic'
-import { Route as LayoutCcadRouteImport } from './routes/_layout.ccad'
-import { Route as LayoutExerciseToleranceRouteImport } from './routes/_layout.exercise-tolerance'
-import { Route as LayoutGoldmanRouteImport } from './routes/_layout.goldman'
-import { Route as LayoutHuttRouteImport } from './routes/_layout.hutt'
-import { Route as LayoutImagesRouteImport } from './routes/_layout.images'
-import { Route as LayoutLongQtRouteImport } from './routes/_layout.long-qt'
-import { Route as LayoutMedcalcRouteImport } from './routes/_layout.medcalc'
-import { Route as LayoutRhythmsRouteImport } from './routes/_layout.rhythms'
-import { Route as LayoutScoresRouteImport } from './routes/_layout.scores'
-import { Route as LayoutStellateRouteImport } from './routes/_layout.stellate'
-import { Route as LayoutSvtRouteImport } from './routes/_layout.svt'
-import { Route as LayoutSyncopeRouteImport } from './routes/_layout.syncope'
-import { Route as LayoutSyncopeTriageRouteImport } from './routes/_layout.syncope-triage'
-import { Route as LayoutTreatmentRouteImport } from './routes/_layout.treatment'
 import { Route as LayoutWarfarinRouteImport } from './routes/_layout.warfarin'
+import { Route as LayoutTreatmentRouteImport } from './routes/_layout.treatment'
+import { Route as LayoutSyncopeTriageRouteImport } from './routes/_layout.syncope-triage'
+import { Route as LayoutSyncopeRouteImport } from './routes/_layout.syncope'
+import { Route as LayoutSvtRouteImport } from './routes/_layout.svt'
+import { Route as LayoutStellateRouteImport } from './routes/_layout.stellate'
+import { Route as LayoutScoresRouteImport } from './routes/_layout.scores'
+import { Route as LayoutRhythmsRouteImport } from './routes/_layout.rhythms'
+import { Route as LayoutMedcalcRouteImport } from './routes/_layout.medcalc'
+import { Route as LayoutLongQtRouteImport } from './routes/_layout.long-qt'
+import { Route as LayoutImagesRouteImport } from './routes/_layout.images'
+import { Route as LayoutHuttRouteImport } from './routes/_layout.hutt'
+import { Route as LayoutGoldmanRouteImport } from './routes/_layout.goldman'
+import { Route as LayoutExerciseToleranceRouteImport } from './routes/_layout.exercise-tolerance'
+import { Route as LayoutCcadRouteImport } from './routes/_layout.ccad'
+import { Route as LayoutBaroreflexRouteImport } from './routes/_layout.baroreflex'
+import { Route as LayoutAutonomicRouteImport } from './routes/_layout.autonomic'
+import { Route as LayoutAnticoagulationRouteImport } from './routes/_layout.anticoagulation'
+import { Route as LayoutAntiarrhythmicsRouteImport } from './routes/_layout.antiarrhythmics'
 import { Route as LayoutProtocolIdRouteImport } from './routes/_layout.protocol.$id'
 
 const LayoutRoute = LayoutRouteImport.update({
@@ -46,84 +47,9 @@ const LayoutIndexRoute = LayoutIndexRouteImport.update({
   path: '/',
   getParentRoute: () => LayoutRoute,
 } as any)
-const LayoutAntiarrhythmicsRoute = LayoutAntiarrhythmicsRouteImport.update({
-  id: '/antiarrhythmics',
-  path: '/antiarrhythmics',
-  getParentRoute: () => LayoutRoute,
-} as any)
-const LayoutAnticoagulationRoute = LayoutAnticoagulationRouteImport.update({
-  id: '/anticoagulation',
-  path: '/anticoagulation',
-  getParentRoute: () => LayoutRoute,
-} as any)
-const LayoutAutonomicRoute = LayoutAutonomicRouteImport.update({
-  id: '/autonomic',
-  path: '/autonomic',
-  getParentRoute: () => LayoutRoute,
-} as any)
-const LayoutCcadRoute = LayoutCcadRouteImport.update({
-  id: '/ccad',
-  path: '/ccad',
-  getParentRoute: () => LayoutRoute,
-} as any)
-const LayoutExerciseToleranceRoute = LayoutExerciseToleranceRouteImport.update({
-  id: '/exercise-tolerance',
-  path: '/exercise-tolerance',
-  getParentRoute: () => LayoutRoute,
-} as any)
-const LayoutGoldmanRoute = LayoutGoldmanRouteImport.update({
-  id: '/goldman',
-  path: '/goldman',
-  getParentRoute: () => LayoutRoute,
-} as any)
-const LayoutHuttRoute = LayoutHuttRouteImport.update({
-  id: '/hutt',
-  path: '/hutt',
-  getParentRoute: () => LayoutRoute,
-} as any)
-const LayoutImagesRoute = LayoutImagesRouteImport.update({
-  id: '/images',
-  path: '/images',
-  getParentRoute: () => LayoutRoute,
-} as any)
-const LayoutLongQtRoute = LayoutLongQtRouteImport.update({
-  id: '/long-qt',
-  path: '/long-qt',
-  getParentRoute: () => LayoutRoute,
-} as any)
-const LayoutMedcalcRoute = LayoutMedcalcRouteImport.update({
-  id: '/medcalc',
-  path: '/medcalc',
-  getParentRoute: () => LayoutRoute,
-} as any)
-const LayoutRhythmsRoute = LayoutRhythmsRouteImport.update({
-  id: '/rhythms',
-  path: '/rhythms',
-  getParentRoute: () => LayoutRoute,
-} as any)
-const LayoutScoresRoute = LayoutScoresRouteImport.update({
-  id: '/scores',
-  path: '/scores',
-  getParentRoute: () => LayoutRoute,
-} as any)
-const LayoutStellateRoute = LayoutStellateRouteImport.update({
-  id: '/stellate',
-  path: '/stellate',
-  getParentRoute: () => LayoutRoute,
-} as any)
-const LayoutSvtRoute = LayoutSvtRouteImport.update({
-  id: '/svt',
-  path: '/svt',
-  getParentRoute: () => LayoutRoute,
-} as any)
-const LayoutSyncopeRoute = LayoutSyncopeRouteImport.update({
-  id: '/syncope',
-  path: '/syncope',
-  getParentRoute: () => LayoutRoute,
-} as any)
-const LayoutSyncopeTriageRoute = LayoutSyncopeTriageRouteImport.update({
-  id: '/syncope-triage',
-  path: '/syncope-triage',
+const LayoutWarfarinRoute = LayoutWarfarinRouteImport.update({
+  id: '/warfarin',
+  path: '/warfarin',
   getParentRoute: () => LayoutRoute,
 } as any)
 const LayoutTreatmentRoute = LayoutTreatmentRouteImport.update({
@@ -131,9 +57,89 @@ const LayoutTreatmentRoute = LayoutTreatmentRouteImport.update({
   path: '/treatment',
   getParentRoute: () => LayoutRoute,
 } as any)
-const LayoutWarfarinRoute = LayoutWarfarinRouteImport.update({
-  id: '/warfarin',
-  path: '/warfarin',
+const LayoutSyncopeTriageRoute = LayoutSyncopeTriageRouteImport.update({
+  id: '/syncope-triage',
+  path: '/syncope-triage',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutSyncopeRoute = LayoutSyncopeRouteImport.update({
+  id: '/syncope',
+  path: '/syncope',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutSvtRoute = LayoutSvtRouteImport.update({
+  id: '/svt',
+  path: '/svt',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutStellateRoute = LayoutStellateRouteImport.update({
+  id: '/stellate',
+  path: '/stellate',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutScoresRoute = LayoutScoresRouteImport.update({
+  id: '/scores',
+  path: '/scores',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutRhythmsRoute = LayoutRhythmsRouteImport.update({
+  id: '/rhythms',
+  path: '/rhythms',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutMedcalcRoute = LayoutMedcalcRouteImport.update({
+  id: '/medcalc',
+  path: '/medcalc',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutLongQtRoute = LayoutLongQtRouteImport.update({
+  id: '/long-qt',
+  path: '/long-qt',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutImagesRoute = LayoutImagesRouteImport.update({
+  id: '/images',
+  path: '/images',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutHuttRoute = LayoutHuttRouteImport.update({
+  id: '/hutt',
+  path: '/hutt',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutGoldmanRoute = LayoutGoldmanRouteImport.update({
+  id: '/goldman',
+  path: '/goldman',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutExerciseToleranceRoute = LayoutExerciseToleranceRouteImport.update({
+  id: '/exercise-tolerance',
+  path: '/exercise-tolerance',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutCcadRoute = LayoutCcadRouteImport.update({
+  id: '/ccad',
+  path: '/ccad',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutBaroreflexRoute = LayoutBaroreflexRouteImport.update({
+  id: '/baroreflex',
+  path: '/baroreflex',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutAutonomicRoute = LayoutAutonomicRouteImport.update({
+  id: '/autonomic',
+  path: '/autonomic',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutAnticoagulationRoute = LayoutAnticoagulationRouteImport.update({
+  id: '/anticoagulation',
+  path: '/anticoagulation',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutAntiarrhythmicsRoute = LayoutAntiarrhythmicsRouteImport.update({
+  id: '/antiarrhythmics',
+  path: '/antiarrhythmics',
   getParentRoute: () => LayoutRoute,
 } as any)
 const LayoutProtocolIdRoute = LayoutProtocolIdRouteImport.update({
@@ -147,6 +153,7 @@ export interface FileRoutesByFullPath {
   '/antiarrhythmics': typeof LayoutAntiarrhythmicsRoute
   '/anticoagulation': typeof LayoutAnticoagulationRoute
   '/autonomic': typeof LayoutAutonomicRoute
+  '/baroreflex': typeof LayoutBaroreflexRoute
   '/ccad': typeof LayoutCcadRoute
   '/exercise-tolerance': typeof LayoutExerciseToleranceRoute
   '/goldman': typeof LayoutGoldmanRoute
@@ -169,6 +176,7 @@ export interface FileRoutesByTo {
   '/antiarrhythmics': typeof LayoutAntiarrhythmicsRoute
   '/anticoagulation': typeof LayoutAnticoagulationRoute
   '/autonomic': typeof LayoutAutonomicRoute
+  '/baroreflex': typeof LayoutBaroreflexRoute
   '/ccad': typeof LayoutCcadRoute
   '/exercise-tolerance': typeof LayoutExerciseToleranceRoute
   '/goldman': typeof LayoutGoldmanRoute
@@ -194,6 +202,7 @@ export interface FileRoutesById {
   '/_layout/antiarrhythmics': typeof LayoutAntiarrhythmicsRoute
   '/_layout/anticoagulation': typeof LayoutAnticoagulationRoute
   '/_layout/autonomic': typeof LayoutAutonomicRoute
+  '/_layout/baroreflex': typeof LayoutBaroreflexRoute
   '/_layout/ccad': typeof LayoutCcadRoute
   '/_layout/exercise-tolerance': typeof LayoutExerciseToleranceRoute
   '/_layout/goldman': typeof LayoutGoldmanRoute
@@ -220,6 +229,7 @@ export interface FileRouteTypes {
     | '/antiarrhythmics'
     | '/anticoagulation'
     | '/autonomic'
+    | '/baroreflex'
     | '/ccad'
     | '/exercise-tolerance'
     | '/goldman'
@@ -242,6 +252,7 @@ export interface FileRouteTypes {
     | '/antiarrhythmics'
     | '/anticoagulation'
     | '/autonomic'
+    | '/baroreflex'
     | '/ccad'
     | '/exercise-tolerance'
     | '/goldman'
@@ -266,6 +277,7 @@ export interface FileRouteTypes {
     | '/_layout/antiarrhythmics'
     | '/_layout/anticoagulation'
     | '/_layout/autonomic'
+    | '/_layout/baroreflex'
     | '/_layout/ccad'
     | '/_layout/exercise-tolerance'
     | '/_layout/goldman'
@@ -313,116 +325,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutIndexRouteImport
       parentRoute: typeof LayoutRoute
     }
-    '/_layout/antiarrhythmics': {
-      id: '/_layout/antiarrhythmics'
-      path: '/antiarrhythmics'
-      fullPath: '/antiarrhythmics'
-      preLoaderRoute: typeof LayoutAntiarrhythmicsRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/anticoagulation': {
-      id: '/_layout/anticoagulation'
-      path: '/anticoagulation'
-      fullPath: '/anticoagulation'
-      preLoaderRoute: typeof LayoutAnticoagulationRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/autonomic': {
-      id: '/_layout/autonomic'
-      path: '/autonomic'
-      fullPath: '/autonomic'
-      preLoaderRoute: typeof LayoutAutonomicRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/ccad': {
-      id: '/_layout/ccad'
-      path: '/ccad'
-      fullPath: '/ccad'
-      preLoaderRoute: typeof LayoutCcadRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/exercise-tolerance': {
-      id: '/_layout/exercise-tolerance'
-      path: '/exercise-tolerance'
-      fullPath: '/exercise-tolerance'
-      preLoaderRoute: typeof LayoutExerciseToleranceRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/goldman': {
-      id: '/_layout/goldman'
-      path: '/goldman'
-      fullPath: '/goldman'
-      preLoaderRoute: typeof LayoutGoldmanRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/hutt': {
-      id: '/_layout/hutt'
-      path: '/hutt'
-      fullPath: '/hutt'
-      preLoaderRoute: typeof LayoutHuttRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/images': {
-      id: '/_layout/images'
-      path: '/images'
-      fullPath: '/images'
-      preLoaderRoute: typeof LayoutImagesRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/long-qt': {
-      id: '/_layout/long-qt'
-      path: '/long-qt'
-      fullPath: '/long-qt'
-      preLoaderRoute: typeof LayoutLongQtRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/medcalc': {
-      id: '/_layout/medcalc'
-      path: '/medcalc'
-      fullPath: '/medcalc'
-      preLoaderRoute: typeof LayoutMedcalcRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/rhythms': {
-      id: '/_layout/rhythms'
-      path: '/rhythms'
-      fullPath: '/rhythms'
-      preLoaderRoute: typeof LayoutRhythmsRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/scores': {
-      id: '/_layout/scores'
-      path: '/scores'
-      fullPath: '/scores'
-      preLoaderRoute: typeof LayoutScoresRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/stellate': {
-      id: '/_layout/stellate'
-      path: '/stellate'
-      fullPath: '/stellate'
-      preLoaderRoute: typeof LayoutStellateRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/svt': {
-      id: '/_layout/svt'
-      path: '/svt'
-      fullPath: '/svt'
-      preLoaderRoute: typeof LayoutSvtRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/syncope': {
-      id: '/_layout/syncope'
-      path: '/syncope'
-      fullPath: '/syncope'
-      preLoaderRoute: typeof LayoutSyncopeRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/syncope-triage': {
-      id: '/_layout/syncope-triage'
-      path: '/syncope-triage'
-      fullPath: '/syncope-triage'
-      preLoaderRoute: typeof LayoutSyncopeTriageRouteImport
+    '/_layout/warfarin': {
+      id: '/_layout/warfarin'
+      path: '/warfarin'
+      fullPath: '/warfarin'
+      preLoaderRoute: typeof LayoutWarfarinRouteImport
       parentRoute: typeof LayoutRoute
     }
     '/_layout/treatment': {
@@ -432,11 +339,123 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutTreatmentRouteImport
       parentRoute: typeof LayoutRoute
     }
-    '/_layout/warfarin': {
-      id: '/_layout/warfarin'
-      path: '/warfarin'
-      fullPath: '/warfarin'
-      preLoaderRoute: typeof LayoutWarfarinRouteImport
+    '/_layout/syncope-triage': {
+      id: '/_layout/syncope-triage'
+      path: '/syncope-triage'
+      fullPath: '/syncope-triage'
+      preLoaderRoute: typeof LayoutSyncopeTriageRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/syncope': {
+      id: '/_layout/syncope'
+      path: '/syncope'
+      fullPath: '/syncope'
+      preLoaderRoute: typeof LayoutSyncopeRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/svt': {
+      id: '/_layout/svt'
+      path: '/svt'
+      fullPath: '/svt'
+      preLoaderRoute: typeof LayoutSvtRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/stellate': {
+      id: '/_layout/stellate'
+      path: '/stellate'
+      fullPath: '/stellate'
+      preLoaderRoute: typeof LayoutStellateRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/scores': {
+      id: '/_layout/scores'
+      path: '/scores'
+      fullPath: '/scores'
+      preLoaderRoute: typeof LayoutScoresRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/rhythms': {
+      id: '/_layout/rhythms'
+      path: '/rhythms'
+      fullPath: '/rhythms'
+      preLoaderRoute: typeof LayoutRhythmsRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/medcalc': {
+      id: '/_layout/medcalc'
+      path: '/medcalc'
+      fullPath: '/medcalc'
+      preLoaderRoute: typeof LayoutMedcalcRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/long-qt': {
+      id: '/_layout/long-qt'
+      path: '/long-qt'
+      fullPath: '/long-qt'
+      preLoaderRoute: typeof LayoutLongQtRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/images': {
+      id: '/_layout/images'
+      path: '/images'
+      fullPath: '/images'
+      preLoaderRoute: typeof LayoutImagesRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/hutt': {
+      id: '/_layout/hutt'
+      path: '/hutt'
+      fullPath: '/hutt'
+      preLoaderRoute: typeof LayoutHuttRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/goldman': {
+      id: '/_layout/goldman'
+      path: '/goldman'
+      fullPath: '/goldman'
+      preLoaderRoute: typeof LayoutGoldmanRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/exercise-tolerance': {
+      id: '/_layout/exercise-tolerance'
+      path: '/exercise-tolerance'
+      fullPath: '/exercise-tolerance'
+      preLoaderRoute: typeof LayoutExerciseToleranceRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/ccad': {
+      id: '/_layout/ccad'
+      path: '/ccad'
+      fullPath: '/ccad'
+      preLoaderRoute: typeof LayoutCcadRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/baroreflex': {
+      id: '/_layout/baroreflex'
+      path: '/baroreflex'
+      fullPath: '/baroreflex'
+      preLoaderRoute: typeof LayoutBaroreflexRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/autonomic': {
+      id: '/_layout/autonomic'
+      path: '/autonomic'
+      fullPath: '/autonomic'
+      preLoaderRoute: typeof LayoutAutonomicRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/anticoagulation': {
+      id: '/_layout/anticoagulation'
+      path: '/anticoagulation'
+      fullPath: '/anticoagulation'
+      preLoaderRoute: typeof LayoutAnticoagulationRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/antiarrhythmics': {
+      id: '/_layout/antiarrhythmics'
+      path: '/antiarrhythmics'
+      fullPath: '/antiarrhythmics'
+      preLoaderRoute: typeof LayoutAntiarrhythmicsRouteImport
       parentRoute: typeof LayoutRoute
     }
     '/_layout/protocol/$id': {
@@ -453,6 +472,7 @@ interface LayoutRouteChildren {
   LayoutAntiarrhythmicsRoute: typeof LayoutAntiarrhythmicsRoute
   LayoutAnticoagulationRoute: typeof LayoutAnticoagulationRoute
   LayoutAutonomicRoute: typeof LayoutAutonomicRoute
+  LayoutBaroreflexRoute: typeof LayoutBaroreflexRoute
   LayoutCcadRoute: typeof LayoutCcadRoute
   LayoutExerciseToleranceRoute: typeof LayoutExerciseToleranceRoute
   LayoutGoldmanRoute: typeof LayoutGoldmanRoute
@@ -477,6 +497,7 @@ const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutAntiarrhythmicsRoute: LayoutAntiarrhythmicsRoute,
   LayoutAnticoagulationRoute: LayoutAnticoagulationRoute,
   LayoutAutonomicRoute: LayoutAutonomicRoute,
+  LayoutBaroreflexRoute: LayoutBaroreflexRoute,
   LayoutCcadRoute: LayoutCcadRoute,
   LayoutExerciseToleranceRoute: LayoutExerciseToleranceRoute,
   LayoutGoldmanRoute: LayoutGoldmanRoute,
