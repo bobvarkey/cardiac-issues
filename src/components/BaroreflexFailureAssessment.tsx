@@ -6,9 +6,11 @@ import {
   Download,
   FileText,
   HeartPulse,
+  Pill,
   Plus,
   Printer,
   RotateCcw,
+  Stethoscope,
   Trash2,
 } from "lucide-react";
 
@@ -19,315 +21,124 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 
-// ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
+import {
+  type Assessment,
+  type Causes,
+  type CauseEvent,
+  type DiaryEntry,
+  type Investigations,
+  EMPTY_ASSESSMENT,
+  EMPTY_CAUSES,
+  EMPTY_READING,
+  EMPTY_INVESTIGATIONS,
+  DIFFERENTIAL_ITEMS,
+  CONFOUNDER_OPTIONS,
+  CAUSE_LABELS,
+  CAUSE_EVENT_CAUSE_IDS,
+  type YesNoUnknown,
+} from "./baroreflex/types";
 
-type YesNoUnknown = "yes" | "no" | "unknown";
-type Onset = "acute" | "chronic" | "uncertain";
-type Position = "supine" | "seated" | "standing" | "unknown";
-type Quality = "accepted" | "questionable" | "excluded";
+import {
+  diaryCalculations,
+  evaluateRules,
+  formatDate,
+  formatDateTime,
+  isAccepted,
+  isUrgent,
+  isUrgencyUnknown,
+  isValidReading,
+  investigationsSummary,
+  onsetLabel,
+  pairedPosturalChange,
+  parseNum,
+  unresolvedFields,
+  buildExportPayload,
+} from "./baroreflex/rules";
 
-interface Assessment {
-  caseId: string;
-  assessmentDate: string;
-  onset: Onset;
-  history: string;
-  medications: string;
-  hypertensiveCrisisDocumented: YesNoUnknown;
-  alternatingHighLowBp: YesNoUnknown;
-  orthostaticTachycardia: YesNoUnknown;
-  orthostaticIntolerance: YesNoUnknown;
-  restingBradyHypotension: YesNoUnknown;
-  sinusArrest: YesNoUnknown;
-  stressAssociation: YesNoUnknown;
-  drowsinessAssociation: YesNoUnknown;
-  urgentConcern: YesNoUnknown;
-  testFindings: string;
-  differentials: string;
-  plan: string;
-}
-
-interface DiaryEntry {
-  id: string;
-  timestamp: string;
-  sbp: string;
-  dbp: string;
-  hr: string;
-  position: Position;
-  minutesAfterStanding: string;
-  episodeId: string;
-  symptoms: string;
-  context: string;
-  medicationTiming: string;
-  quality: Quality;
-}
-
-interface MatchedPattern {
-  id: string;
-  label: string;
-  output: string;
-  supporting: { field: string; value: string }[];
-}
-
-// ---------------------------------------------------------------------------
-// Defaults
-// ---------------------------------------------------------------------------
-
-const EMPTY_ASSESSMENT: Assessment = {
-  caseId: "",
-  assessmentDate: new Date().toISOString().split("T")[0],
-  onset: "uncertain",
-  history: "",
-  medications: "",
-  hypertensiveCrisisDocumented: "unknown",
-  alternatingHighLowBp: "unknown",
-  orthostaticTachycardia: "unknown",
-  orthostaticIntolerance: "unknown",
-  restingBradyHypotension: "unknown",
-  sinusArrest: "unknown",
-  stressAssociation: "unknown",
-  drowsinessAssociation: "unknown",
-  urgentConcern: "unknown",
-  testFindings: "",
-  differentials: "",
-  plan: "",
-};
-
-const EMPTY_READING: Omit<DiaryEntry, "id"> = {
-  timestamp: "",
-  sbp: "",
-  dbp: "",
-  hr: "",
-  position: "seated",
-  minutesAfterStanding: "",
-  episodeId: "",
-  symptoms: "",
-  context: "",
-  medicationTiming: "",
-  quality: "accepted",
-};
-
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
-function formatDate(d: string) {
-  if (!d) return "—";
-  return new Date(d).toLocaleDateString();
-}
-
-function formatDateTime(d: string) {
-  if (!d) return "—";
-  return new Date(d).toLocaleString();
-}
-
-function parseNum(v: string): number | null {
-  const n = parseFloat(v);
-  return Number.isFinite(n) ? n : null;
-}
-
-function isValidReading(e: DiaryEntry): boolean {
-  const sbp = parseNum(e.sbp);
-  const dbp = parseNum(e.dbp);
-  const hr = parseNum(e.hr);
-  if (sbp === null || dbp === null || hr === null) return false;
-  if (sbp <= 0 || dbp <= 0 || hr <= 0) return false;
-  if (sbp <= dbp) return false;
-  const minStanding = parseNum(e.minutesAfterStanding);
-  if (e.minutesAfterStanding !== "" && minStanding !== null && minStanding < 0) return false;
-  return true;
-}
-
-function isAccepted(e: DiaryEntry): boolean {
-  return e.quality === "accepted" && isValidReading(e);
-}
-
-function fieldLabel(id: keyof Assessment): string {
-  const labels: Record<string, string> = {
-    caseId: "Case identifier",
-    assessmentDate: "Assessment date",
-    onset: "Onset",
-    history: "Relevant clinical history, procedures and chronology",
-    medications: "Current medicines, recent changes and timing",
-    hypertensiveCrisisDocumented: "Clinician-documented hypertensive crisis",
-    alternatingHighLowBp: "Documented alternating high and low BP episodes",
-    orthostaticTachycardia: "Documented orthostatic tachycardia",
-    orthostaticIntolerance: "Orthostatic symptoms",
-    restingBradyHypotension: "Documented resting bradycardia with hypotension",
-    sinusArrest: "Documented sinus arrest",
-    stressAssociation: "Episodes associated with stress",
-    drowsinessAssociation: "Low BP episodes associated with drowsiness",
-    urgentConcern: "Clinician identifies an acute emergency or unstable patient",
-    testFindings: "Available investigations and specialist interpretation",
-    differentials: "Alternative explanations considered",
-    plan: "Clinician assessment and plan",
-  };
-  return labels[id] ?? id;
-}
-
-function onsetLabel(o: Onset) {
-  return o === "acute" ? "Acute" : o === "chronic" ? "Chronic" : "Uncertain";
-}
-
-// ---------------------------------------------------------------------------
-// Rule engine
-// ---------------------------------------------------------------------------
-
-const RULES = [
+const PHENOTYPES = [
   {
-    id: "acute_pattern",
-    all: [
-      { field: "onset", eq: "acute" },
-      { field: "hypertensiveCrisisDocumented", eq: "yes" },
-    ],
-    output: "Acute hypertensive presentation recorded",
+    id: "acute",
+    title: "Hypertensive crisis",
+    description:
+      "Acute afferent injury may cause sustained severe hypertension, tachycardia, headache and sweating, often after neck surgery or trauma.",
   },
   {
-    id: "volatile_pattern",
-    all: [{ field: "alternatingHighLowBp", eq: "yes" }],
-    output: "Volatile BP presentation recorded",
+    id: "volatile",
+    title: "Volatile hypertension",
+    description:
+      "Abrupt BP surges with tachycardia may follow mental or physical stress and alternate with hypotension during quiet, sedation or sleep.",
   },
   {
-    id: "orthostatic_pattern",
-    any: [
-      { field: "orthostaticTachycardia", eq: "yes" },
-      { field: "orthostaticIntolerance", eq: "yes" },
-    ],
-    output: "Orthostatic presentation recorded",
+    id: "orthostatic",
+    title: "Orthostatic tachycardia / intolerance",
+    description: "Partial baroreflex impairment can present with upright tachycardia or orthostatic symptoms.",
   },
   {
-    id: "vagotonic_pattern",
-    any: [
-      { field: "restingBradyHypotension", eq: "yes" },
-      { field: "sinusArrest", eq: "yes" },
-    ],
-    output: "Bradycardic / hypotensive presentation recorded; specialist assessment needed before attributing to malignant vagotonia",
+    id: "vagotonia",
+    title: "Malignant vagotonia / selective baroreflex failure",
+    description:
+      "Afferent loss with preserved vagal efferents can produce profound resting hypotension, bradycardia or asystole, including during early-morning sleep.",
   },
 ];
 
-function evaluateRules(a: Assessment): MatchedPattern[] {
-  const matches: MatchedPattern[] = [];
-  for (const rule of RULES) {
-    let ok = false;
-    if (rule.all) {
-      ok = rule.all.every((cond) => (a as any)[cond.field] === cond.eq);
-    } else if (rule.any) {
-      ok = rule.any.some((cond) => (a as any)[cond.field] === cond.eq);
-    }
-    if (!ok) continue;
+const COMPARISON_ROWS = [
+  ["Supine hypertension", "++", "+/−"],
+  ["Labile hypertension", "−", "+++"],
+  ["Orthostatic hypotension", "+++", "+/−"],
+  ["Postprandial hypotension", "+++", "−"],
+  ["Episodic tachycardia", "−", "+++"],
+];
 
-    const conditions = rule.all ?? rule.any ?? [];
-    matches.push({
-      id: rule.id,
-      label: rule.id,
-      output: rule.output,
-      supporting: conditions.map((cond) => ({
-        field: fieldLabel(cond.field as keyof Assessment),
-        value: (a as any)[cond.field] === "yes" ? "Yes" : onsetLabel((a as any)[cond.field]),
-      })),
-    });
-  }
-  return matches;
+const MANAGEMENT_FLAGS = [
+  {
+    agents: ["Tricyclic antidepressants", "MAO-A inhibitors", "Amphetamines", "Cocaine", "Yohimbine"],
+    action: "Flag potential potentiation of sympathetic surges for clinician review; never advise abrupt discontinuation.",
+  },
+  {
+    agents: ["Prednisone", "Tyramine-containing food/beverage"],
+    action: "Listed in the 2002 table. Do not encode as universal absolute contraindications; assess indication, BP effect and relevant drug interactions.",
+  },
+  {
+    agents: ["Clonidine"],
+    action: "Flag interruptions and patch loss for prompt medication review; do not recommend abrupt withdrawal or a catch-up dose.",
+  },
+];
+
+const TRI_STATE_OPTIONS: YesNoUnknown[] = ["yes", "no", "unknown"];
+
+function TriStateButtons({
+  value,
+  onChange,
+}: {
+  value: YesNoUnknown;
+  onChange: (v: YesNoUnknown) => void;
+}) {
+  return (
+    <div className="flex gap-2">
+      {TRI_STATE_OPTIONS.map((val) => (
+        <button
+          key={val}
+          type="button"
+          onClick={() => onChange(val)}
+          className={`flex-1 rounded-md border px-2 py-1.5 text-xs font-medium transition ${
+            value === val
+              ? "border-primary bg-primary text-primary-foreground"
+              : "border-input bg-background hover:bg-muted/50"
+          }`}
+        >
+          {val === "unknown" ? "Unknown" : val === "yes" ? "Yes" : "No"}
+        </button>
+      ))}
+    </div>
+  );
 }
-
-function unresolvedFields(a: Assessment): string[] {
-  const fieldIds: (keyof Assessment)[] = [
-    "onset",
-    "hypertensiveCrisisDocumented",
-    "alternatingHighLowBp",
-    "orthostaticTachycardia",
-    "orthostaticIntolerance",
-    "restingBradyHypotension",
-    "sinusArrest",
-    "stressAssociation",
-    "drowsinessAssociation",
-    "urgentConcern",
-  ];
-  return fieldIds
-    .filter((id) => (a as any)[id] === "unknown")
-    .map((id) => fieldLabel(id));
-}
-
-// ---------------------------------------------------------------------------
-// Diary calculations
-// ---------------------------------------------------------------------------
-
-function diaryCalculations(entries: DiaryEntry[]) {
-  const accepted = entries.filter(isAccepted);
-  const sbps = accepted.map((e) => parseNum(e.sbp)!).filter((n) => n > 0);
-  const dbps = accepted.map((e) => parseNum(e.dbp)!).filter((n) => n > 0);
-  const hrs = accepted.map((e) => parseNum(e.hr)!).filter((n) => n > 0);
-
-  return {
-    bpRange: sbps.length >= 2 ? Math.max(...sbps) - Math.min(...sbps) : null,
-    hrRange: hrs.length >= 2 ? Math.max(...hrs) - Math.min(...hrs) : null,
-    acceptedCount: accepted.length,
-    totalCount: entries.length,
-    invalidCount: entries.filter((e) => !isValidReading(e)).length,
-  };
-}
-
-function pairedPosturalChange(entries: DiaryEntry[]) {
-  const accepted = entries.filter(isAccepted);
-  const episodes = Array.from(new Set(accepted.map((e) => e.episodeId).filter(Boolean)));
-  const pairs: {
-    episodeId: string;
-    supineSbp: number;
-    supineDbp: number;
-    supineHr: number;
-    standingSbp: number;
-    standingDbp: number;
-    standingHr: number;
-    sbpChange: number;
-    dbpChange: number;
-    hrChange: number;
-    elapsedMin: number | null;
-  }[] = [];
-
-  for (const ep of episodes) {
-    const epEntries = accepted.filter((e) => e.episodeId === ep);
-    const supine = epEntries.find((e) => e.position === "supine");
-    const standing = epEntries.find((e) => e.position === "standing");
-    if (!supine || !standing) continue;
-
-    const supineSbp = parseNum(supine.sbp)!;
-    const supineDbp = parseNum(supine.dbp)!;
-    const supineHr = parseNum(supine.hr)!;
-    const standingSbp = parseNum(standing.sbp)!;
-    const standingDbp = parseNum(standing.dbp)!;
-    const standingHr = parseNum(standing.hr)!;
-
-    const elapsedMin =
-      supine.timestamp && standing.timestamp
-        ? (new Date(standing.timestamp).getTime() - new Date(supine.timestamp).getTime()) / 60000
-        : null;
-
-    pairs.push({
-      episodeId: ep,
-      supineSbp,
-      supineDbp,
-      supineHr,
-      standingSbp,
-      standingDbp,
-      standingHr,
-      sbpChange: standingSbp - supineSbp,
-      dbpChange: standingDbp - supineDbp,
-      hrChange: standingHr - supineHr,
-      elapsedMin: elapsedMin !== null && elapsedMin >= 0 ? elapsedMin : null,
-    });
-  }
-
-  return pairs;
-}
-
-// ---------------------------------------------------------------------------
-// Component
-// ---------------------------------------------------------------------------
 
 export function BaroreflexFailureAssessment() {
   const [assessment, setAssessment] = useState<Assessment>(EMPTY_ASSESSMENT);
+  const [causes, setCauses] = useState<Causes>(EMPTY_CAUSES);
   const [entries, setEntries] = useState<DiaryEntry[]>([]);
+  const [investigations, setInvestigations] = useState<Investigations>(EMPTY_INVESTIGATIONS);
+  const [differentialReview, setDifferentialReview] = useState<Record<string, string>>({});
   const [activeTab, setActiveTab] = useState("assessment");
   const printRef = useRef<HTMLDivElement>(null);
 
@@ -336,11 +147,45 @@ export function BaroreflexFailureAssessment() {
   const calcs = useMemo(() => diaryCalculations(entries), [entries]);
   const pairs = useMemo(() => pairedPosturalChange(entries), [entries]);
 
-  const isUrgent = assessment.urgentConcern === "yes";
-  const isIncomplete = assessment.urgentConcern === "unknown";
+  const urgent = isUrgent(assessment);
+  const urgentUnknown = isUrgencyUnknown(assessment);
 
   function updateAssessment<K extends keyof Assessment>(field: K, value: Assessment[K]) {
     setAssessment((prev) => ({ ...prev, [field]: value }));
+  }
+
+  function updateCause<K extends keyof Causes>(field: K, value: Causes[K]) {
+    setCauses((prev) => ({ ...prev, [field]: value }));
+  }
+
+  function addEvent() {
+    const id = crypto.randomUUID();
+    setCauses((prev) => ({
+      ...prev,
+      events: [
+        ...prev.events,
+        {
+          id,
+          causeId: "",
+          eventDate: "",
+          side: "unknown",
+          symptomOnsetDate: "",
+          anatomicalDetails: "",
+          supportingRecord: "",
+        },
+      ],
+    }));
+  }
+
+  function updateEvent(id: string, patch: Partial<CauseEvent>) {
+    setCauses((prev) => ({
+      ...prev,
+      events: prev.events.map((e) => (e.id === id ? { ...e, ...patch } : e)),
+    }));
+  }
+
+  function removeEvent(id: string) {
+    setCauses((prev) => ({ ...prev, events: prev.events.filter((e) => e.id !== id) }));
   }
 
   function addEntry() {
@@ -363,31 +208,44 @@ export function BaroreflexFailureAssessment() {
     setEntries((prev) => prev.filter((e) => e.id !== id));
   }
 
+  function updateInvestigation<K extends keyof Investigations>(field: K, value: Investigations[K]) {
+    setInvestigations((prev) => ({ ...prev, [field]: value }));
+  }
+
+  function toggleConfounder(option: string) {
+    setInvestigations((prev) => {
+      const next = prev.confounders.includes(option)
+        ? prev.confounders.filter((c) => c !== option)
+        : [...prev.confounders, option];
+      return { ...prev, confounders: next };
+    });
+  }
+
+  function setDifferential(item: string, status: string) {
+    setDifferentialReview((prev) => ({ ...prev, [item]: status }));
+  }
+
   function resetAll() {
-    if (typeof window !== "undefined" && window.confirm("Clear the entire assessment and diary?")) {
+    if (typeof window !== "undefined" && window.confirm("Clear the entire assessment, causes, diary, investigations and differentials?")) {
       setAssessment(EMPTY_ASSESSMENT);
+      setCauses(EMPTY_CAUSES);
       setEntries([]);
+      setInvestigations(EMPTY_INVESTIGATIONS);
+      setDifferentialReview({});
     }
   }
 
   function exportJson() {
-    const payload = {
-      meta: {
-        title: "Baroreflex Failure: Four Presentations",
-        version: "0.1.0",
-        specificationVersion: "0.1.0",
-        sourceDoi: "10.1161/01.CIR.0000017186.52382.F4",
-        exportedAt: new Date().toISOString(),
-      },
+    const payload = buildExportPayload(
       assessment,
-      diary: entries,
-      computed: {
-        matchedPatterns: matches.map((m) => m.id),
-        bpRangeMmHg: calcs.bpRange,
-        hrRangeBpm: calcs.hrRange,
-        pairedPosturalChanges: pairs,
-      },
-    };
+      causes,
+      entries,
+      investigations,
+      differentialReview,
+      matches,
+      calcs,
+      pairs
+    );
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -401,31 +259,64 @@ export function BaroreflexFailureAssessment() {
     window.print();
   }
 
-  const assessmentComplete =
-    assessment.history.trim() !== "" || assessment.assessmentDate !== "";
+  const assessmentFields: [keyof Assessment, string][] = [
+    ["hypertensiveCrisisDocumented", "Clinician-documented hypertensive crisis"],
+    ["alternatingHighLowBp", "Documented alternating high and low BP episodes"],
+    ["stressBpHrSurges", "Documented stress-related BP surges with tachycardia"],
+    ["supineHypertension", "Supine hypertension documented"],
+    ["orthostaticTachycardia", "Documented orthostatic tachycardia"],
+    ["orthostaticIntolerance", "Orthostatic symptoms"],
+    ["orthostaticHypotension", "Orthostatic hypotension documented"],
+    ["postprandialHypotension", "Postprandial hypotension documented"],
+    ["episodicTachycardia", "Episodic tachycardia documented"],
+    ["restingBradyHypotension", "Documented resting bradycardia with hypotension"],
+    ["sinusArrest", "Documented sinus arrest"],
+    ["currentUnstableBradycardia", "Current symptomatic bradycardia or significant conduction disturbance"],
+    ["currentAsystole", "Current or newly documented asystole"],
+    ["postoperativeApnoea", "Postoperative apnoea recorded"],
+    ["syncope", "Syncope recorded"],
+    ["stressAssociation", "Episodes associated with stress"],
+    ["drowsinessAssociation", "Low BP episodes associated with drowsiness"],
+    ["newNeurologicDeficit", "New focal neurological deficit"],
+    ["currentChestPain", "Current chest pain"],
+    ["currentSevereDyspnoea", "Current severe breathlessness"],
+    ["clonidineInterruption", "Missed clonidine, patch loss or recent abrupt interruption"],
+    ["urgentConcern", "Clinician identifies an acute emergency or unstable patient"],
+  ];
+
+  const causeFields: (keyof Causes)[] = [
+    "neckTrauma",
+    "carotidEndarterectomy",
+    "carotidBodySurgery",
+    "otherNeckSurgery",
+    "headNeckRadiation",
+    "localTumour",
+    "brainstemStroke",
+    "afferentNeuropathy",
+    "leighSyndrome",
+    "grollHirschowitz",
+    "hypertensionBrachydactyly",
+    "familyParaganglioma",
+  ];
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div>
         <div className="flex items-center gap-2.5 text-xs text-primary">
           <span className="pulse-dot" />
           <span className="font-mono uppercase tracking-wider">Autonomic · Baroreflex</span>
         </div>
-        <h1 className="mt-2 text-3xl font-semibold tracking-tight">
-          Baroreflex Failure: Four Presentations
-        </h1>
+        <h1 className="mt-2 text-3xl font-semibold tracking-tight">Baroreflex Failure: Four Presentations</h1>
         <p className="mt-2 max-w-2xl text-muted-foreground">
-          Document bedside phenotype patterns and a BP/HR diary based on Ketch et al., Circulation
+          Document bedside phenotype patterns, causes, investigations and differentials based on Ketch et al., Circulation
           2002. Pattern matches are educational, not diagnostic.
         </p>
       </div>
 
-      {/* Safety banner */}
-      {(isUrgent || isIncomplete) && (
+      {(urgent || urgentUnknown) && (
         <div
           className={`rounded-xl border p-4 ${
-            isUrgent
+            urgent
               ? "border-warn/30 bg-warn/10 text-warn"
               : "border-amber-300/30 bg-amber-100/50 text-amber-900"
           }`}
@@ -434,12 +325,12 @@ export function BaroreflexFailureAssessment() {
             <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0" />
             <div>
               <p className="font-semibold">
-                {isUrgent
+                {urgent
                   ? "Urgent clinical assessment takes priority."
                   : "Please confirm whether the patient is acutely unstable."}
               </p>
               <p className="text-sm opacity-90">
-                {isUrgent
+                {urgent
                   ? "Routine interpretation is suppressed until the acute issue is reviewed."
                   : "Unknown urgency status may delay appropriate triage."}
               </p>
@@ -448,17 +339,19 @@ export function BaroreflexFailureAssessment() {
         </div>
       )}
 
-      {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-5 sm:w-auto sm:inline-flex">
+        <TabsList className="grid w-full grid-cols-3 sm:grid-cols-5 lg:grid-cols-9">
           <TabsTrigger value="assessment">Assessment</TabsTrigger>
-          <TabsTrigger value="diary">BP / HR diary</TabsTrigger>
+          <TabsTrigger value="causes">Causes</TabsTrigger>
+          <TabsTrigger value="diary">Diary</TabsTrigger>
+          <TabsTrigger value="investigations">Tests</TabsTrigger>
+          <TabsTrigger value="differentials">Ddx</TabsTrigger>
           <TabsTrigger value="results">Results</TabsTrigger>
+          <TabsTrigger value="management">Rx</TabsTrigger>
           <TabsTrigger value="report">Report</TabsTrigger>
           <TabsTrigger value="source">Source</TabsTrigger>
         </TabsList>
 
-        {/* Assessment tab */}
         <TabsContent value="assessment" className="space-y-4">
           <Card>
             <CardHeader>
@@ -491,7 +384,7 @@ export function BaroreflexFailureAssessment() {
                 <select
                   id="onset"
                   value={assessment.onset}
-                  onChange={(e) => updateAssessment("onset", e.target.value as Onset)}
+                  onChange={(e) => updateAssessment("onset", e.target.value as Assessment["onset"])}
                   className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                 >
                   <option value="acute">Acute</option>
@@ -525,41 +418,14 @@ export function BaroreflexFailureAssessment() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
                 <Activity className="h-5 w-5 text-primary" />
-                Phenotype features
+                Phenotype features and red flags
               </CardTitle>
             </CardHeader>
             <CardContent className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {(
-                [
-                  ["hypertensiveCrisisDocumented", "Clinician-documented hypertensive crisis"],
-                  ["alternatingHighLowBp", "Documented alternating high and low BP episodes"],
-                  ["orthostaticTachycardia", "Documented orthostatic tachycardia"],
-                  ["orthostaticIntolerance", "Orthostatic symptoms"],
-                  ["restingBradyHypotension", "Documented resting bradycardia with hypotension"],
-                  ["sinusArrest", "Documented sinus arrest"],
-                  ["stressAssociation", "Episodes associated with stress"],
-                  ["drowsinessAssociation", "Low BP episodes associated with drowsiness"],
-                  ["urgentConcern", "Clinician identifies an acute emergency or unstable patient"],
-                ] as [keyof Assessment, string][]
-              ).map(([key, label]) => (
+              {assessmentFields.map(([key, label]) => (
                 <div key={key} className="space-y-2">
                   <Label className="text-sm leading-snug">{label}</Label>
-                  <div className="flex gap-2">
-                    {(["yes", "no", "unknown"] as YesNoUnknown[]).map((val) => (
-                      <button
-                        key={val}
-                        type="button"
-                        onClick={() => updateAssessment(key, val)}
-                        className={`flex-1 rounded-md border px-2 py-1.5 text-xs font-medium transition ${
-                          (assessment as any)[key] === val
-                            ? "border-primary bg-primary text-primary-foreground"
-                            : "border-input bg-background hover:bg-muted/50"
-                        }`}
-                      >
-                        {val === "unknown" ? "Unknown" : val === "yes" ? "Yes" : "No"}
-                      </button>
-                    ))}
-                  </div>
+                  <TriStateButtons value={assessment[key]} onChange={(v) => updateAssessment(key, v)} />
                 </div>
               ))}
             </CardContent>
@@ -568,7 +434,7 @@ export function BaroreflexFailureAssessment() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
-                <BookOpen className="h-5 w-5 text-primary" />
+                <Stethoscope className="h-5 w-5 text-primary" />
                 Assessment, differentials and plan
               </CardTitle>
             </CardHeader>
@@ -604,7 +470,109 @@ export function BaroreflexFailureAssessment() {
           </Card>
         </TabsContent>
 
-        {/* Diary tab */}
+        <TabsContent value="causes" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <BookOpen className="h-5 w-5 text-primary" />
+                Suspected causes and associations
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {causeFields.map((key) => (
+                <div key={key} className="space-y-2">
+                  <Label className="text-sm leading-snug">{CAUSE_LABELS[key]}</Label>
+                  <TriStateButtons value={causes[key]} onChange={(v) => updateCause(key, v)} />
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg">Cause events</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm text-muted-foreground">
+                Record dated events such as surgery, trauma or radiation with side and anatomical details.
+              </p>
+              {causes.events.map((event) => (
+                <div key={event.id} className="rounded-xl border border-border bg-card p-3">
+                  <div className="mb-2 flex items-center justify-between gap-2">
+                    <div className="text-sm font-medium">Event {event.id.slice(0, 8)}</div>
+                    <Button variant="ghost" size="icon" onClick={() => removeEvent(event.id)} aria-label="Remove event">
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                    <div className="space-y-1">
+                      <Label className="text-xs">Cause</Label>
+                      <select
+                        value={event.causeId}
+                        onChange={(e) => updateEvent(event.id, { causeId: e.target.value })}
+                        className="w-full rounded-md border border-input bg-background px-2 py-2 text-sm"
+                      >
+                        <option value="">Select cause</option>
+                        {CAUSE_EVENT_CAUSE_IDS.map((id) => (
+                          <option key={id} value={id}>
+                            {id.replace(/_/g, " ")}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-xs">Event date</Label>
+                      <Input
+                        type="date"
+                        value={event.eventDate}
+                        onChange={(e) => updateEvent(event.id, { eventDate: e.target.value })}
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-xs">Symptom onset</Label>
+                      <Input
+                        type="date"
+                        value={event.symptomOnsetDate}
+                        onChange={(e) => updateEvent(event.id, { symptomOnsetDate: e.target.value })}
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-xs">Side</Label>
+                      <select
+                        value={event.side}
+                        onChange={(e) =>
+                          updateEvent(event.id, { side: e.target.value as CauseEvent["side"] })
+                        }
+                        className="w-full rounded-md border border-input bg-background px-2 py-2 text-sm"
+                      >
+                        <option value="right">Right</option>
+                        <option value="left">Left</option>
+                        <option value="bilateral">Bilateral</option>
+                        <option value="unknown">Unknown</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                    <Input
+                      value={event.anatomicalDetails}
+                      onChange={(e) => updateEvent(event.id, { anatomicalDetails: e.target.value })}
+                      placeholder="Anatomical details"
+                    />
+                    <Input
+                      value={event.supportingRecord}
+                      onChange={(e) => updateEvent(event.id, { supportingRecord: e.target.value })}
+                      placeholder="Supporting record / reference"
+                    />
+                  </div>
+                </div>
+              ))}
+              <Button variant="outline" onClick={addEvent} className="gap-2">
+                <Plus className="h-4 w-4" /> Add cause event
+              </Button>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
         <TabsContent value="diary" className="space-y-4">
           <Card>
             <CardHeader>
@@ -623,18 +591,11 @@ export function BaroreflexFailureAssessment() {
                 return (
                   <div
                     key={entry.id}
-                    className={`rounded-xl border p-3 ${
-                      invalid ? "border-warn/40 bg-warn/5" : "border-border bg-card"
-                    }`}
+                    className={`rounded-xl border p-3 ${invalid ? "border-warn/40 bg-warn/5" : "border-border bg-card"}`}
                   >
                     <div className="mb-2 flex items-center justify-between gap-2">
                       <div className="text-sm font-medium">Reading {entry.id.slice(0, 8)}</div>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => removeEntry(entry.id)}
-                        aria-label="Remove reading"
-                      >
+                      <Button variant="ghost" size="icon" onClick={() => removeEntry(entry.id)} aria-label="Remove reading">
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
@@ -678,7 +639,7 @@ export function BaroreflexFailureAssessment() {
                         <Label className="text-xs">Position</Label>
                         <select
                           value={entry.position}
-                          onChange={(e) => updateEntry(entry.id, { position: e.target.value as Position })}
+                          onChange={(e) => updateEntry(entry.id, { position: e.target.value as DiaryEntry["position"] })}
                           className="w-full rounded-md border border-input bg-background px-2 py-2 text-sm"
                         >
                           <option value="supine">Supine</option>
@@ -692,9 +653,7 @@ export function BaroreflexFailureAssessment() {
                         <Input
                           type="number"
                           value={entry.minutesAfterStanding}
-                          onChange={(e) =>
-                            updateEntry(entry.id, { minutesAfterStanding: e.target.value })
-                          }
+                          onChange={(e) => updateEntry(entry.id, { minutesAfterStanding: e.target.value })}
                           placeholder="0"
                         />
                       </div>
@@ -710,7 +669,7 @@ export function BaroreflexFailureAssessment() {
                         <Label className="text-xs">Quality</Label>
                         <select
                           value={entry.quality}
-                          onChange={(e) => updateEntry(entry.id, { quality: e.target.value as Quality })}
+                          onChange={(e) => updateEntry(entry.id, { quality: e.target.value as DiaryEntry["quality"] })}
                           className="w-full rounded-md border border-input bg-background px-2 py-2 text-sm"
                         >
                           <option value="accepted">Accepted</option>
@@ -752,8 +711,7 @@ export function BaroreflexFailureAssessment() {
               <Card className="bg-muted/30">
                 <CardContent className="space-y-2 pt-4 text-sm">
                   <p>
-                    <span className="font-medium">Accepted readings:</span> {calcs.acceptedCount} /{" "}
-                    {calcs.totalCount}
+                    <span className="font-medium">Accepted readings:</span> {calcs.acceptedCount} / {calcs.totalCount}
                   </p>
                   <p>
                     <span className="font-medium">BP range:</span>{" "}
@@ -769,7 +727,159 @@ export function BaroreflexFailureAssessment() {
           </Card>
         </TabsContent>
 
-        {/* Results tab */}
+        <TabsContent value="investigations" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <Activity className="h-5 w-5 text-primary" />
+                Specialist investigations
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label>HR response to documented pressor-induced BP rise</Label>
+                <select
+                  value={investigations.pressorHrResponse}
+                  onChange={(e) =>
+                    updateInvestigation("pressorHrResponse", e.target.value as Investigations["pressorHrResponse"])
+                  }
+                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                >
+                  <option value="not_done">Not done</option>
+                  <option value="appropriate_bradycardia">Appropriate bradycardia</option>
+                  <option value="absent_or_blunted">Absent or blunted</option>
+                  <option value="uninterpretable">Uninterpretable</option>
+                </select>
+              </div>
+              <div className="space-y-2">
+                <Label>HR response to documented depressor-induced BP fall</Label>
+                <select
+                  value={investigations.depressorHrResponse}
+                  onChange={(e) =>
+                    updateInvestigation("depressorHrResponse", e.target.value as Investigations["depressorHrResponse"])
+                  }
+                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                >
+                  <option value="not_done">Not done</option>
+                  <option value="appropriate_tachycardia">Appropriate tachycardia</option>
+                  <option value="absent_or_blunted">Absent or blunted</option>
+                  <option value="uninterpretable">Uninterpretable</option>
+                </select>
+              </div>
+              <div className="space-y-2">
+                <Label>HR variation with ordinary activities documented</Label>
+                <TriStateButtons
+                  value={investigations.dailyHrVariation}
+                  onChange={(v) => updateInvestigation("dailyHrVariation", v)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Specialist documented preserved efferent autonomic responses</Label>
+                <TriStateButtons
+                  value={investigations.specialistEfferentPreserved}
+                  onChange={(v) => updateInvestigation("specialistEfferentPreserved", v)}
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Confounders</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-wrap gap-2">
+                {CONFOUNDER_OPTIONS.map((option) => {
+                  const active = investigations.confounders.includes(option);
+                  return (
+                    <button
+                      key={option}
+                      type="button"
+                      onClick={() => toggleConfounder(option)}
+                      className={`rounded-full border px-3 py-1 text-xs font-medium transition ${
+                        active
+                          ? "border-primary bg-primary text-primary-foreground"
+                          : "border-input bg-background hover:bg-muted/50"
+                      }`}
+                    >
+                      {option}
+                    </button>
+                  );
+                })}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Reports</CardTitle>
+            </CardHeader>
+            <CardContent className="grid gap-4">
+              <div className="space-y-2">
+                <Label>Test report / interpretation</Label>
+                <Textarea
+                  value={investigations.testReport}
+                  onChange={(e) => updateInvestigation("testReport", e.target.value)}
+                  rows={3}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Rhythm findings</Label>
+                <Textarea
+                  value={investigations.rhythmReport}
+                  onChange={(e) => updateInvestigation("rhythmReport", e.target.value)}
+                  rows={3}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Specialist conclusion</Label>
+                <Textarea
+                  value={investigations.specialistConclusion}
+                  onChange={(e) => updateInvestigation("specialistConclusion", e.target.value)}
+                  rows={3}
+                />
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="differentials" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <Stethoscope className="h-5 w-5 text-primary" />
+                Differential review
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm text-muted-foreground">
+                For each item select not assessed / under evaluation / supported / less likely and add evidence. A not-done result is not proof of absence.
+              </p>
+              {DIFFERENTIAL_ITEMS.map((item) => (
+                <div key={item} className="rounded-xl border border-border bg-card p-3">
+                  <div className="mb-2 text-sm font-medium">{item}</div>
+                  <div className="flex flex-wrap gap-2">
+                    {["not_assessed", "under_evaluation", "supported", "less_likely"].map((status) => (
+                      <button
+                        key={status}
+                        type="button"
+                        onClick={() => setDifferential(item, status)}
+                        className={`rounded-md border px-2.5 py-1 text-xs font-medium transition ${
+                          (differentialReview[item] ?? "not_assessed") === status
+                            ? "border-primary bg-primary text-primary-foreground"
+                            : "border-input bg-background hover:bg-muted/50"
+                        }`}
+                      >
+                        {status.replace(/_/g, " ")}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
         <TabsContent value="results" className="space-y-4">
           <Card>
             <CardHeader>
@@ -779,14 +889,13 @@ export function BaroreflexFailureAssessment() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {isUrgent ? (
+              {urgent ? (
                 <div className="rounded-lg border border-warn/30 bg-warn/10 p-4 text-warn">
                   Urgent clinical assessment takes priority. Routine interpretation is suppressed.
                 </div>
               ) : matches.length === 0 ? (
                 <div className="rounded-lg border border-border bg-muted/30 p-4 text-muted-foreground">
-                  No presentation matched the entered information. This neither excludes nor confirms
-                  baroreflex failure.
+                  No presentation matched the entered information. This neither excludes nor confirms baroreflex failure.
                 </div>
               ) : (
                 <div className="space-y-3">
@@ -794,15 +903,14 @@ export function BaroreflexFailureAssessment() {
                     <div key={m.id} className="rounded-xl border border-border bg-card p-4">
                       <p className="font-semibold text-foreground">{m.output}</p>
                       <p className="mt-1 text-xs text-muted-foreground">
-                        Supporting:{" "}
-                        {m.supporting.map((s) => `${s.field} = ${s.value}`).join("; ")}
+                        Supporting: {m.supporting.map((s) => `${s.field} = ${s.value}`).join("; ")}
                       </p>
                     </div>
                   ))}
                 </div>
               )}
 
-              {unresolved.length > 0 && !isUrgent && (
+              {unresolved.length > 0 && !urgent && (
                 <div className="rounded-lg border border-amber-300/30 bg-amber-100/50 p-3 text-sm text-amber-900">
                   <span className="font-medium">Unresolved items:</span> {unresolved.join("; ")}
                 </div>
@@ -819,8 +927,7 @@ export function BaroreflexFailureAssessment() {
             </CardHeader>
             <CardContent className="space-y-2 text-sm">
               <p>
-                <span className="font-medium">Accepted readings:</span> {calcs.acceptedCount} /{" "}
-                {calcs.totalCount}
+                <span className="font-medium">Accepted readings:</span> {calcs.acceptedCount} / {calcs.totalCount}
               </p>
               <p>
                 <span className="font-medium">BP range:</span>{" "}
@@ -842,6 +949,11 @@ export function BaroreflexFailureAssessment() {
                         {p.dbpChange} mmHg · HR {p.hrChange > 0 ? "+" : ""}
                         {p.hrChange} bpm
                       </p>
+                      {p.hrRiseDescriptor && (
+                        <p className="text-xs text-muted-foreground">
+                          HR rise &gt;30 bpm: meets the 2002 article’s historical descriptor (not a modern POTS rule).
+                        </p>
+                      )}
                       {p.elapsedMin !== null && (
                         <p className="text-xs text-muted-foreground">
                           Elapsed standing time: {Math.round(p.elapsedMin)} min
@@ -853,9 +965,112 @@ export function BaroreflexFailureAssessment() {
               )}
             </CardContent>
           </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Autonomic failure vs baroreflex failure comparison</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-border">
+                      <th className="py-2 text-left font-medium">Feature</th>
+                      <th className="py-2 text-center font-medium">Autonomic failure</th>
+                      <th className="py-2 text-center font-medium">Baroreflex failure</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {COMPARISON_ROWS.map(([feature, af, bf]) => (
+                      <tr key={feature} className="border-b border-border/50">
+                        <td className="py-2">{feature}</td>
+                        <td className="py-2 text-center font-semibold">{af}</td>
+                        <td className="py-2 text-center font-semibold">{bf}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <p className="mt-3 text-xs text-muted-foreground">
+                Qualitative descriptions from the 2002 article; not a diagnostic score. Do not interpret a minus sign as impossible.
+              </p>
+            </CardContent>
+          </Card>
         </TabsContent>
 
-        {/* Report tab */}
+        <TabsContent value="management" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <Pill className="h-5 w-5 text-primary" />
+                Management reference
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4 text-sm">
+              <div className="rounded-lg border border-warn/20 bg-warn/5 p-3 text-warn">
+                <p className="font-medium">Educational reference only</p>
+                <p className="opacity-90">No generated prescriptions or automatic dose adjustments. Verify contemporary sources before treatment decisions.</p>
+              </div>
+
+              <div>
+                <p className="font-medium">Goals</p>
+                <ul className="mt-1 list-disc space-y-1 pl-5 text-muted-foreground">
+                  <li>Reduce hazardous BP/HR surges</li>
+                  <li>Reduce symptomatic hypotension</li>
+                  <li>Address clinically significant bradyarrhythmia</li>
+                  <li>Review both high and low BP burden at follow-up</li>
+                </ul>
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <p className="font-medium">Historical 2002 agents for BP surges</p>
+                  <ul className="mt-1 list-disc space-y-1 pl-5 text-muted-foreground">
+                    <li>Clonidine</li>
+                    <li>Guanadrel</li>
+                    <li>Guanethidine</li>
+                    <li>Diazepam in selected cases</li>
+                  </ul>
+                </div>
+                <div>
+                  <p className="font-medium">Historical 2002 agents for hypotension</p>
+                  <ul className="mt-1 list-disc space-y-1 pl-5 text-muted-foreground">
+                    <li>Fludrocortisone</li>
+                    <li>Exceptional yohimbine use described for excessive alpha-2 agonist effect</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div>
+                <p className="font-medium">2019 JACC review context</p>
+                <p className="text-muted-foreground">
+                  Long-acting central sympatholytics are a mainstay. Fludrocortisone is reserved for otherwise resistant hypotension because it can aggravate cardiovascular problems.
+                </p>
+                <p className="mt-1 text-xs text-muted-foreground">Limited verified update, not a complete current prescribing review.</p>
+              </div>
+
+              <div>
+                <p className="font-medium">Review flags</p>
+                <div className="mt-1 space-y-2">
+                  {MANAGEMENT_FLAGS.map((flag, idx) => (
+                    <div key={idx} className="rounded-md border border-border bg-muted/30 p-2">
+                      <p className="font-medium">{flag.agents.join(" · ")}</p>
+                      <p className="text-xs text-muted-foreground">{flag.action}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <p className="font-medium">Pacing / rhythm</p>
+                <p className="text-muted-foreground">
+                  Rhythm findings prompt cardiology/electrophysiology assessment. Neither HR &lt;40 nor a reported pause duration is used alone as an automatic pacemaker indication.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
         <TabsContent value="report" className="space-y-4">
           <div className="flex flex-wrap gap-2 print:hidden">
             <Button variant="outline" onClick={exportJson} className="gap-2">
@@ -876,31 +1091,21 @@ export function BaroreflexFailureAssessment() {
             <div className="border-b border-black pb-4">
               <h2 className="text-2xl font-semibold">Baroreflex Presentation Assessment</h2>
               <p className="text-sm text-gray-700">
-                Abstract-based educational adaptation; not a validated diagnostic instrument.
+                Adapted from user-supplied 2002 article text with labelled later context. Not a validated diagnostic instrument or prescribing tool.
               </p>
-              {assessment.caseId && (
-                <p className="mt-2 text-sm font-medium">Case ID: {assessment.caseId}</p>
-              )}
+              {assessment.caseId && <p className="mt-2 text-sm font-medium">Case ID: {assessment.caseId}</p>}
               <p className="text-sm">Date: {formatDate(assessment.assessmentDate)}</p>
             </div>
 
             <section>
-              <h3 className="text-lg font-semibold">Clinical history</h3>
-              <p className="whitespace-pre-wrap text-sm">
-                {assessment.history || "Not provided."}
-              </p>
-            </section>
-
-            <section>
-              <h3 className="text-lg font-semibold">Medications</h3>
-              <p className="whitespace-pre-wrap text-sm">
-                {assessment.medications || "Not provided."}
-              </p>
+              <h3 className="text-lg font-semibold">Clinical history and medications</h3>
+              <p className="whitespace-pre-wrap text-sm">{assessment.history || "Not provided."}</p>
+              <p className="mt-2 whitespace-pre-wrap text-sm">{assessment.medications || "Medications not provided."}</p>
             </section>
 
             <section>
               <h3 className="text-lg font-semibold">Recorded phenotype matches</h3>
-              {isUrgent ? (
+              {urgent ? (
                 <p className="text-sm font-semibold text-red-700">
                   Urgent clinical assessment takes priority — routine interpretation suppressed.
                 </p>
@@ -925,9 +1130,7 @@ export function BaroreflexFailureAssessment() {
 
             <section>
               <h3 className="text-lg font-semibold">Unanswered phenotype items</h3>
-              <p className="text-sm">
-                {unresolved.length > 0 ? unresolved.join("; ") : "None — all items answered."}
-              </p>
+              <p className="text-sm">{unresolved.length > 0 ? unresolved.join("; ") : "None — all items answered."}</p>
             </section>
 
             <section>
@@ -949,6 +1152,7 @@ export function BaroreflexFailureAssessment() {
                         {p.sbpChange} mmHg, DBP {p.dbpChange > 0 ? "+" : ""}
                         {p.dbpChange} mmHg, HR {p.hrChange > 0 ? "+" : ""}
                         {p.hrChange} bpm
+                        {p.hrRiseDescriptor && " (HR rise >30 bpm — historical descriptor only)"}
                         {p.elapsedMin !== null && ` (${Math.round(p.elapsedMin)} min standing)`}
                       </li>
                     ))}
@@ -958,17 +1162,35 @@ export function BaroreflexFailureAssessment() {
             </section>
 
             <section>
-              <h3 className="text-lg font-semibold">Investigation findings</h3>
-              <p className="whitespace-pre-wrap text-sm">
-                {assessment.testFindings || "Not provided."}
+              <h3 className="text-lg font-semibold">Investigations</h3>
+              {investigationsSummary(investigations).length === 0 ? (
+                <p className="text-sm text-gray-700">No investigations recorded.</p>
+              ) : (
+                <ul className="list-disc space-y-1 pl-5 text-sm">
+                  {investigationsSummary(investigations).map((line, idx) => (
+                    <li key={idx}>{line}</li>
+                  ))}
+                </ul>
+              )}
+              <p className="mt-2 whitespace-pre-wrap text-sm">{investigations.testReport || "Test report not provided."}</p>
+              <p className="mt-2 whitespace-pre-wrap text-sm">{investigations.rhythmReport || "Rhythm report not provided."}</p>
+              <p className="mt-2 whitespace-pre-wrap text-sm">
+                {investigations.specialistConclusion || "Specialist conclusion not provided."}
               </p>
             </section>
 
             <section>
-              <h3 className="text-lg font-semibold">Differential considerations</h3>
-              <p className="whitespace-pre-wrap text-sm">
-                {assessment.differentials || "Not provided."}
-              </p>
+              <h3 className="text-lg font-semibold">Differential review</h3>
+              {DIFFERENTIAL_ITEMS.length === 0 ? null : (
+                <ul className="list-disc space-y-1 pl-5 text-sm">
+                  {DIFFERENTIAL_ITEMS.map((item) => (
+                    <li key={item}>
+                      {item}: {(differentialReview[item] ?? "not_assessed").replace(/_/g, " ")}
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <p className="mt-2 whitespace-pre-wrap text-sm">{assessment.differentials || "Differentials not provided."}</p>
             </section>
 
             <section>
@@ -978,19 +1200,18 @@ export function BaroreflexFailureAssessment() {
 
             <section className="border-t border-black pt-4 text-xs text-gray-700">
               <p>
-                Source: Ketch T, Biaggioni I, Robertson R, Robertson D. Four faces of baroreflex
-                failure: hypertensive crisis, volatile hypertension, orthostatic tachycardia, and
-                malignant vagotonia. Circulation. 2002;105:2518–2523. doi:10.1161/01.CIR.0000017186.52382.F4
+                Source: Ketch T, Biaggioni I, Robertson R, Robertson D. Four faces of baroreflex failure: hypertensive
+                crisis, volatile hypertension, orthostatic tachycardia, and malignant vagotonia. Circulation.
+                2002;105:2518–2523. doi:10.1161/01.CIR.0000017186.52382.F4
               </p>
               <p className="mt-1">
-                Form design, matching rules, diary and report are implementation additions not
-                validated by the source article.
+                Form design, matching rules, diary, differentials and report are implementation additions not validated by
+                the source article.
               </p>
             </section>
           </div>
         </TabsContent>
 
-        {/* Source tab */}
         <TabsContent value="source" className="space-y-4">
           <Card>
             <CardHeader>
@@ -1001,13 +1222,12 @@ export function BaroreflexFailureAssessment() {
             </CardHeader>
             <CardContent className="space-y-4 text-sm">
               <p>
-                <span className="font-medium">Article:</span> Four faces of baroreflex failure:
-                hypertensive crisis, volatile hypertension, orthostatic tachycardia, and malignant
-                vagotonia.
+                <span className="font-medium">Article:</span> Four faces of baroreflex failure: hypertensive crisis,
+                volatile hypertension, orthostatic tachycardia, and malignant vagotonia.
               </p>
               <p>
-                <span className="font-medium">Authors:</span> Terry Ketch, Italo Biaggioni,
-                RoseMarie Robertson, David Robertson.
+                <span className="font-medium">Authors:</span> Terry Ketch, Italo Biaggioni, RoseMarie Robertson, David
+                Robertson.
               </p>
               <p>
                 <span className="font-medium">Journal:</span> Circulation, 2002;105:2518–2523.
@@ -1026,46 +1246,39 @@ export function BaroreflexFailureAssessment() {
               <div className="rounded-lg border border-warn/20 bg-warn/5 p-3 text-warn">
                 <p className="font-medium">Important limitations</p>
                 <ul className="mt-1 list-disc space-y-1 pl-5">
-                  <li>This mini-app is built from the article title and abstract only.</li>
+                  <li>This mini-app is built from supplied 2002 article text with later labelled context.</li>
                   <li>Pattern matches are descriptive, not diagnostic.</li>
                   <li>No validated score, probability, or automated treatment recommendation is provided.</li>
                   <li>Full-text review and clinician validation are required before release.</li>
                   <li>Always prioritise urgent clinical assessment over interpretation output.</li>
                 </ul>
               </div>
-
               <div>
                 <p className="font-medium">Educational mechanism</p>
                 <p className="text-muted-foreground">
-                  Damage to baroreceptor afferents or central connections reduces buffering of blood
-                  pressure and heart rate. The four described phenotypes are:
+                  Damage to baroreceptor afferents or central connections reduces buffering of blood pressure and heart rate.
                 </p>
                 <ul className="mt-1 list-disc space-y-1 pl-5 text-muted-foreground">
-                  <li>
-                    <span className="font-medium text-foreground">Hypertensive crisis</span> — acute
-                    major hypertensive episode.
-                  </li>
-                  <li>
-                    <span className="font-medium text-foreground">Volatile hypertension</span> —
-                    hypertensive surges alternating with hypotension.
-                  </li>
-                  <li>
-                    <span className="font-medium text-foreground">Orthostatic tachycardia / intolerance</span>{" "}
-                    — partial afferent impairment presenting with orthostatic symptoms.
-                  </li>
-                  <li>
-                    <span className="font-medium text-foreground">Malignant vagotonia</span> —
-                    preserved vagal efferents permitting marked bradycardia, hypotension or sinus
-                    arrest.
-                  </li>
+                  <li>Carotid sinus stretch → CN IX → nucleus tractus solitarii.</li>
+                  <li>Aortic and cardiopulmonary afferents → CN X.</li>
+                  <li>Medullary circuits integrate baroreceptor and cortical inputs.</li>
+                  <li>Loss of afferent buffering differs from generalized autonomic failure.</li>
                 </ul>
+              </div>
+              <div>
+                <p className="font-medium">The four phenotypes</p>
+                {PHENOTYPES.map((p) => (
+                  <div key={p.id} className="mt-1">
+                    <p className="font-medium text-foreground">{p.title}</p>
+                    <p className="text-muted-foreground">{p.description}</p>
+                  </div>
+                ))}
               </div>
             </CardContent>
           </Card>
         </TabsContent>
       </Tabs>
 
-      {/* Bottom action bar */}
       <div className="flex flex-wrap gap-2 print:hidden">
         <Button variant="outline" onClick={() => setActiveTab("diary")} className="gap-2">
           <Plus className="h-4 w-4" /> Add diary reading
