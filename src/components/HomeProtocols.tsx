@@ -202,6 +202,15 @@ export function HomeProtocols() {
         icon: Heart,
         badge: "Evidence · LoDoCo2",
       },
+      {
+        key: "coronary-syndromes",
+        title: "ANOCA, MINOCA & INOCA",
+        to: "/coronary-syndromes",
+        description: "Angina, infarction and ischemia with non-obstructive coronary arteries: illustrated comparison and key distinctions.",
+        keywords: "anoca minoca inoca angina myocardial infarction ischemia non obstructive coronary microvascular vasospasm",
+        icon: Heart,
+        badge: "Coronary · Reference",
+      },
     ];
   }, []);
 

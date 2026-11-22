@@ -90,7 +90,7 @@ export function calculateMcass(inputs: McassInputs): McassResult {
   if (maxSbpFall >= 20 || maxDbpFall >= 10) adrenergic += 1;
   if (maxSbpFall >= 30 || maxDbpFall >= 15 || hrRiseStanding >= 30) adrenergic += 1;
   if (hrRiseStanding >= 40 || deltaHrDeltaSbp >= 0.8) adrenergic += 1;
-  if (inputs.potsScreen === "positive" || inputs.sixMinuteStandingHr >= 30) adrenergic += 1;
+  if (inputs.potsScreen === "positive" || (inputs.sixMinuteStandingHr ?? 0) >= 30) adrenergic += 1;
 
   adrenergic = clamp(adrenergic, 0, 4);
 

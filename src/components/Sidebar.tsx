@@ -92,6 +92,17 @@ const SECTIONS: Section[] = [
     ],
   },
   {
+    id: "coronary",
+    label: "Coronary syndromes",
+    icon: Heart,
+    color: "text-primary",
+    bg: "bg-primary/15",
+    items: [
+      { label: "ANOCA, MINOCA & INOCA", to: "/coronary-syndromes" },
+      { label: "Chronic Coronary Disease", to: "/ccad" },
+    ],
+  },
+  {
     id: "exercise",
     label: "ETT (VO₂ · Lactate)",
     icon: Activity,

@@ -259,7 +259,7 @@ export function BaroreflexFailureAssessment() {
     window.print();
   }
 
-  const assessmentFields: [keyof Assessment, string][] = [
+  const assessmentFields: [Exclude<keyof Assessment, "caseId" | "assessmentDate" | "onset" | "history" | "medications" | "testFindings" | "differentials" | "plan">, string][] = [
     ["hypertensiveCrisisDocumented", "Clinician-documented hypertensive crisis"],
     ["alternatingHighLowBp", "Documented alternating high and low BP episodes"],
     ["stressBpHrSurges", "Documented stress-related BP surges with tachycardia"],
@@ -284,7 +284,7 @@ export function BaroreflexFailureAssessment() {
     ["urgentConcern", "Clinician identifies an acute emergency or unstable patient"],
   ];
 
-  const causeFields: (keyof Causes)[] = [
+  const causeFields: Exclude<keyof Causes, "events">[] = [
     "neckTrauma",
     "carotidEndarterectomy",
     "carotidBodySurgery",

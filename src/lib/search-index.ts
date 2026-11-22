@@ -86,6 +86,14 @@ export const searchIndex: SearchItem[] = [
 
   // Reference pages
   {
+    id: "ref:coronary-syndromes",
+    label: "ANOCA, MINOCA & INOCA",
+    category: "Reference",
+    detail: "Non-obstructive coronary syndromes · illustrated comparison",
+    to: "/coronary-syndromes",
+    keywords: "anoca minoca inoca angina myocardial infarction ischemia non obstructive coronary microvascular vasospasm",
+  },
+  {
     id: "ref:antiarrhythmics",
     label: "Anti-arrhythmic drugs",
     category: "Reference",

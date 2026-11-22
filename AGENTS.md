@@ -10,3 +10,5 @@
 > the editor, so keep the branch in a working state.
 
 <!-- LOVABLE:END -->
+
+- Keep non-obstructive coronary syndrome references in a dedicated layout route, discoverable from home, sidebar and global search, so the comparison remains directly accessible.
